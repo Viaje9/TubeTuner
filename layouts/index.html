@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube 影片速度控制器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+        .aspect-video {
+            aspect-ratio: 16 / 9;
+        }
+        /* 隱藏 number input 的上下箭頭 */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen p-4">
+
+    <!-- 訊息提示框 -->
+    <div id="message-box" class="fixed top-5 right-5 bg-red-600 text-white py-2 px-4 rounded-lg shadow-lg opacity-0 transition-opacity duration-500 z-50"></div>
+
+    <div class="w-full max-w-4xl">
+        <h1 class="text-3xl font-bold text-center mb-6">YouTube 影片速度控制器</h1>
+
+        <!-- 輸入影片網址的區塊 -->
+        <div class="mb-6 flex flex-col sm:flex-row gap-2">
+            <input type="text" id="videoUrl" placeholder="在此貼上 YouTube 影片網址..." class="flex-grow bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white">
+            <button id="loadVideoButton" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-300">
+                載入影片
+            </button>
+        </div>
+
+        <!-- 影片播放器容器 -->
+        <div id="player-container" class="w-full aspect-video bg-black rounded-lg shadow-lg mb-6 overflow-hidden">
+            <div id="player"></div>
+        </div>
+
+        <!-- 播放速度控制按鈕 -->
+        <div class="flex flex-wrap justify-center gap-2">
+            <h2 class="w-full text-center text-xl font-semibold mb-2">播放速度</h2>
+            <button onclick="setSpeed(0.5)" class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">0.5x</button>
+            <button onclick="setSpeed(1)" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">正常 (1x)</button>
+            <button onclick="setSpeed(1.5)" class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">1.5x</button>
+            <button onclick="setSpeed(2)" class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">2x</button>
+        </div>
+
+        <!-- 時間控制 -->
+        <div class="mt-6 flex flex-wrap justify-center items-center gap-3">
+            <h2 class="w-full text-center text-xl font-semibold mb-2">時間控制</h2>
+            <button id="rewindButton" class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-5 rounded-lg transition-colors duration-200">倒轉</button>
+            <input type="number" id="seekSeconds" value="5" class="w-20 text-center bg-gray-800 border border-gray-600 rounded-lg py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <span class="text-gray-400">秒</span>
+            <button id="forwardButton" class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-5 rounded-lg transition-colors duration-200">快轉</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. 載入 YouTube IFrame Player API
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        var defaultVideoId = 'dQw4w9WgXcQ'; // 預設影片 ID
+
+        // 2. 這個函式會在 API 載入完成後自動被呼叫
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '100%',
+                width: '100%',
+                videoId: defaultVideoId,
+                playerVars: {
+                    'playsinline': 1,
+                    'rel': 0
+                },
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        // 3. 當播放器準備好時，這個函式會被呼叫
+        function onPlayerReady(event) {
+            // 播放器準備好後，啟用控制按鈕
+        }
+
+        // 4. 設定播放速度的函式
+        function setSpeed(speed) {
+            if (player && typeof player.setPlaybackRate === 'function') {
+                player.setPlaybackRate(speed);
+            } else {
+                showMessage("播放器尚未準備好");
+            }
+        }
+        
+        // 5. 快轉/倒轉影片的函式
+        function seekVideo(seconds) {
+            if (player && typeof player.getCurrentTime === 'function') {
+                const currentTime = player.getCurrentTime();
+                player.seekTo(currentTime + seconds, true);
+            } else {
+                showMessage("播放器尚未準備好");
+            }
+        }
+
+        // 6. 從 YouTube 網址中提取影片 ID 的函式
+        function getVideoIdFromUrl(url) {
+            var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            var match = url.match(regExp);
+            return (match && match[2].length == 11) ? match[2] : null;
+        }
+
+        // 7. 顯示訊息的函式
+        function showMessage(message) {
+            const messageBox = document.getElementById('message-box');
+            messageBox.textContent = message;
+            messageBox.style.opacity = 1;
+            setTimeout(() => {
+                messageBox.style.opacity = 0;
+            }, 3000); // 3秒後自動消失
+        }
+
+        // 8. 監聽 "載入影片" 按鈕的點擊事件
+        document.getElementById('loadVideoButton').addEventListener('click', function() {
+            var url = document.getElementById('videoUrl').value;
+            if (!url) {
+                showMessage('請先輸入 YouTube 影片網址！');
+                return;
+            }
+            var videoId = getVideoIdFromUrl(url);
+            if (videoId) {
+                if (player && typeof player.loadVideoById === 'function') {
+                    player.loadVideoById(videoId);
+                } else {
+                    defaultVideoId = videoId;
+                    onYouTubeIframeAPIReady();
+                }
+            } else {
+                showMessage('無法識別的 YouTube 網址，請確認格式。');
+            }
+        });
+
+        // 9. 監聽時間控制按鈕
+        document.getElementById('rewindButton').addEventListener('click', function() {
+            const seconds = parseInt(document.getElementById('seekSeconds').value, 10) || 5;
+            seekVideo(-seconds);
+        });
+
+        document.getElementById('forwardButton').addEventListener('click', function() {
+            const seconds = parseInt(document.getElementById('seekSeconds').value, 10) || 5;
+            seekVideo(seconds);
+        });
+    </script>
+</body>
+</html>
