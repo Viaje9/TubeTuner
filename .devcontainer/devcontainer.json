@@ -1,0 +1,36 @@
+{
+  "name": "TubeTuner Vue 3 Development",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [5173],
+  "postCreateCommand": "npm install",
+  "portsAttributes": {
+    "5173": {
+      "label": "Vite Dev Server"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vue.volar",
+        "bradlc.vscode-tailwindcss",
+        "ms-vscode.vscode-typescript-next",
+        "esbenp.prettier-vscode",
+        "ms-vscode.vscode-eslint",
+        "anthropic.claude-code",
+        "mhutchie.git-graph"
+      ]
+    }
+  },
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "source=tubetuner_node_modules,target=/workspace/node_modules,type=volume",
+    "source=claude-code-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
+    "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume"
+  ],
+  "containerEnv": {
+    "NODE_OPTIONS": "--max-old-space-size=4096",
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude"
+  }
+}
