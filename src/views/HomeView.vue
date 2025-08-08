@@ -1,32 +1,48 @@
 <template>
-  <div class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen p-4">
+  <div class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen">
     <!-- 訊息提示框 -->
     <MessageBox :message="errorMessage" />
 
-    <div class="w-full max-w-4xl">
-      <h1 class="text-3xl font-bold text-center mb-6">YouTube 影片速度控制器</h1>
+    <div class="container mx-auto px-4 py-8">
+      <!-- 標題區域 -->
+      <div class="text-center mb-8">
+        <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">
+          TubeTuner
+        </h1>
+        <p class="text-xl text-gray-300">YouTube 影片速度控制器</p>
+        <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"></div>
+      </div>
 
-      <!-- YouTube 播放器 -->
-      <YouTubePlayer 
-        :player="youtubePlayer"
-        @player-ready="handlePlayerReady"
-        @video-loaded="handleVideoLoaded"
-        @error="showError"
-      />
+      <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- YouTube 播放器區域 -->
+          <div class="lg:col-span-2">
+            <YouTubePlayer 
+              :player="youtubePlayer"
+              @player-ready="handlePlayerReady"
+              @video-loaded="handleVideoLoaded"
+              @error="showError"
+            />
+          </div>
 
-      <!-- 播放速度控制 -->
-      <SpeedControl 
-        :player="youtubePlayer"
-        @speed-changed="handleSpeedChanged"
-        @error="showError"
-      />
+          <!-- 控制面板區域 -->
+          <div class="space-y-6">
+            <!-- 播放控制 -->
+            <SpeedControl 
+              :player="youtubePlayer"
+              @speed-changed="handleSpeedChanged"
+              @error="showError"
+            />
 
-      <!-- 時間控制 -->
-      <TimeControl 
-        :player="youtubePlayer"
-        @seeked="handleSeeked"
-        @error="showError"
-      />
+            <!-- 時間控制 -->
+            <TimeControl 
+              :player="youtubePlayer"
+              @seeked="handleSeeked"
+              @error="showError"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

@@ -1,47 +1,45 @@
 <template>
-  <div class="space-y-4">
+  <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 space-y-6">
     <!-- 播放/暫停控制 -->
-    <div class="flex justify-center">
+    <div class="text-center">
       <button
         @click="handleTogglePlayPause"
         :disabled="isToggling"
         :class="[
-          'font-medium py-3 px-8 rounded-lg transition-all duration-200 transform',
-          isToggling ? 'scale-95 cursor-not-allowed opacity-75' : 'hover:scale-105',
+          'w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 transform shadow-lg',
+          isToggling ? 'scale-90 cursor-not-allowed opacity-75' : 'hover:scale-110 active:scale-95',
           isPlaying 
-            ? 'bg-red-600 hover:bg-red-700 text-white' 
-            : 'bg-green-600 hover:bg-green-700 text-white'
+            ? 'bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-red-500/30' 
+            : 'bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-green-500/30'
         ]"
       >
-        <span class="flex items-center gap-2">
-          <svg v-if="!isPlaying" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-          </svg>
-          <svg v-else class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M5.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75A.75.75 0 007.25 3h-1.5zM12.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75a.75.75 0 00-.75-.75h-1.5z" />
-          </svg>
-          {{ isPlaying ? '暫停' : '播放' }}
-        </span>
+        <svg v-if="!isPlaying" class="w-7 h-7 ml-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+        </svg>
+        <svg v-else class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M5.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75A.75.75 0 007.25 3h-1.5zM12.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75a.75.75 0 00-.75-.75h-1.5z" />
+        </svg>
       </button>
     </div>
 
-    <!-- 播放速度控制 -->
+    <!-- 播放速度控制區域 -->
     <div class="space-y-4">
-      <h2 class="text-center text-xl font-semibold">播放速度</h2>
+      <div class="text-center">
+        <h2 class="text-lg font-semibold text-white mb-1">播放速度</h2>
+        <div class="text-2xl font-bold text-blue-400">{{ currentSpeed.toFixed(1) }}x</div>
+      </div>
       
-      <!-- 自訂速度輸入 -->
-      <div class="flex justify-center items-center gap-3">
+      <!-- 速度調整控制 -->
+      <div class="flex items-center justify-center gap-4">
         <button
           @click="handleSpeedChange(-0.1)"
-          class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-3 rounded-lg transition-colors duration-200"
+          class="w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-bold text-xl flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg"
           title="減速 0.1x"
         >
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M5 10h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+          −
         </button>
         
-        <div class="flex items-center gap-2">
+        <div class="bg-gray-700/50 rounded-2xl px-4 py-3 min-w-[140px]">
           <input
             v-model.number="customSpeed"
             @blur="handleCustomSpeed"
@@ -52,54 +50,45 @@
             min="0.25"
             max="4"
             step="0.1"
-            class="w-20 text-center py-2 px-3 bg-gray-800 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none transition-all duration-200"
+            class="w-full text-center text-lg font-semibold bg-transparent text-white placeholder-gray-400 focus:outline-none"
             placeholder="1.0"
-            title="使用上下方向鍵快速調整"
           />
-          <span class="text-white font-medium">x</span>
         </div>
         
         <button
           @click="handleSpeedChange(0.1)"
-          class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-3 rounded-lg transition-colors duration-200"
+          class="w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-bold text-xl flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg"
           title="加速 0.1x"
         >
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 5v10M5 10h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+          +
         </button>
       </div>
       
-      <!-- 快速重置按鈕 -->
-      <div class="flex justify-center">
-        <button
-          @click="handleSetSpeed(1)"
-          :class="[
-            'font-medium py-2 px-6 rounded-lg transition-all duration-200',
-            Math.abs(currentSpeed - 1) < 0.01
-              ? 'bg-green-600 hover:bg-green-700 text-white' 
-              : 'bg-yellow-600 hover:bg-yellow-700 text-white'
-          ]"
-          title="快速重置為正常速度"
-        >
-          {{ Math.abs(currentSpeed - 1) < 0.01 ? '✓ 正常速度' : '重置 1x' }}
-        </button>
-      </div>
-
-      <!-- 預設速度按鈕 -->
-      <div class="flex flex-wrap justify-center gap-2">
+      <!-- 快速選擇按鈕 -->
+      <div class="grid grid-cols-4 gap-2">
         <button 
           v-for="speed in speeds" 
           :key="speed"
           @click="handleSetSpeed(speed)"
           :class="[
-            'font-medium py-2 px-4 rounded-lg transition-colors duration-200',
+            'py-3 px-2 rounded-xl font-semibold transition-all duration-200 hover:scale-105 active:scale-95',
             Math.abs(currentSpeed - speed) < 0.01
-              ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-              : 'bg-gray-700 hover:bg-gray-600 text-white'
+              ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25' 
+              : 'bg-gray-700/70 hover:bg-gray-600/70 text-gray-200 hover:text-white'
           ]"
         >
-          {{ speed === 1 ? '正常 (1x)' : `${speed}x` }}
+          {{ speed === 1 ? '正常' : `${speed}x` }}
+        </button>
+      </div>
+
+      <!-- 重置按鈕 -->
+      <div class="text-center pt-2">
+        <button
+          @click="handleSetSpeed(1)"
+          v-if="Math.abs(currentSpeed - 1) > 0.01"
+          class="px-6 py-2 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-yellow-500/25"
+        >
+          重置為正常速度
         </button>
       </div>
     </div>
