@@ -50,6 +50,7 @@ export function useYouTubePlayer() {
   const isReady = ref(false)
   const currentVideoId = ref('')
   const playbackRate = ref(1)
+  const isPlaying = ref(false)
 
   let playerElement: HTMLElement | null = null
 
@@ -96,8 +97,10 @@ export function useYouTubePlayer() {
         'onReady': () => {
           isReady.value = true
         },
-        'onStateChange': () => {
-          // 可以在這裡處理播放狀態變化
+        'onStateChange': (event: YTPlayerStateChangeEvent) => {
+          // YouTube API 狀態: -1=未開始, 0=結束, 1=播放中, 2=暫停, 3=緩衝中, 5=影片提示
+          console.log('YouTube 播放狀態變更:', event.data)
+          isPlaying.value = event.data === 1
         }
       }
     })
@@ -133,11 +136,34 @@ export function useYouTubePlayer() {
     }
   }
 
+  const pauseVideo = () => {
+    if (player.value && isReady.value) {
+      player.value.pauseVideo()
+      // 不在這裡立即更新狀態，讓 onStateChange 處理
+    }
+  }
+
+  const playVideo = () => {
+    if (player.value && isReady.value) {
+      player.value.playVideo()
+      // 不在這裡立即更新狀態，讓 onStateChange 處理
+    }
+  }
+
+  const togglePlayPause = () => {
+    if (isPlaying.value) {
+      pauseVideo()
+    } else {
+      playVideo()
+    }
+  }
+
   const destroyPlayer = () => {
     if (player.value) {
       player.value.destroy()
       player.value = null
       isReady.value = false
+      isPlaying.value = false
     }
   }
 
@@ -150,10 +176,14 @@ export function useYouTubePlayer() {
     isReady,
     currentVideoId,
     playbackRate,
+    isPlaying,
     initPlayer,
     loadVideo,
     setSpeed,
     seekVideo,
+    pauseVideo,
+    playVideo,
+    togglePlayPause,
     destroyPlayer
   }
 }
