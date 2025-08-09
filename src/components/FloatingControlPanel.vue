@@ -27,7 +27,12 @@
             class="text-gray-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-gray-700/50"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -37,20 +42,38 @@
           <!-- 播放速度控制 -->
           <div class="space-y-4">
             <h3 class="text-white font-semibold text-center flex items-center justify-center gap-2">
-              <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <svg
+                class="w-5 h-5 text-purple-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
               </svg>
               播放速度
             </h3>
-            
+
             <!-- 速度滑桿 -->
             <div class="flex items-center gap-4">
-              <button @click="decreaseSpeed" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700/50 transition-all">
+              <button
+                @click="decreaseSpeed"
+                class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700/50 transition-all"
+              >
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M20 12H4"
+                  />
                 </svg>
               </button>
-              
+
               <div class="flex-1 relative">
                 <input
                   type="range"
@@ -60,17 +83,25 @@
                   max="2"
                   step="0.25"
                   class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-                >
+                />
                 <div class="flex justify-between mt-2">
                   <span class="text-xs text-gray-500">0.25x</span>
                   <span class="text-sm font-bold text-blue-400">{{ currentSpeed }}x</span>
                   <span class="text-xs text-gray-500">2x</span>
                 </div>
               </div>
-              
-              <button @click="increaseSpeed" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700/50 transition-all">
+
+              <button
+                @click="increaseSpeed"
+                class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700/50 transition-all"
+              >
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4v16m8-8H4"
+                  />
                 </svg>
               </button>
             </div>
@@ -83,9 +114,9 @@
                 @click="setSpeed(preset)"
                 :class="[
                   'px-4 py-2 rounded-lg font-medium transition-all',
-                  speed == preset 
-                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30' 
-                    : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50 hover:text-white'
+                  speed == preset
+                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
+                    : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50 hover:text-white',
                 ]"
               >
                 {{ preset === 1 ? '正常' : `${preset}x` }}
@@ -96,54 +127,69 @@
           <!-- 時間控制 -->
           <div class="space-y-4">
             <h3 class="text-white font-semibold text-center flex items-center justify-center gap-2">
-              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                class="w-5 h-5 text-green-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               時間控制
             </h3>
-            
+
             <div class="flex items-center justify-center gap-3">
               <button
                 @click="rewind"
                 class="bg-gray-700/50 hover:bg-gray-600/50 text-white px-5 py-2 rounded-lg transition-all hover:scale-105 flex items-center gap-2"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z"
+                  />
                 </svg>
                 倒轉
               </button>
-              
+
               <input
                 v-model="seekSeconds"
                 type="number"
                 class="w-20 text-center bg-gray-700/50 border border-gray-600 rounded-lg py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              >
-              
+              />
+
               <span class="text-gray-400">秒</span>
-              
+
               <button
                 @click="forward"
                 class="bg-gray-700/50 hover:bg-gray-600/50 text-white px-5 py-2 rounded-lg transition-all hover:scale-105 flex items-center gap-2"
               >
                 快轉
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z"
+                  />
                 </svg>
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </Transition>
 
     <!-- 背景遮罩 -->
     <Transition name="backdrop">
-      <div
-        v-if="isExpanded"
-        @click="collapse"
-        class="fixed inset-0 bg-black/0 z-40"
-      ></div>
+      <div v-if="isExpanded" @click="collapse" class="fixed inset-0 bg-black/0 z-40"></div>
     </Transition>
 
     <!-- 播放控制按鈕（左下角） -->
@@ -154,11 +200,15 @@
       >
         <!-- 播放圖示 -->
         <svg v-if="!isPlaying" class="w-7 h-7 ml-0.5" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+          <path
+            d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"
+          />
         </svg>
         <!-- 暫停圖示 -->
         <svg v-else class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M5.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75A.75.75 0 007.25 3h-1.5zM12.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75a.75.75 0 00-.75-.75h-1.5z" />
+          <path
+            d="M5.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75A.75.75 0 007.25 3h-1.5zM12.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75a.75.75 0 00-.75-.75h-1.5z"
+          />
         </svg>
       </button>
     </div>
@@ -172,7 +222,9 @@
       >
         <div class="flex flex-col items-center">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
+            <path
+              d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z"
+            />
           </svg>
           <span class="text-xs font-bold">-{{ seekSeconds }}</span>
         </div>
@@ -185,7 +237,9 @@
       >
         <div class="flex flex-col items-center">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z" />
+            <path
+              d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"
+            />
           </svg>
           <span class="text-xs font-bold">+{{ seekSeconds }}</span>
         </div>
@@ -193,7 +247,10 @@
     </div>
 
     <!-- 底部固定輸入框 -->
-    <div class="fixed inset-x-0 z-40 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800 border-t border-gray-700/50" style="bottom: var(--keyboard-height, 0px)">
+    <div
+      class="fixed inset-x-0 z-40 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800 border-t border-gray-700/50"
+      style="bottom: var(--keyboard-height, 0px)"
+    >
       <div class="p-4">
         <div class="flex gap-3">
           <input
@@ -201,14 +258,20 @@
             @keydown.enter="sendMessage"
             type="text"
             placeholder="輸入訊息..."
+            data-dialog-input="true"
             class="flex-1 bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
+          />
           <button
             @click="sendMessage"
             class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg transition-all hover:scale-105 flex items-center gap-2"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+              />
             </svg>
             發送
           </button>
@@ -242,11 +305,15 @@ const chatMessage = ref('')
 const isPlaying = ref(false)
 
 // 監聽播放狀態變化
-watch(() => props.player?.isPlaying?.value, (newValue) => {
-  if (newValue !== undefined) {
-    isPlaying.value = newValue
-  }
-}, { immediate: true })
+watch(
+  () => props.player?.isPlaying?.value,
+  (newValue) => {
+    if (newValue !== undefined) {
+      isPlaying.value = newValue
+    }
+  },
+  { immediate: true },
+)
 
 const currentSpeed = computed(() => speed.value.toFixed(2).replace(/\.00$/, ''))
 
@@ -315,7 +382,6 @@ const sendMessage = () => {
     chatMessage.value = ''
   }
 }
-
 </script>
 
 <style scoped>

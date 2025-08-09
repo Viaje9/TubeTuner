@@ -54,14 +54,19 @@
         ['resize', 'scroll'].forEach(ev => vv.addEventListener(ev, apply));
         apply();
 
-        // 輸入框獲取焦點時滾動到頂部
+        // 對話輸入框獲取焦點時滾動到頂部
         document.addEventListener('focusin', (e) => {
           const target = e.target;
           if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
-            // 延遲執行以等待鍵盤完全彈出
-            setTimeout(() => {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 300);
+            // 檢查是否為對話輸入框（通過 data-dialog-input 屬性識別）
+            const isDialogInput = target.getAttribute('data-dialog-input') === 'true';
+            
+            if (isDialogInput) {
+              // 延遲執行以等待鍵盤完全彈出
+              setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }, 300);
+            }
           }
         });
       })();
