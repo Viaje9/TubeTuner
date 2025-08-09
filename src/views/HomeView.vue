@@ -150,7 +150,11 @@ const loadVideo = () => {
   // 從 URL 提取影片 ID 或直接使用 ID
   const videoId = extractVideoId(videoUrl.value)
   if (videoId && youtubePlayer.loadVideo) {
-    youtubePlayer.loadVideo(videoId)
+    const success = youtubePlayer.loadVideo(videoUrl.value)
+    if (success) {
+      // 手動觸發載入成功的處理
+      handleVideoLoaded(videoId)
+    }
   } else {
     showError('無法識別的 YouTube 網址')
   }

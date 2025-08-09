@@ -102,6 +102,8 @@ const handleLoadVideo = () => {
       } else {
         emit('error', '無法載入影片，請確認網址是否正確')
       }
+    } else {
+      emit('error', '播放器尚未準備好')
     }
   } else {
     emit('error', '無法識別的 YouTube 網址，請確認格式。')
