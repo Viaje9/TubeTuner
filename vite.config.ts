@@ -28,16 +28,16 @@ export default defineConfig({
         background_color: '#1f2937',
         display: 'standalone',
         orientation: 'portrait',
-        scope: '/',
-        start_url: '/',
+        scope: (process.env.VITE_BASE_PATH || '/'),
+        start_url: (process.env.VITE_BASE_PATH || '/'),
         icons: [
           {
-            src: '/icon-192x192.png',
+            src: (process.env.VITE_BASE_PATH || '/') + 'icon-192x192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: '/icon-512x512.png',
+            src: (process.env.VITE_BASE_PATH || '/') + 'icon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
           },
