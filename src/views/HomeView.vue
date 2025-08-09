@@ -20,7 +20,7 @@
           <!-- 精簡的載入按鈕 -->
           <button
             @click="showLoadInput = !showLoadInput"
-            class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 flex items-center gap-2"
+            class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-75 flex items-center gap-2 active:scale-95 active:bg-purple-700"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 16h4m10 0h4" />
@@ -212,14 +212,17 @@ const pasteFromClipboard = async () => {
 }
 
 /* 輸入框彈出動畫 */
-.input-popup-enter-active,
+.input-popup-enter-active {
+  transition: none;
+}
+
 .input-popup-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .input-popup-enter-from,
 .input-popup-leave-to {
   opacity: 0;
-  transform: translateY(-10px) scale(0.95);
+  transform: translateY(-5px) scale(0.98);
 }
 </style>
