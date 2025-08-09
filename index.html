@@ -4,21 +4,25 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>TubeTuner - YouTube 影片速度控制器</title>
-    
+
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#9333ea" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    
+
     <!-- 防止白邊的 CSS -->
     <style>
       :root {
         --vvh: 100dvh; /* 預設為動態視口高度 */
       }
-      
-      html, body {
+
+      html,
+      body {
         margin: 0;
         padding: 0;
         background-color: #111827;
@@ -28,7 +32,7 @@
         touch-action: manipulation;
         -webkit-text-size-adjust: 100%;
       }
-      
+
       #app {
         min-height: 100%;
         padding-top: env(safe-area-inset-top);
@@ -37,63 +41,80 @@
         padding-right: env(safe-area-inset-right);
         background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #111827 100%);
       }
-      
+
       /* VisualViewport 處理腳本 */
     </style>
     <script>
-      (function () {
-        const vv = window.visualViewport;
-        if (!vv) return;
+      ;(function () {
+        const vv = window.visualViewport
+        if (!vv) return
 
         const apply = () => {
-          const windowHeight = window.innerHeight;
-          const viewportHeight = vv.height;
-          const keyboardHeight = windowHeight - viewportHeight;
-          
-          document.documentElement.style.setProperty('--vvh', vv.height + 'px');
-          document.documentElement.style.setProperty('--keyboard-height', keyboardHeight > 50 ? keyboardHeight + 'px' : '0px');
-        };
+          const windowHeight = window.innerHeight
+          const viewportHeight = vv.height
+          const keyboardHeight = windowHeight - viewportHeight
 
-        ['resize', 'scroll'].forEach(ev => vv.addEventListener(ev, apply));
-        apply();
+          document.documentElement.style.setProperty('--vvh', vv.height + 'px')
+          document.documentElement.style.setProperty(
+            '--keyboard-height',
+            keyboardHeight > 50 ? keyboardHeight + 'px' : '0px',
+          )
+        }
+
+        ;['resize', 'scroll'].forEach((ev) => vv.addEventListener(ev, apply))
+        apply()
 
         // 對話輸入框獲取焦點時滾動到頂部
         document.addEventListener('focusin', (e) => {
-          const target = e.target;
+          const target = e.target
           if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
             // 檢查是否為對話輸入框（通過 data-dialog-input 屬性識別）
-            const isDialogInput = target.getAttribute('data-dialog-input') === 'true';
-            
+            const isDialogInput = target.getAttribute('data-dialog-input') === 'true'
+
             if (isDialogInput) {
               // 延遲執行以等待鍵盤完全彈出
               setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }, 300);
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+                setTimeout(() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                  setTimeout(() => {
+                    window.scrollTo({ top: 0, behavior: 'instant' })
+                  }, 50)
+                }, 50)
+              }, 50)
             }
           }
-        });
+        })
 
         // 防止 iOS 雙擊導致的意外滑動
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', (e) => {
-          const now = Date.now();
-          if (now - lastTouchEnd <= 300) {
-            e.preventDefault();
-          }
-          lastTouchEnd = now;
-        }, { passive: false });
+        let lastTouchEnd = 0
+        document.addEventListener(
+          'touchend',
+          (e) => {
+            const now = Date.now()
+            if (now - lastTouchEnd <= 300) {
+              e.preventDefault()
+            }
+            lastTouchEnd = now
+          },
+          { passive: false },
+        )
 
         // 防止多指觸控縮放
-        document.addEventListener('touchstart', (e) => {
-          if (e.touches.length > 1) {
-            e.preventDefault();
-          }
-        }, { passive: false });
-      })();
+        document.addEventListener(
+          'touchstart',
+          (e) => {
+            if (e.touches.length > 1) {
+              e.preventDefault()
+            }
+          },
+          { passive: false },
+        )
+      })()
     </script>
     <meta name="apple-mobile-web-app-title" content="TubeTuner" />
     <link rel="apple-touch-icon" href="/icon-192x192.png" />
-    
+
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"

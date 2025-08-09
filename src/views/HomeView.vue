@@ -7,48 +7,46 @@
 
     <div class="container mx-auto px-4 py-4">
       <!-- 標題區域（會根據影片載入狀態調整，輸入框有焦點時隱藏） -->
-      <Transition name="header" mode="out-in">
-        <div v-if="!hasVideoLoaded && !isInputFocused" class="text-center mb-8">
-          <h1
-            class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2"
-          >
-            TubeTuner
-          </h1>
-          <p class="text-xl text-gray-300">YouTube 影片速度控制器</p>
-          <div
-            class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"
-          ></div>
-        </div>
-        <div v-else-if="!isInputFocused" class="flex items-center justify-between mb-4">
-          <h1
-            class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
-          >
-            TubeTuner
-          </h1>
-          <!-- 統一控制按鈕 -->
-          <button
-            @click="toggleControlPanel"
-            class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-75 flex items-center gap-2 active:scale-95"
-            title="打開控制面板"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
-            <span v-if="!aiConfig.canUseAI" class="w-2 h-2 bg-orange-400 rounded-full"></span>
-          </button>
-        </div>
-      </Transition>
+      <div v-if="!hasVideoLoaded && !isInputFocused" class="text-center mb-8">
+        <h1
+          class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2"
+        >
+          TubeTuner
+        </h1>
+        <p class="text-xl text-gray-300">YouTube 影片速度控制器</p>
+        <div
+          class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"
+        ></div>
+      </div>
+      <div v-else-if="!isInputFocused" class="flex items-center justify-between mb-4">
+        <h1
+          class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+        >
+          TubeTuner
+        </h1>
+        <!-- 統一控制按鈕 -->
+        <button
+          @click="toggleControlPanel"
+          class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-75 flex items-center gap-2 active:scale-95"
+          title="打開控制面板"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
+          <span v-if="!aiConfig.canUseAI" class="w-2 h-2 bg-orange-400 rounded-full"></span>
+        </button>
+      </div>
 
       <div class="max-w-7xl mx-auto flex-1">
         <!-- YouTube 播放器區域（全寬） -->
@@ -100,19 +98,21 @@ const hasVideoLoaded = ref(false)
 const controlPanelRef = ref()
 const isInputFocused = ref(false)
 
-
 onMounted(async () => {
   await youtubePlayer.initPlayer('youtube-player')
   aiConfig.loadFromStorage()
 })
 
 // 監聽影片載入狀態
-watch(() => youtubePlayer.currentVideoId.value, (videoId) => {
-  if (videoId) {
-    hasVideoLoaded.value = true
-    console.log('自動載入的影片 ID:', videoId)
-  }
-})
+watch(
+  () => youtubePlayer.currentVideoId.value,
+  (videoId) => {
+    if (videoId) {
+      hasVideoLoaded.value = true
+      console.log('自動載入的影片 ID:', videoId)
+    }
+  },
+)
 
 const handlePlayerReady = () => {
   console.log('播放器已準備好')
