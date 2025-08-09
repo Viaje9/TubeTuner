@@ -1,6 +1,7 @@
 # 🎬 TubeTuner
 
-> 具備 AI 聊天功能的 YouTube 速度控制器
+> 具備 AI 聊天功能的 YouTube 速度控制器  
+> 支援 PWA 離線使用
 
 TubeTuner 是一個先進的 YouTube 影片速度控制器，結合了 AI 聊天功能的漸進式網頁應用程式（PWA）。使用 Vue 3 + TypeScript 構建，提供直觀的影片控制介面和智慧對話體驗。
 
