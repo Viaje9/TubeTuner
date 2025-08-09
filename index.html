@@ -2,9 +2,50 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>YouTube 影片速度控制器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>TubeTuner - YouTube 影片速度控制器</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#9333ea" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <!-- 防止白邊的 CSS -->
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: #111827;
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+      }
+      
+      #app {
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+        background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #111827 100%);
+      }
+      
+      /* 確保 viewport 填滿整個螢幕 */
+      html {
+        height: 100%;
+        height: -webkit-fill-available;
+      }
+      
+      body {
+        height: 100%;
+        height: -webkit-fill-available;
+      }
+    </style>
+    <meta name="apple-mobile-web-app-title" content="TubeTuner" />
+    <link rel="apple-touch-icon" href="/icon-192x192.png" />
+    
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"

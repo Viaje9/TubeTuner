@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen">
+  <div class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-[100dvh] relative">
     <!-- 訊息提示框 -->
     <MessageBox :message="errorMessage" />
 
@@ -7,14 +7,20 @@
       <!-- 標題區域（會根據影片載入狀態調整） -->
       <Transition name="header" mode="out-in">
         <div v-if="!hasVideoLoaded" class="text-center mb-8">
-          <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">
+          <h1
+            class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2"
+          >
             TubeTuner
           </h1>
           <p class="text-xl text-gray-300">YouTube 影片速度控制器</p>
-          <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"></div>
+          <div
+            class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"
+          ></div>
         </div>
         <div v-else class="flex items-center justify-between mb-4">
-          <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+          <h1
+            class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+          >
             TubeTuner
           </h1>
           <!-- 精簡的載入按鈕 -->
@@ -23,7 +29,12 @@
             class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-75 flex items-center gap-2 active:scale-95 active:bg-purple-700"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 16h4m10 0h4" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 4v16M17 4v16M3 8h4m10 0h4M3 16h4m10 0h4"
+              />
             </svg>
             載入影片
           </button>
@@ -34,13 +45,12 @@
       <Transition name="input-popup">
         <div v-if="showLoadInput">
           <!-- 背景遮罩 -->
-          <div 
-            class="fixed inset-0 bg-black/60 z-40" 
-            @click="showLoadInput = false"
-          ></div>
-          
+          <div class="fixed inset-0 bg-black/60 z-40" @click="showLoadInput = false"></div>
+
           <!-- 彈窗內容 -->
-          <div class="fixed top-20 right-4 z-50 bg-gray-800 p-4 rounded-lg shadow-2xl border border-gray-700">
+          <div
+            class="fixed top-20 right-4 z-50 bg-gray-800 p-4 rounded-lg shadow-2xl border border-gray-700"
+          >
             <div class="flex flex-col gap-2">
               <div class="flex items-center gap-2">
                 <input
@@ -49,14 +59,19 @@
                   placeholder="貼上 YouTube 影片網址或影片 ID..."
                   class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 text-white w-64"
                   @keyup.enter="loadVideo"
-                >
+                />
                 <button
                   @click="clearInput"
                   class="text-gray-400 hover:text-white transition-colors p-1"
                   title="清除"
                 >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -66,7 +81,12 @@
                   class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
                   </svg>
                   貼上
                 </button>
@@ -85,7 +105,7 @@
       <div class="max-w-7xl mx-auto">
         <!-- YouTube 播放器區域（全寬） -->
         <div :class="hasVideoLoaded ? 'w-full' : 'max-w-4xl mx-auto'">
-          <YouTubePlayer 
+          <YouTubePlayer
             :player="youtubePlayer"
             @player-ready="handlePlayerReady"
             @video-loaded="handleVideoLoaded"
@@ -117,7 +137,7 @@ const youtubePlayer = useYouTubePlayer()
 const errorMessage = ref('')
 const hasVideoLoaded = ref(false)
 const showLoadInput = ref(false)
-const videoUrl = ref('https://youtu.be/dQw4w9WgXcQ')
+const videoUrl = ref('https://www.youtube.com/watch?v=6XIPkMFZf-0')
 
 onMounted(async () => {
   await youtubePlayer.initPlayer('youtube-player')
@@ -146,7 +166,7 @@ const loadVideo = () => {
     showError('請輸入 YouTube 影片網址或 ID')
     return
   }
-  
+
   // 從 URL 提取影片 ID 或直接使用 ID
   const videoId = extractVideoId(videoUrl.value)
   if (videoId && youtubePlayer.loadVideo) {
@@ -165,11 +185,11 @@ const extractVideoId = (urlOrId: string): string | null => {
   if (/^[a-zA-Z0-9_-]{11}$/.test(urlOrId)) {
     return urlOrId
   }
-  
+
   // 從 URL 提取 ID
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
   const match = urlOrId.match(regExp)
-  return (match && match[2].length === 11) ? match[2] : null
+  return match && match[2].length === 11 ? match[2] : null
 }
 
 const showError = (message: string) => {

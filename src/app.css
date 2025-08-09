@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+/* PWA 安全區域支援 */
+@supports (padding: max(0px)) {
+  body {
+    padding-top: max(0px, env(safe-area-inset-top));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+}
+
+/* 防止手機瀏覽器的白邊問題 */
+html {
+  height: 100%;
+  height: -webkit-fill-available;
+  background-color: #111827;
+}
+
+body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #111827 100%);
+}
+
+#app {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+}
