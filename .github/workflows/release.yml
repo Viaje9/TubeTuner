@@ -1,0 +1,64 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+    
+    - name: 設置 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+    
+    - name: 安裝依賴
+      run: npm ci
+    
+    - name: 執行完整檢查
+      run: |
+        npm run lint
+        npm run type-check
+        npm run format:check
+    
+    - name: 建置專案
+      run: npm run build
+    
+    - name: 壓縮建置結果
+      run: |
+        cd dist
+        tar -czf ../tubetuner-${{ github.ref_name }}.tar.gz .
+        cd ..
+        zip -r tubetuner-${{ github.ref_name }}.zip dist/
+    
+    - name: 建立 Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          tubetuner-${{ github.ref_name }}.tar.gz
+          tubetuner-${{ github.ref_name }}.zip
+        body: |
+          ## 🎉 TubeTuner ${{ github.ref_name }}
+          
+          ### 📦 下載
+          - **tar.gz**: 適用於 Linux/macOS
+          - **zip**: 適用於 Windows
+          
+          ### 🚀 部署
+          解壓縮後，將檔案部署到任何靜態檔案伺服器即可使用。
+          
+          ### ✨ 更新內容
+          請參考 commit 記錄查看詳細更新內容。
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
