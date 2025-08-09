@@ -11,4 +11,10 @@ export interface IYouTubePlayer {
   isReady: Ref<boolean>
   isPlaying: Ref<boolean>
   playbackRate: Ref<number>
+  currentVideoId: Ref<string>
+  savePlaybackState: () => void
+  restorePlaybackState: () => void
+  setPlaybackRate: (rate: number) => void
+  getCurrentTime: () => number
+  seekTo: (time: number, allowSeekAhead?: boolean) => void
 }

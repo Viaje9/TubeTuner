@@ -582,6 +582,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useAIConfigStore } from '@/stores/aiConfig'
 import { useChatStore } from '@/stores/chat'
+import { LocalStorageService } from '@/services/localStorage'
 
 interface Props {
   player: {
@@ -624,8 +625,11 @@ const tabs = [
 
 // 狀態
 const isExpanded = ref(false)
-const speed = ref(1)
-const seekSeconds = ref(10)
+
+// 從 localStorage 恢復設定
+const savedState = LocalStorageService.getPlaybackState()
+const speed = ref(savedState.playbackRate || 1)
+const seekSeconds = ref(savedState.seekSeconds || 10)
 const speedPresets = [0.5, 1, 1.5, 2]
 const chatMessage = ref('')
 const isPlaying = ref(false)
@@ -644,7 +648,10 @@ const forwardClicked = ref(false)
 const rewindClicked = ref(false)
 
 // 計算屬性
-const currentSpeed = computed(() => speed.value.toFixed(2).replace(/\.00$/, ''))
+const currentSpeed = computed(() => {
+  const formatted = speed.value.toFixed(1)
+  return formatted.replace(/\.0$/, '')
+})
 
 // 更新 YouTube 上下文
 const updateYouTubeContext = () => {
@@ -683,6 +690,11 @@ watch(
   },
 )
 
+// 監聽 seekSeconds 變化並保存
+watch(seekSeconds, (newValue) => {
+  LocalStorageService.savePlaybackState({ seekSeconds: newValue })
+})
+
 // 面板控制
 const expand = () => {
   isExpanded.value = true
@@ -707,15 +719,15 @@ const setSpeed = (newSpeed: number) => {
 }
 
 const decreaseSpeed = () => {
-  if (speed.value > 0.25) {
-    speed.value = Math.max(0.25, speed.value - 0.25)
+  if (speed.value > 0.1) {
+    speed.value = Math.max(0.1, Math.round((speed.value - 0.1) * 10) / 10)
     updateSpeed()
   }
 }
 
 const increaseSpeed = () => {
   if (speed.value < 2) {
-    speed.value = Math.min(2, speed.value + 0.25)
+    speed.value = Math.min(2, Math.round((speed.value + 0.1) * 10) / 10)
     updateSpeed()
   }
 }

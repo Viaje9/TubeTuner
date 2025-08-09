@@ -86,9 +86,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useYouTubePlayer } from '@/composables/useYouTubePlayer'
 import { useAIConfigStore } from '@/stores/aiConfig'
+import { LocalStorageService } from '@/services/localStorage'
 import YouTubePlayer from '@/components/YouTubePlayer.vue'
 import FloatingControlPanel from '@/components/FloatingControlPanel.vue'
 import MessageBox from '@/components/MessageBox.vue'
@@ -101,9 +102,18 @@ const hasVideoLoaded = ref(false)
 const controlPanelRef = ref()
 const isInputFocused = ref(false)
 
+
 onMounted(async () => {
   await youtubePlayer.initPlayer('youtube-player')
   aiConfig.loadFromStorage()
+})
+
+// 監聽影片載入狀態
+watch(() => youtubePlayer.currentVideoId.value, (videoId) => {
+  if (videoId) {
+    hasVideoLoaded.value = true
+    console.log('自動載入的影片 ID:', videoId)
+  }
 })
 
 const handlePlayerReady = () => {

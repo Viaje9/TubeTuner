@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { OpenRouterService, type OpenRouterModel, POPULAR_MODELS } from '@/services/openrouter'
+import { LocalStorageService } from '@/services/localStorage'
 
 export interface AIConfig {
   apiKey: string
@@ -41,35 +42,33 @@ export const useAIConfigStore = defineStore('aiConfig', () => {
   // 從 localStorage 載入設定
   const loadFromStorage = () => {
     try {
-      const savedApiKey = localStorage.getItem('tubetuner_ai_api_key')
-      const savedModel = localStorage.getItem('tubetuner_ai_model')
-      const savedTemperature = localStorage.getItem('tubetuner_ai_temperature')
-      const savedMaxTokens = localStorage.getItem('tubetuner_ai_max_tokens')
-      const savedSystemPrompt = localStorage.getItem('tubetuner_ai_system_prompt')
-
-      if (savedApiKey) {
-        apiKey.value = savedApiKey
+      const savedSettings = LocalStorageService.getAppSettings()
+      
+      if (savedSettings.aiApiKey) {
+        apiKey.value = savedSettings.aiApiKey
         isConfigured.value = true
         
         // 創建 OpenRouter 服務實例
-        openRouterService.value = new OpenRouterService(savedApiKey)
+        openRouterService.value = new OpenRouterService(savedSettings.aiApiKey)
         
         // 載入可用模型
         loadAvailableModels()
       }
 
-      if (savedModel) {
-        selectedModel.value = savedModel
+      if (savedSettings.selectedModel) {
+        selectedModel.value = savedSettings.selectedModel
       }
 
-      if (savedTemperature) {
-        temperature.value = parseFloat(savedTemperature)
+      if (savedSettings.temperature !== undefined) {
+        temperature.value = savedSettings.temperature
       }
 
-      if (savedMaxTokens) {
-        maxTokens.value = parseInt(savedMaxTokens)
+      if (savedSettings.maxTokens !== undefined) {
+        maxTokens.value = savedSettings.maxTokens
       }
 
+      // 載入舊的系統提示（如果存在）
+      const savedSystemPrompt = localStorage.getItem('tubetuner_ai_system_prompt')
       if (savedSystemPrompt) {
         systemPrompt.value = savedSystemPrompt
       }
@@ -81,10 +80,13 @@ export const useAIConfigStore = defineStore('aiConfig', () => {
   // 儲存設定到 localStorage
   const saveToStorage = () => {
     try {
-      localStorage.setItem('tubetuner_ai_api_key', apiKey.value)
-      localStorage.setItem('tubetuner_ai_model', selectedModel.value)
-      localStorage.setItem('tubetuner_ai_temperature', temperature.value.toString())
-      localStorage.setItem('tubetuner_ai_max_tokens', maxTokens.value.toString())
+      LocalStorageService.saveAppSettings({
+        aiApiKey: apiKey.value,
+        selectedModel: selectedModel.value,
+        temperature: temperature.value,
+        maxTokens: maxTokens.value
+      })
+      // 系統提示仍使用舊的方式儲存
       localStorage.setItem('tubetuner_ai_system_prompt', systemPrompt.value)
     } catch (error) {
       console.error('儲存 AI 設定失敗:', error)
@@ -140,7 +142,7 @@ export const useAIConfigStore = defineStore('aiConfig', () => {
   }
 
   // 更新模型
-  const setModel = (modelId: string) => {
+  const setSelectedModel = (modelId: string) => {
     const model = availableModels.value.find(m => m.id === modelId)
     if (model) {
       selectedModel.value = modelId
@@ -220,7 +222,8 @@ export const useAIConfigStore = defineStore('aiConfig', () => {
     saveToStorage,
     setApiKey,
     loadAvailableModels,
-    setModel,
+    setModel: setSelectedModel,
+    setSelectedModel,
     setTemperature,
     setMaxTokens,
     setSystemPrompt,
