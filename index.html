@@ -60,7 +60,7 @@
           if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
             // 延遲執行以等待鍵盤完全彈出
             setTimeout(() => {
-              window.scrollTo({ top: 0, behavior: 'instant' });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }, 300);
           }
         });
