@@ -83,21 +83,21 @@
     <!-- 對話區域 -->
     <div
       ref="chatContainer"
-      class="space-y-3 pr-2 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent"
+      class="space-y-3 pr-2 pb-10 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent"
     >
       <div
-        v-for="message in [...chat.conversationHistory].reverse()"
+        v-for="message in chat.conversationHistory"
         :key="message.id"
         :class="['flex gap-3', message.role === 'user' ? 'justify-end' : 'justify-start']"
       >
         <!-- 使用者訊息 -->
         <div v-if="message.role === 'user'" class="flex items-start gap-3 max-w-[80%]">
           <div
-            class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl rounded-br-sm px-4 py-3 shadow-lg"
+            class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl rounded-br-sm px-3 py-2 shadow-lg"
           >
             <p class="text-white text-sm leading-relaxed">{{ message.content }}</p>
             <div class="flex items-center justify-end gap-2 mt-2">
-              <span class="text-xs text-blue-200 opacity-70">
+              <span class="text-xs text-blue-200">
                 {{ formatTime(message.timestamp) }}
               </span>
             </div>
@@ -116,7 +116,7 @@
           >
             <span class="text-white text-xs font-medium">AI</span>
           </div>
-          <div class="bg-gray-700/50 rounded-2xl rounded-bl-sm px-4 py-3">
+          <div class="bg-gray-700/50 rounded-2xl rounded-bl-sm px-3 py-2">
             <!-- 載入狀態 -->
             <div v-if="message.isLoading" class="flex items-center gap-2 text-gray-400">
               <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -155,14 +155,19 @@
                 class="text-gray-100 text-sm leading-relaxed prose prose-invert prose-sm max-w-none"
                 v-html="renderMarkdown(message.content)"
               ></div>
-              <div class="flex items-center justify-between mt-3">
+              <div class="flex items-center justify-between">
                 <span class="text-xs text-gray-400">
                   {{ formatTime(message.timestamp) }}
                 </span>
                 <button
-                  @click="copyMessage(message.content)"
-                  class="text-gray-400 hover:text-gray-300 transition-colors"
-                  title="複製訊息"
+                  @click="copyMessage(message.content, message.id)"
+                  :class="[
+                    'transition-colors',
+                    copiedMessageId === message.id
+                      ? 'text-green-400'
+                      : 'text-gray-400 hover:text-gray-300',
+                  ]"
+                  :title="copiedMessageId === message.id ? '已複製！' : '複製訊息'"
                 >
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -193,6 +198,7 @@ import { renderMarkdown } from '@/utils/markdown'
 const chat = useChatStore()
 const chatContainer = ref<HTMLElement>()
 const showConfirmDialog = ref(false)
+const copiedMessageId = ref<string | null>(null)
 
 // 格式化時間
 const formatTime = (timestamp: Date): string => {
@@ -220,21 +226,37 @@ const formatTokenCount = (count: number): string => {
   return count.toString()
 }
 
-// 滾動到頂部（顯示最新訊息）
-const scrollToTop = () => {
+// 滾動到底部（顯示最新訊息）
+const scrollToBottom = () => {
   nextTick(() => {
-    if (chatContainer.value) {
-      chatContainer.value.scrollTop = 0
-    }
+    setTimeout(() => {
+      document.body.scrollTop = document.body.scrollHeight
+      // 也處理 documentElement 以確保兼容性
+      document.documentElement.scrollTop = document.documentElement.scrollHeight
+    }, 10)
   })
 }
 
-// 監聽訊息變化，自動滾動到頂部
+// 監聽訊息變化，自動滾動到底部
 watch(
   () => chat.conversationHistory.length,
   () => {
-    scrollToTop()
+    scrollToBottom()
   },
+)
+
+// 監聽訊息內容變化（包括 AI 回覆更新），自動滾動到底部
+watch(
+  () =>
+    chat.conversationHistory.map((msg) => ({
+      id: msg.id,
+      content: msg.content,
+      isLoading: msg.isLoading,
+    })),
+  () => {
+    scrollToBottom()
+  },
+  { deep: true },
 )
 
 // 監聽載入狀態變化
@@ -242,7 +264,7 @@ watch(
   () => chat.isLoading,
   (isLoading) => {
     if (isLoading) {
-      scrollToTop()
+      scrollToBottom()
     }
   },
 )
@@ -263,18 +285,22 @@ const retryMessage = async () => {
 }
 
 // 複製訊息
-const copyMessage = async (content: string) => {
+const copyMessage = async (content: string, messageId: string) => {
   try {
     await navigator.clipboard.writeText(content)
-    // 可以添加提示訊息
+    copiedMessageId.value = messageId
+    // 1秒後重置狀態
+    setTimeout(() => {
+      copiedMessageId.value = null
+    }, 1000)
   } catch (error) {
     console.error('複製失敗:', error)
   }
 }
 
-// 初始化時滾動到頂部
+// 初始化時滾動到底部
 onMounted(() => {
-  scrollToTop()
+  scrollToBottom()
 })
 </script>
 
