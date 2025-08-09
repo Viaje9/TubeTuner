@@ -38,7 +38,7 @@
               <input
                 v-model="videoUrl"
                 type="text"
-                placeholder="貼上 YouTube 影片網址或 ID..."
+                placeholder="貼上 YouTube 影片網址或影片 ID..."
                 class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 text-white w-64"
                 @keyup.enter="loadVideo"
               >
@@ -96,7 +96,7 @@ const youtubePlayer = useYouTubePlayer()
 const errorMessage = ref('')
 const hasVideoLoaded = ref(false)
 const showLoadInput = ref(false)
-const videoUrl = ref('')
+const videoUrl = ref('https://youtu.be/dQw4w9WgXcQ')
 
 onMounted(async () => {
   await youtubePlayer.initPlayer('youtube-player')

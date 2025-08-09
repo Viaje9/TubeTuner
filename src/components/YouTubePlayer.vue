@@ -35,7 +35,7 @@
     </div>
 
     <!-- 影片播放器容器 -->
-    <div class="relative">
+    <div :class="hasVideo ? 'relative' : 'hidden'">
       <div class="w-full aspect-video bg-gradient-to-br from-gray-900 to-black rounded-2xl shadow-2xl overflow-hidden border border-gray-700/50">
         <div id="youtube-player" class="w-full h-full"></div>
         
@@ -83,7 +83,7 @@ const props = defineProps<{
   player: IYouTubePlayer
 }>()
 
-const videoUrl = ref('')
+const videoUrl = ref('https://youtu.be/dQw4w9WgXcQ')
 const hasVideo = ref(false)
 
 const handleLoadVideo = () => {

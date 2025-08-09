@@ -72,7 +72,7 @@ export function useYouTubePlayer() {
     })
   }
 
-  const initPlayer = async (elementId: string, videoId: string = 'dQw4w9WgXcQ') => {
+  const initPlayer = async (elementId: string) => {
     await loadYouTubeAPI()
     
     playerElement = document.getElementById(elementId)
@@ -81,12 +81,10 @@ export function useYouTubePlayer() {
       return
     }
 
-    currentVideoId.value = videoId
-
+    // 建立空的播放器，不載入任何影片
     player.value = new window.YT.Player(elementId, {
       height: '100%',
       width: '100%',
-      videoId: videoId,
       playerVars: {
         'playsinline': 1,
         'rel': 0,
@@ -108,8 +106,34 @@ export function useYouTubePlayer() {
 
   const loadVideo = (url: string) => {
     const videoId = extractVideoId(url)
-    if (videoId && player.value) {
-      player.value.loadVideoById(videoId)
+    if (videoId) {
+      if (player.value) {
+        player.value.loadVideoById(videoId)
+      } else {
+        // 如果播放器還沒初始化，創建新的播放器並載入影片
+        if (playerElement) {
+          player.value = new window.YT.Player(playerElement.id, {
+            height: '100%',
+            width: '100%',
+            videoId: videoId,
+            playerVars: {
+              'playsinline': 1,
+              'rel': 0,
+              'modestbranding': 1,
+              'controls': 1
+            },
+            events: {
+              'onReady': () => {
+                isReady.value = true
+              },
+              'onStateChange': (event: YTPlayerStateChangeEvent) => {
+                console.log('YouTube 播放狀態變更:', event.data)
+                isPlaying.value = event.data === 1
+              }
+            }
+          })
+        }
+      }
       currentVideoId.value = videoId
       return true
     }
