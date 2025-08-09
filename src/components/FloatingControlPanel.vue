@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- AI 設定模態框 -->
-    <AISettingsModal :show="showAISettings" @close="showAISettings = false" />
 
     <!-- 浮動按鈕（收合狀態） -->
     <Transition name="float-button">
@@ -233,10 +231,12 @@
         <div class="flex gap-3">
           <input
             v-model="chatMessage"
-            @keydown.enter="sendChatMessage"
+            @keydown="handleKeydown"
+            @compositionstart="handleCompositionStart"
+            @compositionend="handleCompositionEnd"
             :disabled="!aiConfig.canUseAI || chat.isLoading"
             type="text"
-            :placeholder="aiConfig.canUseAI ? '向 AI 詢問影片相關問題...' : '請先設定 AI 助手'"
+            :placeholder="aiConfig.canUseAI ? '向 AI 詢問影片相關問題 (Ctrl+Enter 送出)...' : '請先設定 AI 助手'"
             data-dialog-input="true"
             class="flex-1 bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
           />
@@ -266,23 +266,14 @@
           </button>
         </div>
 
-        <!-- 最近一條 AI 回應預覽 -->
-        <div v-if="latestAIResponse" class="mt-3 bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-          <div class="flex items-start gap-3">
-            <div class="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-              <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="text-sm text-gray-300 truncate">{{ latestAIResponse }}</div>
-              <button
-                @click="expandChatPanel"
-                class="text-xs text-blue-400 hover:text-blue-300 mt-1"
-              >
-                查看完整對話
-              </button>
-            </div>
+        <!-- 發送狀態提示 -->
+        <div v-if="chat.isLoading" class="mt-3 bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+          <div class="flex items-center gap-2 text-gray-400">
+            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span class="text-sm">AI 正在回覆中...</span>
           </div>
         </div>
       </div>
@@ -292,10 +283,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useAIConfigStore } from '@/stores/aiConfig'
 import { useChatStore } from '@/stores/chat'
-import { renderMarkdown } from '@/utils/markdown'
 
 interface Props {
   player: {
@@ -330,28 +320,6 @@ const rewindClicked = ref(false)
 // 計算屬性
 const currentSpeed = computed(() => speed.value.toFixed(2).replace(/\.00$/, ''))
 
-// 最新 AI 回應
-const latestAIResponse = computed(() => {
-  const lastAssistantMessage = chat.conversationHistory
-    .slice()
-    .reverse()
-    .find(msg => msg.role === 'assistant' && !msg.isLoading && !msg.error)
-  
-  if (!lastAssistantMessage) return ''
-  
-  // 去除 Markdown 標記並截取前 100 字符
-  const plainText = lastAssistantMessage.content
-    .replace(/```[\s\S]*?```/g, '[程式碼]')
-    .replace(/`([^`]+)`/g, '$1')
-    .replace(/\*\*(.*?)\*\*/g, '$1')
-    .replace(/\*(.*?)\*/g, '$1')
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .replace(/^#{1,6}\s+/gm, '')
-    .replace(/\n+/g, ' ')
-    .trim()
-  
-  return plainText.length > 100 ? plainText.substring(0, 100) + '...' : plainText
-})
 
 // 更新 YouTube 上下文
 const updateYouTubeContext = () => {
@@ -465,6 +433,34 @@ const togglePlayPause = () => {
   }
 }
 
+// 中文輸入法狀態追蹤
+const isComposing = ref(false)
+
+// 輸入法事件處理
+const handleCompositionStart = () => {
+  isComposing.value = true
+}
+
+const handleCompositionEnd = () => {
+  isComposing.value = false
+}
+
+// 鍵盤事件處理
+const handleKeydown = (event: KeyboardEvent) => {
+  // 如果正在使用中文輸入法選字，不處理 Enter 鍵
+  if (isComposing.value) return
+  
+  // 只有在按下 Ctrl+Enter 或 Cmd+Enter 時才發送訊息
+  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+    event.preventDefault()
+    sendChatMessage()
+  }
+  // 防止單獨的 Enter 鍵觸發事件
+  else if (event.key === 'Enter' && !event.ctrlKey && !event.metaKey) {
+    event.preventDefault()
+  }
+}
+
 // AI 聊天功能
 const sendChatMessage = async () => {
   if (!chatMessage.value.trim() || !chat.canSendMessage) return
@@ -482,10 +478,6 @@ const sendChatMessage = async () => {
   }
 }
 
-// 展開聊天面板 - 但現在只是展開控制面板
-const expandChatPanel = () => {
-  isExpanded.value = true
-}
 
 // 清理
 onUnmounted(() => {

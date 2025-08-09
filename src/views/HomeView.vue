@@ -130,6 +130,11 @@
             @error="showError"
           />
         </div>
+
+        <!-- AI 聊天記錄區域 -->
+        <div v-if="hasVideoLoaded" class="mt-6 mb-32">
+          <ChatHistory />
+        </div>
       </div>
     </div>
 
@@ -153,6 +158,7 @@ import YouTubePlayer from '@/components/YouTubePlayer.vue'
 import FloatingControlPanel from '@/components/FloatingControlPanel.vue'
 import MessageBox from '@/components/MessageBox.vue'
 import AISettingsModal from '@/components/AISettingsModal.vue'
+import ChatHistory from '@/components/ChatHistory.vue'
 
 const youtubePlayer = useYouTubePlayer()
 const aiConfig = useAIConfigStore()
