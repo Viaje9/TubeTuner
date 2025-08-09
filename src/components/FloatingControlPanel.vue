@@ -538,13 +538,19 @@
             @compositionend="handleCompositionEnd"
             @focus="handleInputFocus"
             @blur="handleInputBlur"
-            :disabled="!aiConfig.canUseAI || chat.isLoading"
+            @click="handleInputClick"
+            :disabled="chat.isLoading"
+            :readonly="!aiConfig.canUseAI"
             type="text"
             :placeholder="
-              aiConfig.canUseAI ? '向 AI 詢問影片相關問題 (Ctrl+Enter 送出)...' : '請先設定 AI 助手'
+              aiConfig.canUseAI ? '向 AI 詢問影片相關問題 (Ctrl+Enter 送出)...' : '點擊設定 AI 助手'
             "
             data-dialog-input="true"
-            class="flex-1 bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+            :class="[
+              'flex-1 bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
+              !aiConfig.canUseAI ? 'cursor-pointer hover:bg-gray-700/70' : '',
+              chat.isLoading ? 'opacity-50 cursor-not-allowed' : ''
+            ]"
           />
           <button
             @click="sendChatMessage"
@@ -792,9 +798,17 @@ const handleCompositionEnd = () => {
   isComposing.value = false
 }
 
-// 輸入框焦點事件處理
+// 輸入框焦點和點擊事件處理
 const handleInputFocus = () => {
   emit('input-focused')
+}
+
+const handleInputClick = () => {
+  // 如果 AI 還沒設定，自動切換到 AI 設定頁籤並展開控制面板
+  if (!aiConfig.canUseAI) {
+    currentTab.value = 'ai'
+    isExpanded.value = true
+  }
 }
 
 const handleInputBlur = () => {
