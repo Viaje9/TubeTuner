@@ -18,3 +18,16 @@ export interface IYouTubePlayer {
   getCurrentTime: () => number
   seekTo: (time: number, allowSeekAhead?: boolean) => void
 }
+
+export interface YTPlayerVars {
+  playsinline?: number
+  rel?: number
+  modestbranding?: number
+  controls?: number
+  cc_load_policy?: number
+  iv_load_policy?: number
+  disablekb?: number
+  fs?: number
+  showinfo?: number
+  autoplay?: number
+}

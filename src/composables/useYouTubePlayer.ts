@@ -19,6 +19,11 @@ interface YTPlayerOptions {
     rel: number
     modestbranding: number
     controls: number
+    cc_load_policy?: number
+    iv_load_policy?: number
+    disablekb?: number
+    fs?: number
+    showinfo?: number
     autoplay?: number
   }
   events: {
@@ -90,15 +95,15 @@ export function useYouTubePlayer() {
       height: '100%',
       width: '100%',
       playerVars: {
-        'playsinline': 1,
-        'rel': 0,
-        'modestbranding': 1,
-        'controls': 1, // 顯示進度條
-        'cc_load_policy': 0, // 關閉字幕
-        'iv_load_policy': 3, // 關閉資訊卡片
-        'disablekb': 0, // 啟用鍵盤控制
-        'fs': 1, // 啟用全螢幕
-        'showinfo': 0 // 關閉影片資訊
+        playsinline: 1,
+        rel: 0,
+        modestbranding: 1,
+        controls: 1,
+        cc_load_policy: 0,
+        iv_load_policy: 3,
+        disablekb: 0,
+        fs: 1,
+        showinfo: 0
       },
       events: {
         'onReady': () => {
@@ -143,16 +148,16 @@ export function useYouTubePlayer() {
             width: '100%',
             videoId: videoId,
             playerVars: {
-              'playsinline': 1,
-              'rel': 0,
-              'modestbranding': 1,
-              'controls': 1, // 顯示進度條
-              'cc_load_policy': 0, // 關閉字幕
-              'iv_load_policy': 3, // 關閉資訊卡片
-              'disablekb': 0, // 啟用鍵盤控制
-              'fs': 1, // 啟用全螢幕
-              'showinfo': 0, // 關閉影片資訊
-              'autoplay': 0  // 確保不自動播放
+              playsinline: 1,
+              rel: 0,
+              modestbranding: 1,
+              controls: 1,
+              cc_load_policy: 0,
+              iv_load_policy: 3,
+              disablekb: 0,
+              fs: 1,
+              showinfo: 0,
+              autoplay: 0
             },
             events: {
               'onReady': () => {
