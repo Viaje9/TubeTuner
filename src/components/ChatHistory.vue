@@ -1,10 +1,57 @@
 <template>
   <div v-if="chat.conversationHistory.length > 0" class="w-full">
+    <!-- 自訂確認對話框 -->
+    <Teleport to="body">
+      <div 
+        v-if="showConfirmDialog" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        @click.self="showConfirmDialog = false"
+      >
+        <!-- 背景遮罩 -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        
+        <!-- 對話框 -->
+        <div class="relative bg-gray-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-gray-700/50 animate-in">
+          <div class="text-center">
+            <!-- 圖示 -->
+            <div class="mx-auto w-12 h-12 bg-red-900/20 rounded-full flex items-center justify-center mb-4">
+              <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            
+            <!-- 標題 -->
+            <h3 class="text-lg font-semibold text-white mb-2">清除對話記錄</h3>
+            
+            <!-- 說明 -->
+            <p class="text-sm text-gray-400 mb-6">
+              確定要清除所有 AI 對話記錄嗎？此操作無法復原。
+            </p>
+            
+            <!-- 按鈕 -->
+            <div class="flex gap-3">
+              <button
+                @click="showConfirmDialog = false"
+                class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg transition-colors text-sm font-medium"
+              >
+                取消
+              </button>
+              <button
+                @click="confirmClear"
+                class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm font-medium"
+              >
+                確定清除
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
     <!-- 頂部控制區 -->
-    <div class="flex items-center justify-between mb-2">
-      <span class="text-xs text-gray-500">{{ formatTokenCount(chat.totalTokensUsed) }} tokens</span>
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-xs text-gray-400 font-mono">{{ formatTokenCount(chat.totalTokensUsed) }} tokens</span>
       <button
-        @click="clearHistory"
+        @click="showConfirmDialog = true"
         class="text-gray-400 hover:text-red-400 transition-colors p-1"
         title="清除對話記錄"
       >
@@ -113,6 +160,7 @@ import { renderMarkdown } from '@/utils/markdown'
 
 const chat = useChatStore()
 const chatContainer = ref<HTMLElement>()
+const showConfirmDialog = ref(false)
 
 // 格式化時間
 const formatTime = (timestamp: Date): string => {
@@ -167,11 +215,10 @@ watch(
   }
 )
 
-// 清除對話記錄
-const clearHistory = () => {
-  if (confirm('確定要清除所有對話記錄嗎？')) {
-    chat.clearHistory()
-  }
+// 確認清除對話記錄
+const confirmClear = () => {
+  chat.clearHistory()
+  showConfirmDialog.value = false
 }
 
 // 重試訊息
@@ -287,5 +334,21 @@ onMounted(() => {
 :deep(.prose em) {
   color: #e5e7eb;
   font-style: italic;
+}
+
+/* 動畫效果 */
+@keyframes animate-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-in {
+  animation: animate-in 0.2s ease-out;
 }
 </style>
