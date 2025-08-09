@@ -163,6 +163,35 @@
       </button>
     </div>
 
+    <!-- 快速跳躍按鈕（速度按鈕上方） -->
+    <div class="fixed bottom-52 right-6 z-40 flex flex-col gap-3">
+      <!-- 快速後退按鈕 -->
+      <button
+        @click="rewind"
+        class="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 transform shadow-lg hover:scale-110 active:scale-95 bg-gradient-to-br from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white shadow-orange-500/30"
+      >
+        <div class="flex flex-col items-center">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
+          </svg>
+          <span class="text-xs font-bold">-{{ seekSeconds }}</span>
+        </div>
+      </button>
+
+      <!-- 快速前進按鈕 -->
+      <button
+        @click="forward"
+        class="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 transform shadow-lg hover:scale-110 active:scale-95 bg-gradient-to-br from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white shadow-green-500/30"
+      >
+        <div class="flex flex-col items-center">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z" />
+          </svg>
+          <span class="text-xs font-bold">+{{ seekSeconds }}</span>
+        </div>
+      </button>
+    </div>
+
     <!-- 底部固定輸入框 -->
     <div class="fixed inset-x-0 z-40 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800 border-t border-gray-700/50" style="bottom: var(--keyboard-height, 0px)">
       <div class="p-4">
