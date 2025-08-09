@@ -1,7 +1,10 @@
 <template>
-  <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 space-y-6">
-    <!-- 輸入影片網址的區塊 -->
-    <div class="space-y-3">
+  <div :class="[
+    'transition-all duration-300',
+    hasVideo ? '' : 'bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 space-y-6'
+  ]">
+    <!-- 輸入影片網址的區塊（只在沒有影片時顯示） -->
+    <div v-if="!hasVideo" class="space-y-3">
       <h2 class="text-lg font-semibold text-white">載入 YouTube 影片</h2>
       <div class="flex flex-col sm:flex-row gap-3">
         <div class="flex-grow relative">
@@ -81,6 +84,7 @@ const props = defineProps<{
 }>()
 
 const videoUrl = ref('')
+const hasVideo = ref(false)
 
 const handleLoadVideo = () => {
   if (!videoUrl.value) {
@@ -93,6 +97,7 @@ const handleLoadVideo = () => {
     if (props.player?.loadVideo) {
       const success = props.player.loadVideo(videoUrl.value)
       if (success) {
+        hasVideo.value = true
         emit('videoLoaded', videoId)
       } else {
         emit('error', '無法載入影片，請確認網址是否正確')

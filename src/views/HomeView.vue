@@ -3,47 +3,83 @@
     <!-- 訊息提示框 -->
     <MessageBox :message="errorMessage" />
 
-    <div class="container mx-auto px-4 py-8">
-      <!-- 標題區域 -->
-      <div class="text-center mb-8">
-        <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">
-          TubeTuner
-        </h1>
-        <p class="text-xl text-gray-300">YouTube 影片速度控制器</p>
-        <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"></div>
-      </div>
+    <div class="container mx-auto px-4 py-4">
+      <!-- 標題區域（會根據影片載入狀態調整） -->
+      <Transition name="header" mode="out-in">
+        <div v-if="!hasVideoLoaded" class="text-center mb-8">
+          <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">
+            TubeTuner
+          </h1>
+          <p class="text-xl text-gray-300">YouTube 影片速度控制器</p>
+          <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"></div>
+        </div>
+        <div v-else class="flex items-center justify-between mb-4">
+          <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            TubeTuner
+          </h1>
+          <!-- 精簡的載入按鈕 -->
+          <button
+            @click="showLoadInput = !showLoadInput"
+            class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 flex items-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 16h4m10 0h4" />
+            </svg>
+            載入影片
+          </button>
+        </div>
+      </Transition>
 
-      <div class="max-w-6xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- YouTube 播放器區域 -->
-          <div class="lg:col-span-2">
-            <YouTubePlayer 
-              :player="youtubePlayer"
-              @player-ready="handlePlayerReady"
-              @video-loaded="handleVideoLoaded"
-              @error="showError"
-            />
+      <!-- 輸入框（浮動在右上角） -->
+      <Transition name="input-popup">
+        <div v-if="showLoadInput" class="fixed top-20 right-4 z-50 bg-gray-800 p-4 rounded-lg shadow-2xl border border-gray-700">
+          <div class="flex gap-2">
+            <input
+              v-model="videoUrl"
+              type="text"
+              placeholder="貼上 YouTube 影片網址或 ID..."
+              class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 text-white w-64"
+              @keyup.enter="loadVideo"
+            >
+            <button
+              @click="loadVideo"
+              class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all"
+            >
+              載入
+            </button>
+            <button
+              @click="showLoadInput = false"
+              class="text-gray-400 hover:text-white transition-colors"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
+        </div>
+      </Transition>
 
-          <!-- 控制面板區域 -->
-          <div class="space-y-6">
-            <!-- 播放控制 -->
-            <SpeedControl 
-              :player="youtubePlayer"
-              @speed-changed="handleSpeedChanged"
-              @error="showError"
-            />
-
-            <!-- 時間控制 -->
-            <TimeControl 
-              :player="youtubePlayer"
-              @seeked="handleSeeked"
-              @error="showError"
-            />
-          </div>
+      <div class="max-w-7xl mx-auto">
+        <!-- YouTube 播放器區域（全寬） -->
+        <div :class="hasVideoLoaded ? 'w-full' : 'max-w-4xl mx-auto'">
+          <YouTubePlayer 
+            :player="youtubePlayer"
+            @player-ready="handlePlayerReady"
+            @video-loaded="handleVideoLoaded"
+            @error="showError"
+          />
         </div>
       </div>
     </div>
+
+    <!-- 浮動控制面板 -->
+    <FloatingControlPanel
+      v-if="hasVideoLoaded"
+      :player="youtubePlayer"
+      @speed-changed="handleSpeedChanged"
+      @seeked="handleSeeked"
+      @error="showError"
+    />
   </div>
 </template>
 
@@ -51,12 +87,14 @@
 import { ref, onMounted } from 'vue'
 import { useYouTubePlayer } from '@/composables/useYouTubePlayer'
 import YouTubePlayer from '@/components/YouTubePlayer.vue'
-import SpeedControl from '@/components/SpeedControl.vue'
-import TimeControl from '@/components/TimeControl.vue'
+import FloatingControlPanel from '@/components/FloatingControlPanel.vue'
 import MessageBox from '@/components/MessageBox.vue'
 
 const youtubePlayer = useYouTubePlayer()
 const errorMessage = ref('')
+const hasVideoLoaded = ref(false)
+const showLoadInput = ref(false)
+const videoUrl = ref('')
 
 onMounted(async () => {
   await youtubePlayer.initPlayer('youtube-player')
@@ -68,6 +106,8 @@ const handlePlayerReady = () => {
 
 const handleVideoLoaded = (videoId: string) => {
   console.log('影片已載入:', videoId)
+  hasVideoLoaded.value = true
+  showLoadInput.value = false
 }
 
 const handleSpeedChanged = (speed: number) => {
@@ -76,6 +116,33 @@ const handleSpeedChanged = (speed: number) => {
 
 const handleSeeked = (seconds: number) => {
   console.log('已跳轉:', seconds, '秒')
+}
+
+const loadVideo = () => {
+  if (!videoUrl.value) {
+    showError('請輸入 YouTube 影片網址或 ID')
+    return
+  }
+  
+  // 從 URL 提取影片 ID 或直接使用 ID
+  const videoId = extractVideoId(videoUrl.value)
+  if (videoId && youtubePlayer.loadVideo) {
+    youtubePlayer.loadVideo(videoId)
+  } else {
+    showError('無法識別的 YouTube 網址')
+  }
+}
+
+const extractVideoId = (urlOrId: string): string | null => {
+  // 如果是純 ID（11 個字符）
+  if (/^[a-zA-Z0-9_-]{11}$/.test(urlOrId)) {
+    return urlOrId
+  }
+  
+  // 從 URL 提取 ID
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+  const match = urlOrId.match(regExp)
+  return (match && match[2].length === 11) ? match[2] : null
 }
 
 const showError = (message: string) => {
@@ -89,3 +156,33 @@ const showError = (message: string) => {
   }, 150)
 }
 </script>
+
+<style scoped>
+/* 標題過渡動畫 */
+.header-enter-active,
+.header-leave-active {
+  transition: all 0.3s ease;
+}
+
+.header-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.header-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* 輸入框彈出動畫 */
+.input-popup-enter-active,
+.input-popup-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-popup-enter-from,
+.input-popup-leave-to {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+}
+</style>

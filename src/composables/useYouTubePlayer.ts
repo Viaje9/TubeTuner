@@ -184,6 +184,14 @@ export function useYouTubePlayer() {
     pauseVideo,
     playVideo,
     togglePlayPause,
-    destroyPlayer
+    destroyPlayer,
+    // 為 FloatingControlPanel 提供的方法
+    setPlaybackRate: setSpeed,
+    getCurrentTime: () => player.value?.getCurrentTime() || 0,
+    seekTo: (time: number, allowSeekAhead: boolean = true) => {
+      if (player.value && isReady.value) {
+        player.value.seekTo(time, allowSeekAhead)
+      }
+    }
   }
 }
