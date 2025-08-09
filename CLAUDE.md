@@ -4,6 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 此檔案為 Claude Code (claude.ai/code) 在處理此專案時提供的指引。
 
+**重要：請使用繁體中文與使用者溝通，除非使用者明確要求使用英文。**
+
 ## 專案概述
 
 TubeTuner 是一個先進的 YouTube 影片速度控制器，結合了 AI 聊天功能的 Vue 3 + TypeScript PWA 應用程式。專案使用 Vite 作為建置工具，Pinia 進行狀態管理，並整合 OpenRouter AI API 提供影片內容討論功能。
