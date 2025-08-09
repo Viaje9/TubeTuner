@@ -49,9 +49,10 @@
         </div>
 
         <!-- 內容區域 -->
-        <div class="max-h-[60vh] overflow-y-auto">
-          <!-- 控制頁籤內容 -->
-          <div v-if="currentTab === 'control'" class="p-6 space-y-6">
+        <div class="h-[50vh] overflow-y-auto">
+          <Transition name="tab-content" mode="out-in">
+            <!-- 控制頁籤內容 -->
+            <div v-if="currentTab === 'control'" key="control" class="p-6 space-y-6">
             <!-- 播放速度控制 -->
             <div class="space-y-4">
               <h3
@@ -206,12 +207,12 @@
                 </button>
               </div>
             </div>
-          </div>
+            </div>
 
-          <!-- 載入影片頁籤內容 -->
-          <div v-if="currentTab === 'load'" class="p-6 space-y-6">
-            <h3 class="text-white font-semibold text-center flex items-center justify-center gap-2">
-              <svg
+            <!-- 載入影片頁籤內容 -->
+            <div v-else-if="currentTab === 'load'" key="load" class="p-6 space-y-6">
+              <h3 class="text-white font-semibold text-center flex items-center justify-center gap-2">
+                <svg
                 class="w-5 h-5 text-blue-400"
                 fill="none"
                 stroke="currentColor"
@@ -300,12 +301,12 @@
                 <p>例如：https://youtube.com/watch?v=xxxxx 或 xxxxx</p>
               </div>
             </div>
-          </div>
+            </div>
 
-          <!-- AI 設定頁籤內容 -->
-          <div v-if="currentTab === 'ai'" class="p-6 space-y-6">
-            <h3 class="text-white font-semibold text-center flex items-center justify-center gap-2">
-              <svg
+            <!-- AI 設定頁籤內容 -->
+            <div v-else-if="currentTab === 'ai'" key="ai" class="p-6 space-y-6">
+              <h3 class="text-white font-semibold text-center flex items-center justify-center gap-2">
+                <svg
                 class="w-5 h-5 text-purple-400"
                 fill="none"
                 stroke="currentColor"
@@ -427,7 +428,8 @@
                 {{ isSavingAI ? '驗證中...' : aiConfig.isConfigured ? '更新設定' : '儲存設定' }}
               </button>
             </div>
-          </div>
+            </div>
+          </Transition>
         </div>
       </div>
     </Transition>
@@ -950,5 +952,21 @@ onUnmounted(() => {
 .backdrop-enter-from,
 .backdrop-leave-to {
   opacity: 0;
+}
+
+/* 頁籤內容切換動畫 */
+.tab-content-enter-active,
+.tab-content-leave-active {
+  transition: all 0.2s ease;
+}
+
+.tab-content-enter-from {
+  opacity: 0;
+  transform: translateX(10px);
+}
+
+.tab-content-leave-to {
+  opacity: 0;
+  transform: translateX(-10px);
 }
 </style>
