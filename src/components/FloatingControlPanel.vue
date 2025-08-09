@@ -133,34 +133,6 @@
             </div>
           </div>
 
-          <!-- 聊天輸入框 -->
-          <div class="space-y-4">
-            <h3 class="text-white font-semibold text-center flex items-center justify-center gap-2">
-              <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-              聊天功能
-            </h3>
-            
-            <div class="flex gap-2">
-              <input
-                v-model="chatMessage"
-                @keydown.enter="sendMessage"
-                type="text"
-                placeholder="輸入訊息..."
-                class="flex-1 bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-              <button
-                @click="sendMessage"
-                class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg transition-all hover:scale-105 flex items-center gap-2"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-                發送
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </Transition>
@@ -218,7 +190,6 @@ const isExpanded = ref(false)
 const speed = ref(1)
 const seekSeconds = ref(10)
 const speedPresets = [0.5, 1, 1.5, 2]
-const chatMessage = ref('')
 
 const currentSpeed = computed(() => speed.value.toFixed(2).replace(/\.00$/, ''))
 
@@ -269,13 +240,6 @@ const forward = () => {
     const currentTime = props.player.getCurrentTime()
     props.player.seekTo(currentTime + seekSeconds.value, true)
     emit('seeked', seekSeconds.value)
-  }
-}
-
-const sendMessage = () => {
-  if (chatMessage.value.trim()) {
-    console.log('發送訊息:', chatMessage.value)
-    chatMessage.value = ''
   }
 }
 </script>
