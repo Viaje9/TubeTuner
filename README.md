@@ -45,8 +45,8 @@ TubeTuner 是一個先進的 YouTube 影片速度控制器，結合了 AI 聊天
 
 ```bash
 # 複製專案
-git clone https://github.com/your-username/tubetuner.git
-cd tubetuner
+git clone https://github.com/Viaje9/TubeTuner.git
+cd TubeTuner
 
 # 安裝依賴
 npm install

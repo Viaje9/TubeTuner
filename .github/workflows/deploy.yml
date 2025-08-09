@@ -39,7 +39,7 @@ jobs:
     - name: 建置專案
       run: npm run build
       env:
-        VITE_BASE_PATH: /${{ github.event.repository.name }}/
+        VITE_BASE_PATH: /TubeTuner/
     
     - name: 設定 Pages
       uses: actions/configure-pages@v4

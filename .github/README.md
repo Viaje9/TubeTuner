@@ -61,9 +61,9 @@ git push origin v1.0.0
 將以下徽章加入主要 README：
 
 ```markdown
-[![CI](https://github.com/your-username/tubetuner/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/tubetuner/actions/workflows/ci.yml)
-[![Deploy](https://github.com/your-username/tubetuner/actions/workflows/deploy.yml/badge.svg)](https://github.com/your-username/tubetuner/actions/workflows/deploy.yml)
-[![CodeQL](https://github.com/your-username/tubetuner/actions/workflows/codeql.yml/badge.svg)](https://github.com/your-username/tubetuner/actions/workflows/codeql.yml)
+[![CI](https://github.com/Viaje9/TubeTuner/actions/workflows/ci.yml/badge.svg)](https://github.com/Viaje9/TubeTuner/actions/workflows/ci.yml)
+[![Deploy](https://github.com/Viaje9/TubeTuner/actions/workflows/deploy.yml/badge.svg)](https://github.com/Viaje9/TubeTuner/actions/workflows/deploy.yml)
+[![CodeQL](https://github.com/Viaje9/TubeTuner/actions/workflows/codeql.yml/badge.svg)](https://github.com/Viaje9/TubeTuner/actions/workflows/codeql.yml)
 ```
 
 ## 🔧 本地測試
