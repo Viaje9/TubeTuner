@@ -83,7 +83,7 @@ export function useYouTubePlayer() {
 
   const initPlayer = async (elementId: string) => {
     await loadYouTubeAPI()
-    
+
     playerElement = document.getElementById(elementId)
     if (!playerElement) {
       console.error(`Element with id ${elementId} not found`)
@@ -103,25 +103,25 @@ export function useYouTubePlayer() {
         iv_load_policy: 3,
         disablekb: 0,
         fs: 1,
-        showinfo: 0
+        showinfo: 0,
       },
       events: {
-        'onReady': () => {
+        onReady: () => {
           isReady.value = true
           // 檢查是否需要自動載入保存的影片
           tryAutoLoadSavedVideo()
         },
-        'onStateChange': (event: YTPlayerStateChangeEvent) => {
+        onStateChange: (event: YTPlayerStateChangeEvent) => {
           // YouTube API 狀態: -1=未開始, 0=結束, 1=播放中, 2=暫停, 3=緩衝中, 5=影片提示
           console.log('YouTube 播放狀態變更:', event.data)
           isPlaying.value = event.data === 1
-          
+
           // 保存播放狀態
           if (event.data === 1 || event.data === 2) {
             savePlaybackState()
           }
-        }
-      }
+        },
+      },
     })
   }
 
@@ -133,12 +133,12 @@ export function useYouTubePlayer() {
         player.value.cueVideoById(videoId)
         currentVideoId.value = videoId
         console.log('影片已載入:', videoId)
-        
+
         // 延遲恢復播放狀態，等待影片載入完成
         setTimeout(() => {
           restorePlaybackState()
         }, 1000)
-        
+
         return true
       } else {
         // 如果播放器還沒初始化，創建新的播放器並載入影片
@@ -157,26 +157,26 @@ export function useYouTubePlayer() {
               disablekb: 0,
               fs: 1,
               showinfo: 0,
-              autoplay: 0
+              autoplay: 0,
             },
             events: {
-              'onReady': () => {
+              onReady: () => {
                 isReady.value = true
                 // 載入後暫停，確保不自動播放
                 player.value?.pauseVideo()
                 // 檢查是否需要恢復播放狀態
                 restorePlaybackState()
               },
-              'onStateChange': (event: YTPlayerStateChangeEvent) => {
+              onStateChange: (event: YTPlayerStateChangeEvent) => {
                 console.log('YouTube 播放狀態變更:', event.data)
                 isPlaying.value = event.data === 1
-                
+
                 // 保存播放狀態
                 if (event.data === 1 || event.data === 2) {
                   savePlaybackState()
                 }
-              }
-            }
+              },
+            },
           })
         }
         currentVideoId.value = videoId
@@ -189,7 +189,7 @@ export function useYouTubePlayer() {
   const extractVideoId = (url: string): string | null => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
     const match = url.match(regExp)
-    return (match && match[2].length === 11) ? match[2] : null
+    return match && match[2].length === 11 ? match[2] : null
   }
 
   const setSpeed = (speed: number) => {
@@ -236,13 +236,13 @@ export function useYouTubePlayer() {
         const currentTime = player.value.getCurrentTime()
         const rate = player.value.getPlaybackRate()
         const playerState = player.value.getPlayerState()
-        
+
         LocalStorageService.savePlaybackState({
           videoId: currentVideoId.value,
           currentTime: currentTime,
           playbackRate: rate,
           isPaused: playerState === 2 || playerState === -1 || playerState === 0,
-          volume: 100 // YouTube API 不提供音量 API
+          volume: 100, // YouTube API 不提供音量 API
         })
       } catch (error) {
         console.error('Failed to save playback state:', error)
@@ -255,23 +255,23 @@ export function useYouTubePlayer() {
       console.log('播放器尚未準備好，無法恢復狀態')
       return
     }
-    
+
     const state = LocalStorageService.getPlaybackState()
     console.log('嘗試恢復播放狀態:', state)
-    
+
     // 如果有保存的狀態且不過期
     if (state.videoId && !LocalStorageService.isPlaybackStateExpired()) {
       // 如果是同一個影片，恢復播放位置
       if (state.videoId === currentVideoId.value) {
         console.log(`恢復播放位置: ${state.currentTime}秒, 速度: ${state.playbackRate}x`)
-        
+
         // 跳轉到上次播放位置
         player.value.seekTo(state.currentTime, true)
-        
+
         // 設定播放速度
         player.value.setPlaybackRate(state.playbackRate)
         playbackRate.value = state.playbackRate
-        
+
         // 不管上次是什麼狀態，都保持暫停
         console.log('已恢復到播放位置，保持暫停狀態')
         player.value.pauseVideo()
@@ -286,7 +286,7 @@ export function useYouTubePlayer() {
   const tryAutoLoadSavedVideo = () => {
     const savedState = LocalStorageService.getPlaybackState()
     console.log('檢查保存的播放狀態:', savedState)
-    
+
     if (savedState.videoId && !LocalStorageService.isPlaybackStateExpired()) {
       console.log('自動載入保存的影片:', savedState.videoId)
       const videoUrl = `https://www.youtube.com/watch?v=${savedState.videoId}`
@@ -302,10 +302,10 @@ export function useYouTubePlayer() {
       clearInterval(saveInterval)
       saveInterval = null
     }
-    
+
     // 最後保存一次狀態
     savePlaybackState()
-    
+
     if (player.value) {
       player.value.destroy()
       player.value = null
@@ -360,6 +360,6 @@ export function useYouTubePlayer() {
       if (player.value && isReady.value) {
         player.value.seekTo(time, allowSeekAhead)
       }
-    }
+    },
   }
 }

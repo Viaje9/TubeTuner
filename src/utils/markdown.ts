@@ -17,7 +17,10 @@ export function renderMarkdown(text: string): string {
   })
 
   // 處理行內程式碼 (`)
-  html = html.replace(/`([^`]+)`/g, '<code class="bg-gray-700 text-blue-300 px-2 py-1 rounded text-sm">$1</code>')
+  html = html.replace(
+    /`([^`]+)`/g,
+    '<code class="bg-gray-700 text-blue-300 px-2 py-1 rounded text-sm">$1</code>',
+  )
 
   // 處理粗體 (**)
   html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
@@ -26,7 +29,10 @@ export function renderMarkdown(text: string): string {
   html = html.replace(/\*(.*?)\*/g, '<em class="italic text-gray-200">$1</em>')
 
   // 處理連結
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">$1</a>')
+  html = html.replace(
+    /\[([^\]]+)\]\(([^)]+)\)/g,
+    '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">$1</a>',
+  )
 
   // 處理換行
   html = html.replace(/\n\n/g, '</p><p class="mb-3">')
@@ -39,12 +45,21 @@ export function renderMarkdown(text: string): string {
   html = html.replace(/^\d+\. (.+)$/gm, '<li class="ml-4 mb-1 list-decimal">$1</li>')
 
   // 處理標題 (#)
-  html = html.replace(/^### (.+)$/gm, '<h3 class="text-lg font-semibold text-white mt-4 mb-2">$1</h3>')
+  html = html.replace(
+    /^### (.+)$/gm,
+    '<h3 class="text-lg font-semibold text-white mt-4 mb-2">$1</h3>',
+  )
   html = html.replace(/^## (.+)$/gm, '<h2 class="text-xl font-bold text-white mt-4 mb-2">$1</h2>')
   html = html.replace(/^# (.+)$/gm, '<h1 class="text-2xl font-bold text-white mt-4 mb-3">$1</h1>')
 
   // 包裝段落
-  if (!html.includes('<p>') && !html.includes('<pre>') && !html.includes('<h1>') && !html.includes('<h2>') && !html.includes('<h3>')) {
+  if (
+    !html.includes('<p>') &&
+    !html.includes('<pre>') &&
+    !html.includes('<h1>') &&
+    !html.includes('<h2>') &&
+    !html.includes('<h3>')
+  ) {
     html = `<p class="mb-3">${html}</p>`
   }
 
@@ -55,22 +70,24 @@ export function renderMarkdown(text: string): string {
 export function stripMarkdown(text: string): string {
   if (!text) return ''
 
-  return text
-    // 移除程式碼區塊
-    .replace(/```[\s\S]*?```/g, '[程式碼]')
-    // 移除行內程式碼
-    .replace(/`([^`]+)`/g, '$1')
-    // 移除粗體和斜體標記
-    .replace(/\*\*(.*?)\*\*/g, '$1')
-    .replace(/\*(.*?)\*/g, '$1')
-    // 移除連結，保留文字
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    // 移除標題標記
-    .replace(/^#{1,6}\s+/gm, '')
-    // 移除清單標記
-    .replace(/^[-*+]\s+/gm, '• ')
-    .replace(/^\d+\.\s+/gm, '')
-    // 正規化換行
-    .replace(/\n{3,}/g, '\n\n')
-    .trim()
+  return (
+    text
+      // 移除程式碼區塊
+      .replace(/```[\s\S]*?```/g, '[程式碼]')
+      // 移除行內程式碼
+      .replace(/`([^`]+)`/g, '$1')
+      // 移除粗體和斜體標記
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      // 移除連結，保留文字
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      // 移除標題標記
+      .replace(/^#{1,6}\s+/gm, '')
+      // 移除清單標記
+      .replace(/^[-*+]\s+/gm, '• ')
+      .replace(/^\d+\.\s+/gm, '')
+      // 正規化換行
+      .replace(/\n{3,}/g, '\n\n')
+      .trim()
+  )
 }

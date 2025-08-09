@@ -41,7 +41,7 @@ export const useChatStore = defineStore('chat', () => {
   })
 
   const conversationHistory = computed(() => {
-    return messages.value.filter(msg => msg.role !== 'system')
+    return messages.value.filter((msg) => msg.role !== 'system')
   })
 
   // 生成唯一 ID
@@ -59,7 +59,7 @@ export const useChatStore = defineStore('chat', () => {
         title: context.title || '未知影片',
         currentTime: context.currentTime || 0,
         duration: context.duration || 0,
-        playbackRate: context.playbackRate || 1
+        playbackRate: context.playbackRate || 1,
       }
     }
   }
@@ -71,7 +71,7 @@ export const useChatStore = defineStore('chat', () => {
     if (youtubeContext.value) {
       const timeString = formatTime(youtubeContext.value.currentTime)
       const durationString = formatTime(youtubeContext.value.duration)
-      
+
       systemMessage += `\n\n當前觀看的影片資訊：
 - 影片標題：${youtubeContext.value.title}
 - 當前播放時間：${timeString}
@@ -102,16 +102,16 @@ export const useChatStore = defineStore('chat', () => {
     const newMessage: ChatMessage = {
       id: generateId(),
       timestamp: new Date(),
-      ...message
+      ...message,
     }
-    
+
     messages.value.push(newMessage)
     return newMessage
   }
 
   // 更新訊息
   const updateMessage = (id: string, updates: Partial<ChatMessage>) => {
-    const index = messages.value.findIndex(msg => msg.id === id)
+    const index = messages.value.findIndex((msg) => msg.id === id)
     if (index !== -1) {
       messages.value[index] = { ...messages.value[index], ...updates }
     }
@@ -121,14 +121,14 @@ export const useChatStore = defineStore('chat', () => {
   const prepareMessagesForAI = (): OpenRouterMessage[] => {
     const systemMessage: OpenRouterMessage = {
       role: 'system',
-      content: buildSystemMessage()
+      content: buildSystemMessage(),
     }
 
     const conversationMessages: OpenRouterMessage[] = messages.value
-      .filter(msg => msg.role !== 'system' && !msg.error)
-      .map(msg => ({
+      .filter((msg) => msg.role !== 'system' && !msg.error)
+      .map((msg) => ({
         role: msg.role,
-        content: msg.content
+        content: msg.content,
       }))
 
     return [systemMessage, ...conversationMessages]
@@ -152,14 +152,14 @@ export const useChatStore = defineStore('chat', () => {
     const userMsg = addMessage({
       role: 'user',
       content: userMessage,
-      tokens: aiService.estimateTokens(userMessage)
+      tokens: aiService.estimateTokens(userMessage),
     })
 
     // 添加載入中的助手訊息
     const assistantMsg = addMessage({
       role: 'assistant',
       content: '',
-      isLoading: true
+      isLoading: true,
     })
 
     try {
@@ -171,24 +171,25 @@ export const useChatStore = defineStore('chat', () => {
         model: aiConfig.selectedModel,
         messages: messagesToSend,
         temperature: aiConfig.temperature,
-        max_tokens: aiConfig.maxTokens
+        max_tokens: aiConfig.maxTokens,
       })
 
       if (response.choices && response.choices.length > 0) {
         const assistantResponse = response.choices[0].message.content
-        const responseTokens = response.usage?.completion_tokens || aiService.estimateTokens(assistantResponse)
+        const responseTokens =
+          response.usage?.completion_tokens || aiService.estimateTokens(assistantResponse)
 
         // 更新助手訊息
         updateMessage(assistantMsg.id, {
           content: assistantResponse,
           isLoading: false,
-          tokens: responseTokens
+          tokens: responseTokens,
         })
 
         // 更新使用者訊息的 token 數
         if (response.usage?.prompt_tokens) {
           updateMessage(userMsg.id, {
-            tokens: response.usage.prompt_tokens
+            tokens: response.usage.prompt_tokens,
           })
         }
       } else {
@@ -202,7 +203,7 @@ export const useChatStore = defineStore('chat', () => {
       updateMessage(assistantMsg.id, {
         content: '抱歉，我遇到了一個錯誤，無法回答您的問題。',
         isLoading: false,
-        error: errorMessage
+        error: errorMessage,
       })
 
       throw err
@@ -216,7 +217,7 @@ export const useChatStore = defineStore('chat', () => {
     const lastUserMessage = messages.value
       .slice()
       .reverse()
-      .find(msg => msg.role === 'user')
+      .find((msg) => msg.role === 'user')
 
     if (!lastUserMessage) {
       throw new Error('沒有找到可以重新發送的訊息')
@@ -224,9 +225,9 @@ export const useChatStore = defineStore('chat', () => {
 
     // 移除最後一條助手回應（如果存在錯誤）
     const lastAssistantIndex = messages.value.findIndex(
-      (msg, index) => 
-        msg.role === 'assistant' && 
-        index > messages.value.findIndex(m => m.id === lastUserMessage.id)
+      (msg, index) =>
+        msg.role === 'assistant' &&
+        index > messages.value.findIndex((m) => m.id === lastUserMessage.id),
     )
 
     if (lastAssistantIndex !== -1) {
@@ -244,7 +245,7 @@ export const useChatStore = defineStore('chat', () => {
 
   // 刪除特定訊息
   const deleteMessage = (id: string) => {
-    const index = messages.value.findIndex(msg => msg.id === id)
+    const index = messages.value.findIndex((msg) => msg.id === id)
     if (index !== -1) {
       messages.value.splice(index, 1)
     }
@@ -255,24 +256,28 @@ export const useChatStore = defineStore('chat', () => {
     const exportData = {
       timestamp: new Date().toISOString(),
       youtubeContext: youtubeContext.value,
-      messages: conversationHistory.value.map(msg => ({
+      messages: conversationHistory.value.map((msg) => ({
         role: msg.role,
         content: msg.content,
-        timestamp: msg.timestamp
+        timestamp: msg.timestamp,
       })),
-      totalTokens: totalTokensUsed.value
+      totalTokens: totalTokensUsed.value,
     }
 
     return JSON.stringify(exportData, null, 2)
   }
 
   // 載入設定時初始化
-  watch(() => aiConfig.isConfigured, (isConfigured) => {
-    if (isConfigured) {
-      // AI 配置完成後可以執行的初始化邏輯
-      console.log('AI 聊天功能已就緒')
-    }
-  }, { immediate: true })
+  watch(
+    () => aiConfig.isConfigured,
+    (isConfigured) => {
+      if (isConfigured) {
+        // AI 配置完成後可以執行的初始化邏輯
+        console.log('AI 聊天功能已就緒')
+      }
+    },
+    { immediate: true },
+  )
 
   return {
     // 狀態
@@ -295,6 +300,6 @@ export const useChatStore = defineStore('chat', () => {
     clearHistory,
     deleteMessage,
     exportHistory,
-    formatTime
+    formatTime,
   }
 })

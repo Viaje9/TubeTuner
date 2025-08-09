@@ -14,7 +14,8 @@ app.mount('#app')
 // PWA Service Worker 註冊
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
+    navigator.serviceWorker
+      .register('/sw.js')
       .then((registration) => {
         console.log('PWA Service Worker 註冊成功:', registration)
       })

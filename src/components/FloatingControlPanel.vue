@@ -22,16 +22,49 @@
               ]"
             >
               <!-- 控制頁籤圖示 -->
-              <svg v-if="tab.id === 'control'" class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"/>
+              <svg
+                v-if="tab.id === 'control'"
+                class="w-4 h-4 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"
+                />
               </svg>
               <!-- 載入影片頁籤圖示 -->
-              <svg v-else-if="tab.id === 'load'" class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              <svg
+                v-else-if="tab.id === 'load'"
+                class="w-4 h-4 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
               </svg>
               <!-- AI 設定頁籤圖示 -->
-              <svg v-else-if="tab.id === 'ai'" class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              <svg
+                v-else-if="tab.id === 'ai'"
+                class="w-4 h-4 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
               </svg>
               <span class="text-xs">{{ tab.name }}</span>
               <span
@@ -62,8 +95,260 @@
           <Transition name="tab-content" mode="out-in">
             <!-- 控制頁籤內容 -->
             <div v-if="currentTab === 'control'" key="control" class="p-6 space-y-6">
-            <!-- 播放速度控制 -->
-            <div class="space-y-4">
+              <!-- 播放速度控制 -->
+              <div class="space-y-4">
+                <h3
+                  class="text-white font-semibold text-center flex items-center justify-center gap-2"
+                >
+                  <svg
+                    class="w-5 h-5 text-purple-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
+                  </svg>
+                  播放速度
+                </h3>
+
+                <!-- 速度滑桿 -->
+                <div class="flex items-center gap-4">
+                  <button
+                    @click="decreaseSpeed"
+                    class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700/50 transition-all"
+                  >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M20 12H4"
+                      />
+                    </svg>
+                  </button>
+
+                  <div class="flex-1 relative">
+                    <input
+                      type="range"
+                      v-model="speed"
+                      @input="updateSpeed"
+                      min="0.25"
+                      max="2"
+                      step="0.25"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                    />
+                    <div class="flex justify-between mt-2">
+                      <span class="text-xs text-gray-500">0.25x</span>
+                      <span class="text-sm font-bold text-blue-400">{{ currentSpeed }}x</span>
+                      <span class="text-xs text-gray-500">2x</span>
+                    </div>
+                  </div>
+
+                  <button
+                    @click="increaseSpeed"
+                    class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700/50 transition-all"
+                  >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- 快速選擇按鈕 -->
+                <div class="flex gap-2 justify-center">
+                  <button
+                    v-for="preset in speedPresets"
+                    :key="preset"
+                    @click="setSpeed(preset)"
+                    :class="[
+                      'px-4 py-2 rounded-lg font-medium transition-all',
+                      speed == preset
+                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
+                        : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50 hover:text-white',
+                    ]"
+                  >
+                    {{ preset === 1 ? '正常' : `${preset}x` }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- 時間控制 -->
+              <div class="space-y-4">
+                <h3
+                  class="text-white font-semibold text-center flex items-center justify-center gap-2"
+                >
+                  <svg
+                    class="w-5 h-5 text-green-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  時間控制
+                </h3>
+
+                <div class="flex items-center justify-center gap-3">
+                  <button
+                    @click="rewind"
+                    :class="[
+                      'bg-gray-700/50 hover:bg-gray-600/50 text-white px-5 py-2 rounded-lg transition-all hover:scale-105 flex items-center gap-2',
+                      rewindClicked ? 'bg-orange-600/70 scale-110 ring-2 ring-orange-300' : '',
+                    ]"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z"
+                      />
+                    </svg>
+                    倒轉
+                  </button>
+
+                  <input
+                    v-model="seekSeconds"
+                    type="number"
+                    class="w-20 text-center bg-gray-700/50 border border-gray-600 rounded-lg py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+
+                  <span class="text-gray-400">秒</span>
+
+                  <button
+                    @click="forward"
+                    :class="[
+                      'bg-gray-700/50 hover:bg-gray-600/50 text-white px-5 py-2 rounded-lg transition-all hover:scale-105 flex items-center gap-2',
+                      forwardClicked ? 'bg-green-600/70 scale-110 ring-2 ring-green-300' : '',
+                    ]"
+                  >
+                    快轉
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 載入影片頁籤內容 -->
+            <div v-else-if="currentTab === 'load'" key="load" class="p-6 space-y-6">
+              <h3
+                class="text-white font-semibold text-center flex items-center justify-center gap-2"
+              >
+                <svg
+                  class="w-5 h-5 text-blue-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M7 4v16M17 4v16M3 8h4m10 0h4M3 16h4m10 0h4"
+                  />
+                </svg>
+                載入 YouTube 影片
+              </h3>
+
+              <div class="space-y-4">
+                <!-- 輸入框 -->
+                <div class="space-y-2">
+                  <label class="text-sm font-medium text-gray-300">YouTube 網址或影片 ID</label>
+                  <div class="flex items-center gap-2">
+                    <input
+                      v-model="videoUrl"
+                      type="text"
+                      placeholder="貼上 YouTube 影片網址或影片 ID..."
+                      class="flex-1 bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      @keyup.enter="loadVideo"
+                    />
+                    <button
+                      @click="clearVideoInput"
+                      class="text-gray-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-gray-700/50"
+                      title="清除"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 操作按鈕 -->
+                <div class="flex gap-2">
+                  <button
+                    @click="pasteFromClipboard"
+                    class="flex-1 bg-gray-700/50 hover:bg-gray-600/50 text-white px-4 py-2 rounded-lg transition-all flex items-center justify-center gap-2"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      />
+                    </svg>
+                    貼上
+                  </button>
+                  <button
+                    @click="loadVideo"
+                    :disabled="!videoUrl.trim()"
+                    :class="[
+                      'flex-1 px-4 py-2 rounded-lg transition-all flex items-center justify-center gap-2',
+                      videoUrl.trim()
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
+                        : 'bg-gray-600 text-gray-400 cursor-not-allowed',
+                    ]"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    載入影片
+                  </button>
+                </div>
+
+                <!-- 說明文字 -->
+                <div class="text-xs text-gray-500 text-center">
+                  <p>支援 YouTube 完整網址或 11 位影片 ID</p>
+                  <p>例如：https://youtube.com/watch?v=xxxxx 或 xxxxx</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI 設定頁籤內容 -->
+            <div v-else-if="currentTab === 'ai'" key="ai" class="p-6 space-y-6">
               <h3
                 class="text-white font-semibold text-center flex items-center justify-center gap-2"
               >
@@ -77,366 +362,124 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
-                播放速度
+                AI 助手設定
               </h3>
 
-              <!-- 速度滑桿 -->
-              <div class="flex items-center gap-4">
-                <button
-                  @click="decreaseSpeed"
-                  class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700/50 transition-all"
-                >
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M20 12H4"
-                    />
-                  </svg>
-                </button>
-
-                <div class="flex-1 relative">
-                  <input
-                    type="range"
-                    v-model="speed"
-                    @input="updateSpeed"
-                    min="0.25"
-                    max="2"
-                    step="0.25"
-                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-                  />
-                  <div class="flex justify-between mt-2">
-                    <span class="text-xs text-gray-500">0.25x</span>
-                    <span class="text-sm font-bold text-blue-400">{{ currentSpeed }}x</span>
-                    <span class="text-xs text-gray-500">2x</span>
-                  </div>
+              <!-- API Key 設定 -->
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <label class="text-sm font-medium text-gray-300">OpenRouter API Key</label>
+                  <a
+                    href="https://openrouter.ai/keys"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-xs text-blue-400 hover:text-blue-300 underline"
+                  >
+                    取得 API Key
+                  </a>
                 </div>
-
-                <button
-                  @click="increaseSpeed"
-                  class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700/50 transition-all"
-                >
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>
-                </button>
-              </div>
-
-              <!-- 快速選擇按鈕 -->
-              <div class="flex gap-2 justify-center">
-                <button
-                  v-for="preset in speedPresets"
-                  :key="preset"
-                  @click="setSpeed(preset)"
-                  :class="[
-                    'px-4 py-2 rounded-lg font-medium transition-all',
-                    speed == preset
-                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
-                      : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50 hover:text-white',
-                  ]"
-                >
-                  {{ preset === 1 ? '正常' : `${preset}x` }}
-                </button>
-              </div>
-            </div>
-
-            <!-- 時間控制 -->
-            <div class="space-y-4">
-              <h3
-                class="text-white font-semibold text-center flex items-center justify-center gap-2"
-              >
-                <svg
-                  class="w-5 h-5 text-green-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                時間控制
-              </h3>
-
-              <div class="flex items-center justify-center gap-3">
-                <button
-                  @click="rewind"
-                  :class="[
-                    'bg-gray-700/50 hover:bg-gray-600/50 text-white px-5 py-2 rounded-lg transition-all hover:scale-105 flex items-center gap-2',
-                    rewindClicked ? 'bg-orange-600/70 scale-110 ring-2 ring-orange-300' : '',
-                  ]"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z"
-                    />
-                  </svg>
-                  倒轉
-                </button>
-
-                <input
-                  v-model="seekSeconds"
-                  type="number"
-                  class="w-20 text-center bg-gray-700/50 border border-gray-600 rounded-lg py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-
-                <span class="text-gray-400">秒</span>
-
-                <button
-                  @click="forward"
-                  :class="[
-                    'bg-gray-700/50 hover:bg-gray-600/50 text-white px-5 py-2 rounded-lg transition-all hover:scale-105 flex items-center gap-2',
-                    forwardClicked ? 'bg-green-600/70 scale-110 ring-2 ring-green-300' : '',
-                  ]"
-                >
-                  快轉
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-            </div>
-
-            <!-- 載入影片頁籤內容 -->
-            <div v-else-if="currentTab === 'load'" key="load" class="p-6 space-y-6">
-              <h3 class="text-white font-semibold text-center flex items-center justify-center gap-2">
-                <svg
-                class="w-5 h-5 text-blue-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M7 4v16M17 4v16M3 8h4m10 0h4M3 16h4m10 0h4"
-                />
-              </svg>
-              載入 YouTube 影片
-            </h3>
-
-            <div class="space-y-4">
-              <!-- 輸入框 -->
-              <div class="space-y-2">
-                <label class="text-sm font-medium text-gray-300">YouTube 網址或影片 ID</label>
-                <div class="flex items-center gap-2">
+                <div class="relative">
                   <input
-                    v-model="videoUrl"
-                    type="text"
-                    placeholder="貼上 YouTube 影片網址或影片 ID..."
-                    class="flex-1 bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    @keyup.enter="loadVideo"
+                    v-model="localApiKey"
+                    :type="showApiKey ? 'text' : 'password'"
+                    placeholder="請輸入您的 OpenRouter API Key..."
+                    class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 pr-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    @input="clearError"
                   />
                   <button
-                    @click="clearVideoInput"
-                    class="text-gray-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-gray-700/50"
-                    title="清除"
+                    @click="showApiKey = !showApiKey"
+                    type="button"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
                   >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg
+                      v-if="showApiKey"
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
                       <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
                         stroke-width="2"
-                        d="M6 18L18 6M6 6l12 12"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
+                    </svg>
+                    <svg
+                      v-else
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
                       />
                     </svg>
                   </button>
                 </div>
+                <p class="text-xs text-gray-500">
+                  API Key 僅保存在您的瀏覽器中，不會發送到任何第三方伺服器
+                </p>
+              </div>
+
+              <!-- 錯誤訊息 -->
+              <div v-if="error" class="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+                <p class="text-red-400 text-sm">{{ error }}</p>
+              </div>
+
+              <!-- 成功訊息 -->
+              <div
+                v-if="aiConfig.isConfigured"
+                class="bg-green-500/10 border border-green-500/30 rounded-lg p-3"
+              >
+                <p class="text-green-400 text-sm flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  AI 助手已成功設定！
+                </p>
               </div>
 
               <!-- 操作按鈕 -->
               <div class="flex gap-2">
                 <button
-                  @click="pasteFromClipboard"
-                  class="flex-1 bg-gray-700/50 hover:bg-gray-600/50 text-white px-4 py-2 rounded-lg transition-all flex items-center justify-center gap-2"
+                  v-if="aiConfig.isConfigured"
+                  @click="resetAISettings"
+                  class="flex-1 bg-red-600/20 hover:bg-red-600/30 text-red-400 px-4 py-2 rounded-lg transition-all text-sm font-medium"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                    />
-                  </svg>
-                  貼上
+                  重置設定
                 </button>
                 <button
-                  @click="loadVideo"
-                  :disabled="!videoUrl.trim()"
+                  @click="saveAISettings"
+                  :disabled="isSavingAI || !localApiKey.trim()"
                   :class="[
-                    'flex-1 px-4 py-2 rounded-lg transition-all flex items-center justify-center gap-2',
-                    videoUrl.trim()
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
-                      : 'bg-gray-600 text-gray-400 cursor-not-allowed',
+                    'flex-1 px-4 py-2 rounded-lg transition-all text-sm font-medium',
+                    isSavingAI || !localApiKey.trim()
+                      ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white',
                   ]"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  載入影片
+                  {{ isSavingAI ? '驗證中...' : aiConfig.isConfigured ? '更新設定' : '儲存設定' }}
                 </button>
               </div>
-
-              <!-- 說明文字 -->
-              <div class="text-xs text-gray-500 text-center">
-                <p>支援 YouTube 完整網址或 11 位影片 ID</p>
-                <p>例如：https://youtube.com/watch?v=xxxxx 或 xxxxx</p>
-              </div>
-            </div>
-            </div>
-
-            <!-- AI 設定頁籤內容 -->
-            <div v-else-if="currentTab === 'ai'" key="ai" class="p-6 space-y-6">
-              <h3 class="text-white font-semibold text-center flex items-center justify-center gap-2">
-                <svg
-                class="w-5 h-5 text-purple-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
-              AI 助手設定
-            </h3>
-
-            <!-- API Key 設定 -->
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <label class="text-sm font-medium text-gray-300">OpenRouter API Key</label>
-                <a
-                  href="https://openrouter.ai/keys"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-xs text-blue-400 hover:text-blue-300 underline"
-                >
-                  取得 API Key
-                </a>
-              </div>
-              <div class="relative">
-                <input
-                  v-model="localApiKey"
-                  :type="showApiKey ? 'text' : 'password'"
-                  placeholder="請輸入您的 OpenRouter API Key..."
-                  class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 pr-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  @input="clearError"
-                />
-                <button
-                  @click="showApiKey = !showApiKey"
-                  type="button"
-                  class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
-                >
-                  <svg
-                    v-if="showApiKey"
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
-                  </svg>
-                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <p class="text-xs text-gray-500">
-                API Key 僅保存在您的瀏覽器中，不會發送到任何第三方伺服器
-              </p>
-            </div>
-
-            <!-- 錯誤訊息 -->
-            <div v-if="error" class="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
-              <p class="text-red-400 text-sm">{{ error }}</p>
-            </div>
-
-            <!-- 成功訊息 -->
-            <div
-              v-if="aiConfig.isConfigured"
-              class="bg-green-500/10 border border-green-500/30 rounded-lg p-3"
-            >
-              <p class="text-green-400 text-sm flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                AI 助手已成功設定！
-              </p>
-            </div>
-
-            <!-- 操作按鈕 -->
-            <div class="flex gap-2">
-              <button
-                v-if="aiConfig.isConfigured"
-                @click="resetAISettings"
-                class="flex-1 bg-red-600/20 hover:bg-red-600/30 text-red-400 px-4 py-2 rounded-lg transition-all text-sm font-medium"
-              >
-                重置設定
-              </button>
-              <button
-                @click="saveAISettings"
-                :disabled="isSavingAI || !localApiKey.trim()"
-                :class="[
-                  'flex-1 px-4 py-2 rounded-lg transition-all text-sm font-medium',
-                  isSavingAI || !localApiKey.trim()
-                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white',
-                ]"
-              >
-                {{ isSavingAI ? '驗證中...' : aiConfig.isConfigured ? '更新設定' : '儲存設定' }}
-              </button>
-            </div>
             </div>
           </Transition>
         </div>
@@ -549,7 +592,7 @@
             :class="[
               'flex-1 bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
               !aiConfig.canUseAI ? 'cursor-pointer hover:bg-gray-700/70' : '',
-              chat.isLoading ? 'opacity-50 cursor-not-allowed' : ''
+              chat.isLoading ? 'opacity-50 cursor-not-allowed' : '',
             ]"
           />
           <button
@@ -612,7 +655,15 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-const emit = defineEmits(['speed-changed', 'seeked', 'error', 'play-state-changed', 'video-loaded', 'input-focused', 'input-blurred'])
+const emit = defineEmits([
+  'speed-changed',
+  'seeked',
+  'error',
+  'play-state-changed',
+  'video-loaded',
+  'input-focused',
+  'input-blurred',
+])
 
 // Stores
 const aiConfig = useAIConfigStore()

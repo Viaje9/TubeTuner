@@ -1,6 +1,6 @@
 <template>
   <Transition name="fade">
-    <div 
+    <div
       v-if="visible"
       class="fixed top-5 right-5 bg-red-600 text-white py-2 px-4 rounded-lg shadow-lg z-50"
     >
@@ -20,19 +20,22 @@ const props = defineProps<{
 const visible = ref(false)
 let timer: ReturnType<typeof setTimeout> | null = null
 
-watch(() => props.message, (newMessage) => {
-  if (newMessage) {
-    visible.value = true
-    
-    if (timer) {
-      clearTimeout(timer)
+watch(
+  () => props.message,
+  (newMessage) => {
+    if (newMessage) {
+      visible.value = true
+
+      if (timer) {
+        clearTimeout(timer)
+      }
+
+      timer = setTimeout(() => {
+        visible.value = false
+      }, props.duration || 3000)
     }
-    
-    timer = setTimeout(() => {
-      visible.value = false
-    }, props.duration || 3000)
-  }
-})
+  },
+)
 </script>
 
 <style scoped>

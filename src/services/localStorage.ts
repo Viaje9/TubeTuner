@@ -23,7 +23,7 @@ interface AppSettings {
 const STORAGE_KEYS = {
   PLAYBACK_STATE: 'tubetuner_playback_state',
   APP_SETTINGS: 'tubetuner_app_settings',
-  CHAT_HISTORY: 'tubetuner_chat_history'
+  CHAT_HISTORY: 'tubetuner_chat_history',
 } as const
 
 export class LocalStorageService {
@@ -36,7 +36,7 @@ export class LocalStorageService {
       const newState: PlaybackState = {
         ...currentState,
         ...state,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
       }
       localStorage.setItem(STORAGE_KEYS.PLAYBACK_STATE, JSON.stringify(newState))
     } catch (error) {
@@ -56,7 +56,7 @@ export class LocalStorageService {
     } catch (error) {
       console.error('Failed to get playback state:', error)
     }
-    
+
     return {
       videoId: null,
       currentTime: 0,
@@ -64,7 +64,7 @@ export class LocalStorageService {
       isPaused: false,
       volume: 100,
       seekSeconds: 10,
-      lastUpdated: 0
+      lastUpdated: 0,
     }
   }
 
@@ -87,7 +87,7 @@ export class LocalStorageService {
       const currentSettings = this.getAppSettings()
       const newSettings = {
         ...currentSettings,
-        ...settings
+        ...settings,
       }
       localStorage.setItem(STORAGE_KEYS.APP_SETTINGS, JSON.stringify(newSettings))
     } catch (error) {
@@ -107,12 +107,12 @@ export class LocalStorageService {
     } catch (error) {
       console.error('Failed to get app settings:', error)
     }
-    
+
     return {
       aiApiKey: '',
       selectedModel: '',
       temperature: 0.7,
-      maxTokens: 4000
+      maxTokens: 4000,
     }
   }
 
@@ -123,9 +123,9 @@ export class LocalStorageService {
     try {
       const patterns = [
         /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
-        /^([a-zA-Z0-9_-]{11})$/
+        /^([a-zA-Z0-9_-]{11})$/,
       ]
-      
+
       for (const pattern of patterns) {
         const match = url.match(pattern)
         if (match) {
@@ -135,7 +135,7 @@ export class LocalStorageService {
     } catch (error) {
       console.error('Failed to extract video ID:', error)
     }
-    
+
     return null
   }
 

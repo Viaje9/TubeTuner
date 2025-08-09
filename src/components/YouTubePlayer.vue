@@ -10,7 +10,9 @@
       <div class="text-center">
         <div class="w-16 h-16 mx-auto relative mb-4">
           <div class="absolute inset-0 border-4 border-blue-500/30 rounded-full"></div>
-          <div class="absolute inset-0 border-4 border-transparent border-t-blue-500 rounded-full animate-spin"></div>
+          <div
+            class="absolute inset-0 border-4 border-transparent border-t-blue-500 rounded-full animate-spin"
+          ></div>
         </div>
         <h2 class="text-lg font-semibold text-white mb-2">正在載入上次觀看的影片</h2>
         <p class="text-gray-400 text-sm">請稍候...</p>
@@ -149,7 +151,7 @@ watch(
       hasVideo.value = false
     }
   },
-  { immediate: true }
+  { immediate: true },
 )
 
 // 監聽播放器就緒狀態，只在真正初始化時顯示載入遮罩
@@ -163,7 +165,7 @@ watch(
       showLoadingOverlay.value = false
     }
   },
-  { immediate: true }
+  { immediate: true },
 )
 
 onMounted(() => {
