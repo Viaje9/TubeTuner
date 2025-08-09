@@ -164,7 +164,7 @@
     </div>
 
     <!-- 底部固定輸入框 -->
-    <div class="fixed inset-x-0 bottom-0 z-40 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800 border-t border-gray-700/50">
+    <div class="app__footer sticky bottom-0 inset-x-0 z-40 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800 border-t border-gray-700/50">
       <div class="p-4">
         <div class="flex gap-3">
           <input
