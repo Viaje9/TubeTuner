@@ -199,7 +199,10 @@
     </Transition>
 
     <!-- 播放控制按鈕（左下角） -->
-    <div class="fixed bottom-32 left-6 z-40">
+    <div 
+      class="fixed left-6 z-40"
+      style="bottom: calc(8rem + var(--keyboard-height, 0px) - min(var(--keyboard-height, 0px), 2rem))"
+    >
       <button
         @click="togglePlayPause"
         class="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 transform shadow-lg hover:scale-110 active:scale-95 bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-blue-500/30"
