@@ -121,6 +121,7 @@
       :player="youtubePlayer"
       @speed-changed="handleSpeedChanged"
       @seeked="handleSeeked"
+      @play-state-changed="handlePlayStateChanged"
       @error="showError"
     />
   </div>
@@ -159,6 +160,10 @@ const handleSpeedChanged = (speed: number) => {
 
 const handleSeeked = (seconds: number) => {
   console.log('已跳轉:', seconds, '秒')
+}
+
+const handlePlayStateChanged = (isPlaying: boolean) => {
+  console.log('播放狀態已變更:', isPlaying ? '播放中' : '已暫停')
 }
 
 const loadVideo = () => {

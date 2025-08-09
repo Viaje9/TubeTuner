@@ -12,12 +12,13 @@ declare global {
 interface YTPlayerOptions {
   height: string
   width: string
-  videoId: string
+  videoId?: string
   playerVars: {
     playsinline: number
     rel: number
     modestbranding: number
     controls: number
+    autoplay?: number
   }
   events: {
     onReady: () => void
@@ -90,7 +91,7 @@ export function useYouTubePlayer() {
         'playsinline': 1,
         'rel': 0,
         'modestbranding': 1,
-        'controls': 1
+        'controls': 0
       },
       events: {
         'onReady': () => {
@@ -122,7 +123,7 @@ export function useYouTubePlayer() {
               'playsinline': 1,
               'rel': 0,
               'modestbranding': 1,
-              'controls': 1,
+              'controls': 0,
               'autoplay': 0  // 確保不自動播放
             },
             events: {

@@ -146,6 +146,23 @@
       ></div>
     </Transition>
 
+    <!-- 播放控制按鈕（左下角） -->
+    <div class="fixed bottom-28 left-6 z-40">
+      <button
+        @click="togglePlayPause"
+        class="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 transform shadow-lg hover:scale-110 active:scale-95 bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-blue-500/30"
+      >
+        <!-- 播放圖示 -->
+        <svg v-if="!isPlaying" class="w-7 h-7 ml-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+        </svg>
+        <!-- 暫停圖示 -->
+        <svg v-else class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M5.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75A.75.75 0 007.25 3h-1.5zM12.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75a.75.75 0 00-.75-.75h-1.5z" />
+        </svg>
+      </button>
+    </div>
+
     <!-- 底部固定輸入框 -->
     <div class="fixed inset-x-0 bottom-0 z-40 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800/95 backdrop-blur-lg border-t border-gray-700/50">
       <div class="p-4">
@@ -173,23 +190,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 interface Props {
   player: {
     setPlaybackRate?: (rate: number) => void
     getCurrentTime?: () => number
     seekTo?: (time: number, allowSeekAhead: boolean) => void
+    togglePlayPause?: () => void
+    isPlaying?: { value: boolean }
   }
 }
 
 const props = defineProps<Props>()
-const emit = defineEmits(['speed-changed', 'seeked', 'error'])
+const emit = defineEmits(['speed-changed', 'seeked', 'error', 'play-state-changed'])
 
 const isExpanded = ref(false)
 const speed = ref(1)
 const seekSeconds = ref(10)
 const speedPresets = [0.5, 1, 1.5, 2]
+const chatMessage = ref('')
+const isPlaying = ref(false)
+
+// 監聽播放狀態變化
+watch(() => props.player?.isPlaying?.value, (newValue) => {
+  if (newValue !== undefined) {
+    isPlaying.value = newValue
+  }
+}, { immediate: true })
 
 const currentSpeed = computed(() => speed.value.toFixed(2).replace(/\.00$/, ''))
 
@@ -242,6 +270,23 @@ const forward = () => {
     emit('seeked', seekSeconds.value)
   }
 }
+
+const togglePlayPause = () => {
+  if (props.player?.togglePlayPause) {
+    props.player.togglePlayPause()
+    emit('play-state-changed', !isPlaying.value)
+  } else {
+    emit('error', '播放器尚未準備好')
+  }
+}
+
+const sendMessage = () => {
+  if (chatMessage.value.trim()) {
+    console.log('發送訊息:', chatMessage.value)
+    chatMessage.value = ''
+  }
+}
+
 </script>
 
 <style scoped>
