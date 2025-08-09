@@ -1,34 +1,23 @@
 <template>
-  <div v-if="chat.conversationHistory.length > 0" class="w-full bg-gray-800/50 rounded-xl border border-gray-700/50 overflow-hidden">
-    <!-- 標題區域 -->
-    <div class="flex items-center justify-between p-4 bg-gray-800/70 border-b border-gray-700/50">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
-        </div>
-        <h3 class="text-lg font-semibold text-white">AI 對話</h3>
-        <span class="text-sm text-gray-400">({{ chat.conversationHistory.length }} 條訊息)</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="text-xs text-gray-500">{{ formatTokenCount(chat.totalTokensUsed) }} tokens</span>
-        <button
-          @click="clearHistory"
-          class="text-gray-400 hover:text-red-400 transition-colors p-2 rounded-lg hover:bg-gray-700/50"
-          title="清除對話記錄"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-        </button>
-      </div>
+  <div v-if="chat.conversationHistory.length > 0" class="w-full">
+    <!-- 頂部控制區 -->
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-xs text-gray-500">{{ formatTokenCount(chat.totalTokensUsed) }} tokens</span>
+      <button
+        @click="clearHistory"
+        class="text-gray-400 hover:text-red-400 transition-colors p-1"
+        title="清除對話記錄"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </button>
     </div>
 
     <!-- 對話區域 -->
     <div 
       ref="chatContainer"
-      class="max-h-96 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800"
+      class="max-h-96 overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent"
     >
       <div
         v-for="message in chat.conversationHistory"
@@ -51,10 +40,8 @@
               </span>
             </div>
           </div>
-          <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
+          <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="text-white text-sm font-medium">我</span>
           </div>
         </div>
 
@@ -63,12 +50,10 @@
           v-else
           class="flex items-start gap-3 max-w-[85%]"
         >
-          <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
+          <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+            <span class="text-white text-xs font-medium">AI</span>
           </div>
-          <div class="bg-gray-700/50 rounded-2xl rounded-bl-sm px-4 py-3 shadow-lg border border-gray-600/30">
+          <div class="bg-gray-700/50 rounded-2xl rounded-bl-sm px-4 py-3">
             <!-- 載入狀態 -->
             <div v-if="message.isLoading" class="flex items-center gap-2 text-gray-400">
               <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -100,20 +85,15 @@
                 <span class="text-xs text-gray-400">
                   {{ formatTime(message.timestamp) }}
                 </span>
-                <div class="flex items-center gap-2">
-                  <span v-if="message.tokens" class="text-xs text-gray-500">
-                    {{ message.tokens }} tokens
-                  </span>
-                  <button
-                    @click="copyMessage(message.content)"
-                    class="text-gray-400 hover:text-gray-300 transition-colors"
-                    title="複製訊息"
-                  >
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                  </button>
-                </div>
+                <button
+                  @click="copyMessage(message.content)"
+                  class="text-gray-400 hover:text-gray-300 transition-colors"
+                  title="複製訊息"
+                >
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
@@ -234,8 +214,8 @@ onMounted(() => {
   background-color: #6b7280;
 }
 
-.scrollbar-track-gray-800::-webkit-scrollbar-track {
-  background-color: #1f2937;
+.scrollbar-track-transparent::-webkit-scrollbar-track {
+  background-color: transparent;
 }
 
 /* Prose 樣式調整 */
