@@ -1,5 +1,5 @@
 <template>
-  <div class="app__content bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative">
+  <div class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-[100dvh] relative">
     <!-- 訊息提示框 -->
     <MessageBox :message="errorMessage" />
 

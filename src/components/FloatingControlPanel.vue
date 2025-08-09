@@ -5,7 +5,7 @@
       <button
         v-if="!isExpanded"
         @click="expand"
-        class="fixed bottom-28 right-6 z-50 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-2xl hover:shadow-purple-500/30 transition-all duration-300 hover:scale-110 px-6 py-4 font-bold text-lg"
+        class="fixed bottom-32 right-6 z-50 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-2xl hover:shadow-purple-500/30 transition-all duration-300 hover:scale-110 px-6 py-4 font-bold text-lg"
       >
         {{ currentSpeed }}x
       </button>
@@ -147,7 +147,7 @@
     </Transition>
 
     <!-- 播放控制按鈕（左下角） -->
-    <div class="fixed bottom-28 left-6 z-40">
+    <div class="fixed bottom-32 left-6 z-40">
       <button
         @click="togglePlayPause"
         class="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 transform shadow-lg hover:scale-110 active:scale-95 bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-blue-500/30"
@@ -164,7 +164,7 @@
     </div>
 
     <!-- 底部固定輸入框 -->
-    <div class="app__footer sticky bottom-0 inset-x-0 z-40 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800 border-t border-gray-700/50">
+    <div class="fixed inset-x-0 z-40 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800 border-t border-gray-700/50" style="bottom: var(--keyboard-height, 0px)">
       <div class="p-4">
         <div class="flex gap-3">
           <input
