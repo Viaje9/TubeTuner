@@ -32,31 +32,52 @@
 
       <!-- 輸入框（浮動在右上角） -->
       <Transition name="input-popup">
-        <div v-if="showLoadInput" class="fixed top-20 right-4 z-50 bg-gray-800 p-4 rounded-lg shadow-2xl border border-gray-700">
-          <div class="flex flex-col gap-2">
-            <div class="flex items-center gap-2">
-              <input
-                v-model="videoUrl"
-                type="text"
-                placeholder="貼上 YouTube 影片網址或影片 ID..."
-                class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 text-white w-64"
-                @keyup.enter="loadVideo"
-              >
-              <button
-                @click="showLoadInput = false"
-                class="text-gray-400 hover:text-white transition-colors"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+        <div v-if="showLoadInput">
+          <!-- 背景遮罩 -->
+          <div 
+            class="fixed inset-0 bg-black/60 z-40" 
+            @click="showLoadInput = false"
+          ></div>
+          
+          <!-- 彈窗內容 -->
+          <div class="fixed top-20 right-4 z-50 bg-gray-800 p-4 rounded-lg shadow-2xl border border-gray-700">
+            <div class="flex flex-col gap-2">
+              <div class="flex items-center gap-2">
+                <input
+                  v-model="videoUrl"
+                  type="text"
+                  placeholder="貼上 YouTube 影片網址或影片 ID..."
+                  class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 text-white w-64"
+                  @keyup.enter="loadVideo"
+                >
+                <button
+                  @click="clearInput"
+                  class="text-gray-400 hover:text-white transition-colors p-1"
+                  title="清除"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  @click="pasteFromClipboard"
+                  class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  貼上
+                </button>
+                <button
+                  @click="loadVideo"
+                  class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all flex-1"
+                >
+                  載入
+                </button>
+              </div>
             </div>
-            <button
-              @click="loadVideo"
-              class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all w-full"
-            >
-              載入
-            </button>
           </div>
         </div>
       </Transition>
@@ -156,6 +177,20 @@ const showError = (message: string) => {
   setTimeout(() => {
     errorMessage.value = message
   }, 150)
+}
+
+const clearInput = () => {
+  videoUrl.value = ''
+}
+
+const pasteFromClipboard = async () => {
+  try {
+    const text = await navigator.clipboard.readText()
+    videoUrl.value = text
+  } catch {
+    // 如果無法存取剪貼簿，顯示錯誤訊息
+    showError('無法存取剪貼簿，請手動貼上')
+  }
 }
 </script>
 
