@@ -32,6 +32,7 @@ interface YTPlayerStateChangeEvent {
 
 export interface YouTubePlayer {
   loadVideoById: (videoId: string) => void
+  cueVideoById: (videoId: string) => void
   playVideo: () => void
   pauseVideo: () => void
   stopVideo: () => void
@@ -108,7 +109,8 @@ export function useYouTubePlayer() {
     const videoId = extractVideoId(url)
     if (videoId) {
       if (player.value) {
-        player.value.loadVideoById(videoId)
+        // 使用 cueVideoById 載入影片但不自動播放
+        player.value.cueVideoById(videoId)
       } else {
         // 如果播放器還沒初始化，創建新的播放器並載入影片
         if (playerElement) {
@@ -120,11 +122,14 @@ export function useYouTubePlayer() {
               'playsinline': 1,
               'rel': 0,
               'modestbranding': 1,
-              'controls': 1
+              'controls': 1,
+              'autoplay': 0  // 確保不自動播放
             },
             events: {
               'onReady': () => {
                 isReady.value = true
+                // 載入後暫停，確保不自動播放
+                player.value?.pauseVideo()
               },
               'onStateChange': (event: YTPlayerStateChangeEvent) => {
                 console.log('YouTube 播放狀態變更:', event.data)
