@@ -7,12 +7,7 @@
         @click="expand"
         class="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-2xl hover:shadow-purple-500/30 transition-all duration-300 hover:scale-110 px-6 py-4 font-bold text-lg"
       >
-        <span class="flex items-center gap-2">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-          {{ currentSpeed }}x
-        </span>
+        {{ currentSpeed }}x
       </button>
     </Transition>
 
