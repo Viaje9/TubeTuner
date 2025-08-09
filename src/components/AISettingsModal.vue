@@ -1,6 +1,6 @@
 <template>
   <Transition name="modal">
-    <div v-if="show" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div v-if="show" class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4">
       <div class="bg-gray-800 rounded-xl shadow-2xl border border-gray-700 max-w-md w-full max-h-[90vh] overflow-y-auto">
         <!-- 標題列 -->
         <div class="flex items-center justify-between p-6 border-b border-gray-700">
