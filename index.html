@@ -54,12 +54,15 @@
         ['resize', 'scroll'].forEach(ev => vv.addEventListener(ev, apply));
         apply();
 
-        // 避免鍵盤彈出時的自動滾動跳動
-        let lastY = window.scrollY;
-        window.addEventListener('scroll', () => { lastY = window.scrollY; }, { passive: true });
-
-        document.addEventListener('focusin', () => {
-          setTimeout(() => window.scrollTo({ top: lastY, behavior: 'instant' }), 0);
+        // 輸入框獲取焦點時滾動到頂部
+        document.addEventListener('focusin', (e) => {
+          const target = e.target;
+          if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+            // 延遲執行以等待鍵盤完全彈出
+            setTimeout(() => {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 300);
+          }
         });
       })();
     </script>
