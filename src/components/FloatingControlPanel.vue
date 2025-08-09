@@ -15,7 +15,7 @@
     <Transition name="panel">
       <div
         v-if="isExpanded"
-        class="fixed inset-x-0 bottom-0 z-50 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800/95 backdrop-blur-lg border-t border-gray-700/50 rounded-t-3xl shadow-2xl"
+        class="fixed inset-x-0 bottom-0 z-50 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800 border-t border-gray-700/50 rounded-t-3xl shadow-2xl"
       >
         <!-- 拖曳手柄和關閉按鈕 -->
         <div class="flex items-center justify-between px-6 py-3 border-b border-gray-700/30">
@@ -142,7 +142,7 @@
       <div
         v-if="isExpanded"
         @click="collapse"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+        class="fixed inset-0 bg-black/0 z-40"
       ></div>
     </Transition>
 
@@ -164,7 +164,7 @@
     </div>
 
     <!-- 底部固定輸入框 -->
-    <div class="fixed inset-x-0 bottom-0 z-40 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800/95 backdrop-blur-lg border-t border-gray-700/50">
+    <div class="fixed inset-x-0 bottom-0 z-40 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800 border-t border-gray-700/50">
       <div class="p-4">
         <div class="flex gap-3">
           <input
