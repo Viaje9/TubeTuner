@@ -56,12 +56,11 @@
       </div>
       
       <!-- 播放器狀態指示器 -->
-      <div class="absolute top-4 right-4">
+      <div class="absolute top-2 right-2">
         <div 
           v-if="props.player?.isReady?.value"
-          class="px-3 py-1 rounded-full bg-green-500/20 border border-green-500/30 text-green-400 text-sm font-medium backdrop-blur-sm"
+          class="w-2 h-2 rounded-full bg-green-400"
         >
-          ● 就緒
         </div>
       </div>
     </div>
