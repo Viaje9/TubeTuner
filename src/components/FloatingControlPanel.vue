@@ -146,7 +146,10 @@
             <div class="flex items-center justify-center gap-3">
               <button
                 @click="rewind"
-                class="bg-gray-700/50 hover:bg-gray-600/50 text-white px-5 py-2 rounded-lg transition-all hover:scale-105 flex items-center gap-2"
+                :class="[
+                  'bg-gray-700/50 hover:bg-gray-600/50 text-white px-5 py-2 rounded-lg transition-all hover:scale-105 flex items-center gap-2',
+                  rewindClicked ? 'bg-orange-600/70 scale-110 ring-2 ring-orange-300' : ''
+                ]"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -169,7 +172,10 @@
 
               <button
                 @click="forward"
-                class="bg-gray-700/50 hover:bg-gray-600/50 text-white px-5 py-2 rounded-lg transition-all hover:scale-105 flex items-center gap-2"
+                :class="[
+                  'bg-gray-700/50 hover:bg-gray-600/50 text-white px-5 py-2 rounded-lg transition-all hover:scale-105 flex items-center gap-2',
+                  forwardClicked ? 'bg-green-600/70 scale-110 ring-2 ring-green-300' : ''
+                ]"
               >
                 快轉
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,25 +221,13 @@
 
     <!-- 快速跳躍按鈕（速度按鈕上方） -->
     <div class="fixed bottom-52 right-6 z-40 flex flex-col gap-3">
-      <!-- 快速後退按鈕 -->
-      <button
-        @click="rewind"
-        class="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 transform shadow-lg hover:scale-110 active:scale-95 bg-gradient-to-br from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white shadow-orange-500/30"
-      >
-        <div class="flex flex-col items-center">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z"
-            />
-          </svg>
-          <span class="text-xs font-bold">-{{ seekSeconds }}</span>
-        </div>
-      </button>
-
       <!-- 快速前進按鈕 -->
       <button
         @click="forward"
-        class="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 transform shadow-lg hover:scale-110 active:scale-95 bg-gradient-to-br from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white shadow-green-500/30"
+        :class="[
+          'w-16 h-16 rounded-full flex items-center justify-center transition-all duration-200 transform shadow-lg hover:scale-110 active:scale-95 bg-gradient-to-br from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white shadow-green-500/30',
+          forwardClicked ? 'animate-pulse scale-125 ring-4 ring-green-300 bg-gradient-to-br from-green-400 to-teal-500' : ''
+        ]"
       >
         <div class="flex flex-col items-center">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -242,6 +236,24 @@
             />
           </svg>
           <span class="text-xs font-bold">+{{ seekSeconds }}</span>
+        </div>
+      </button>
+
+      <!-- 快速後退按鈕 -->
+      <button
+        @click="rewind"
+        :class="[
+          'w-16 h-16 rounded-full flex items-center justify-center transition-all duration-200 transform shadow-lg hover:scale-110 active:scale-95 bg-gradient-to-br from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white shadow-orange-500/30',
+          rewindClicked ? 'animate-pulse scale-125 ring-4 ring-orange-300 bg-gradient-to-br from-orange-400 to-red-500' : ''
+        ]"
+      >
+        <div class="flex flex-col items-center">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z"
+            />
+          </svg>
+          <span class="text-xs font-bold">-{{ seekSeconds }}</span>
         </div>
       </button>
     </div>
@@ -351,19 +363,35 @@ const increaseSpeed = () => {
   }
 }
 
-const rewind = () => {
-  if (props.player?.getCurrentTime && props.player?.seekTo) {
-    const currentTime = props.player.getCurrentTime()
-    props.player.seekTo(Math.max(0, currentTime - seekSeconds.value), true)
-    emit('seeked', -seekSeconds.value)
-  }
-}
+// 點擊反饋狀態
+const forwardClicked = ref(false)
+const rewindClicked = ref(false)
 
 const forward = () => {
   if (props.player?.getCurrentTime && props.player?.seekTo) {
     const currentTime = props.player.getCurrentTime()
     props.player.seekTo(currentTime + seekSeconds.value, true)
     emit('seeked', seekSeconds.value)
+    
+    // 觸發點擊反饋動畫
+    forwardClicked.value = true
+    setTimeout(() => {
+      forwardClicked.value = false
+    }, 200)
+  }
+}
+
+const rewind = () => {
+  if (props.player?.getCurrentTime && props.player?.seekTo) {
+    const currentTime = props.player.getCurrentTime()
+    props.player.seekTo(Math.max(0, currentTime - seekSeconds.value), true)
+    emit('seeked', -seekSeconds.value)
+    
+    // 觸發點擊反饋動畫
+    rewindClicked.value = true
+    setTimeout(() => {
+      rewindClicked.value = false
+    }, 200)
   }
 }
 
