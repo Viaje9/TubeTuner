@@ -33,27 +33,29 @@
       <!-- 輸入框（浮動在右上角） -->
       <Transition name="input-popup">
         <div v-if="showLoadInput" class="fixed top-20 right-4 z-50 bg-gray-800 p-4 rounded-lg shadow-2xl border border-gray-700">
-          <div class="flex gap-2">
-            <input
-              v-model="videoUrl"
-              type="text"
-              placeholder="貼上 YouTube 影片網址或 ID..."
-              class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 text-white w-64"
-              @keyup.enter="loadVideo"
-            >
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center gap-2">
+              <input
+                v-model="videoUrl"
+                type="text"
+                placeholder="貼上 YouTube 影片網址或 ID..."
+                class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 text-white w-64"
+                @keyup.enter="loadVideo"
+              >
+              <button
+                @click="showLoadInput = false"
+                class="text-gray-400 hover:text-white transition-colors"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
             <button
               @click="loadVideo"
-              class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all"
+              class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all w-full"
             >
               載入
-            </button>
-            <button
-              @click="showLoadInput = false"
-              class="text-gray-400 hover:text-white transition-colors"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
             </button>
           </div>
         </div>
