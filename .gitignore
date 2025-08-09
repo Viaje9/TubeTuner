@@ -30,3 +30,6 @@ coverage
 *.tsbuildinfo
 
 screenshots/
+
+# Claude Code configuration
+.claude/
