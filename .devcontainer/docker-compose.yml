@@ -5,12 +5,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    volumes:
-      - ..:/workspace:cached
+      args:
+        TZ: ${TZ:-Asia/Taipei}
+        CLAUDE_CODE_VERSION: latest
+        GIT_DELTA_VERSION: 0.18.2
+        ZSH_IN_DOCKER_VERSION: 1.2.0
     working_dir: /workspace
     command: sleep infinity
     ports:
       - "5173:5173"
 
 volumes:
-  node_modules:
+  tubetuner_node_modules:
