@@ -2,6 +2,9 @@
   <div
     class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-[100dvh] relative"
   >
+    <!-- AI 設定模態框 -->
+    <AISettingsModal :show="showAISettings" @close="showAISettings = false" />
+    
     <!-- 訊息提示框 -->
     <MessageBox :message="errorMessage" />
 
@@ -25,21 +28,34 @@
           >
             TubeTuner
           </h1>
-          <!-- 精簡的載入按鈕 -->
-          <button
-            @click="showLoadInput = !showLoadInput"
-            class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-75 flex items-center gap-2 active:scale-95 active:bg-purple-700"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M7 4v16M17 4v16M3 8h4m10 0h4M3 16h4m10 0h4"
-              />
-            </svg>
-            載入影片
-          </button>
+          <div class="flex items-center gap-3">
+            <!-- AI 助手設定按鈕 -->
+            <button
+              @click="showAISettings = true"
+              class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-2 rounded-lg hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-75 active:scale-95 flex items-center gap-2"
+              :title="aiConfig.canUseAI ? 'AI 助手設定' : '設定 AI 助手'"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <span v-if="!aiConfig.canUseAI" class="w-2 h-2 bg-orange-400 rounded-full"></span>
+            </button>
+            <!-- 精簡的載入按鈕 -->
+            <button
+              @click="showLoadInput = !showLoadInput"
+              class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-75 flex items-center gap-2 active:scale-95 active:bg-purple-700"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 4v16M17 4v16M3 8h4m10 0h4M3 16h4m10 0h4"
+                />
+              </svg>
+              載入影片
+            </button>
+          </div>
         </div>
       </Transition>
 
@@ -132,18 +148,23 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useYouTubePlayer } from '@/composables/useYouTubePlayer'
+import { useAIConfigStore } from '@/stores/aiConfig'
 import YouTubePlayer from '@/components/YouTubePlayer.vue'
 import FloatingControlPanel from '@/components/FloatingControlPanel.vue'
 import MessageBox from '@/components/MessageBox.vue'
+import AISettingsModal from '@/components/AISettingsModal.vue'
 
 const youtubePlayer = useYouTubePlayer()
+const aiConfig = useAIConfigStore()
 const errorMessage = ref('')
 const hasVideoLoaded = ref(false)
 const showLoadInput = ref(false)
+const showAISettings = ref(false)
 const videoUrl = ref('https://www.youtube.com/watch?v=6XIPkMFZf-0')
 
 onMounted(async () => {
   await youtubePlayer.initPlayer('youtube-player')
+  aiConfig.loadFromStorage()
 })
 
 const handlePlayerReady = () => {
