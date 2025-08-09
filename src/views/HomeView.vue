@@ -2,7 +2,6 @@
   <div
     class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-[100dvh] relative"
   >
-    
     <!-- 訊息提示框 -->
     <MessageBox :message="errorMessage" />
 
@@ -52,10 +51,9 @@
         </div>
       </Transition>
 
-
       <div class="max-w-7xl mx-auto flex-1">
         <!-- YouTube 播放器區域（全寬） -->
-        <div :class="hasVideoLoaded ? 'w-full' : 'max-w-4xl mx-auto'">
+        <div :class="hasVideoLoaded ? 'w-full sticky top-0' : 'max-w-4xl mx-auto'">
           <YouTubePlayer
             :player="youtubePlayer"
             @player-ready="handlePlayerReady"
@@ -128,7 +126,6 @@ const handleSeeked = (seconds: number) => {
 const handlePlayStateChanged = (isPlaying: boolean) => {
   console.log('播放狀態已變更:', isPlaying ? '播放中' : '已暫停')
 }
-
 
 const showError = (message: string) => {
   errorMessage.value = message

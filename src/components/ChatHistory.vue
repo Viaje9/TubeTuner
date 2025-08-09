@@ -2,32 +2,44 @@
   <div v-if="chat.conversationHistory.length > 0" class="w-full">
     <!-- 自訂確認對話框 -->
     <Teleport to="body">
-      <div 
-        v-if="showConfirmDialog" 
+      <div
+        v-if="showConfirmDialog"
         class="fixed inset-0 z-50 flex items-center justify-center p-4"
         @click.self="showConfirmDialog = false"
       >
         <!-- 背景遮罩 -->
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
-        
+
         <!-- 對話框 -->
-        <div class="relative bg-gray-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-gray-700/50 animate-in">
+        <div
+          class="relative bg-gray-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-gray-700/50 animate-in"
+        >
           <div class="text-center">
             <!-- 圖示 -->
-            <div class="mx-auto w-12 h-12 bg-red-900/20 rounded-full flex items-center justify-center mb-4">
-              <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <div
+              class="mx-auto w-12 h-12 bg-red-900/20 rounded-full flex items-center justify-center mb-4"
+            >
+              <svg
+                class="w-6 h-6 text-red-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
               </svg>
             </div>
-            
+
             <!-- 標題 -->
             <h3 class="text-lg font-semibold text-white mb-2">清除對話記錄</h3>
-            
+
             <!-- 說明 -->
-            <p class="text-sm text-gray-400 mb-6">
-              確定要清除所有 AI 對話記錄嗎？此操作無法復原。
-            </p>
-            
+            <p class="text-sm text-gray-400 mb-6">確定要清除所有 AI 對話記錄嗎？此操作無法復原。</p>
+
             <!-- 按鈕 -->
             <div class="flex gap-3">
               <button
@@ -49,37 +61,40 @@
     </Teleport>
     <!-- 頂部控制區 -->
     <div class="flex items-center justify-between mb-3">
-      <span class="text-xs text-gray-400 font-mono">{{ formatTokenCount(chat.totalTokensUsed) }} tokens</span>
+      <span class="text-xs text-gray-400 font-mono"
+        >{{ formatTokenCount(chat.totalTokensUsed) }} tokens</span
+      >
       <button
         @click="showConfirmDialog = true"
         class="text-gray-400 hover:text-red-400 transition-colors p-1"
         title="清除對話記錄"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+          />
         </svg>
       </button>
     </div>
 
     <!-- 對話區域 -->
-    <div 
+    <div
       ref="chatContainer"
-      class="max-h-96 overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent"
+      class="space-y-3 pr-2 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent"
     >
       <div
-        v-for="message in chat.conversationHistory"
+        v-for="message in [...chat.conversationHistory].reverse()"
         :key="message.id"
-        :class="[
-          'flex gap-3',
-          message.role === 'user' ? 'justify-end' : 'justify-start'
-        ]"
+        :class="['flex gap-3', message.role === 'user' ? 'justify-end' : 'justify-start']"
       >
         <!-- 使用者訊息 -->
-        <div
-          v-if="message.role === 'user'"
-          class="flex items-start gap-3 max-w-[80%]"
-        >
-          <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl rounded-br-sm px-4 py-3 shadow-lg">
+        <div v-if="message.role === 'user'" class="flex items-start gap-3 max-w-[80%]">
+          <div
+            class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl rounded-br-sm px-4 py-3 shadow-lg"
+          >
             <p class="text-white text-sm leading-relaxed">{{ message.content }}</p>
             <div class="flex items-center justify-end gap-2 mt-2">
               <span class="text-xs text-blue-200 opacity-70">
@@ -87,25 +102,37 @@
               </span>
             </div>
           </div>
-          <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+          <div
+            class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0"
+          >
             <span class="text-white text-sm font-medium">我</span>
           </div>
         </div>
 
         <!-- AI 訊息 -->
-        <div
-          v-else
-          class="flex items-start gap-3 max-w-[85%]"
-        >
-          <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+        <div v-else class="flex items-start gap-3 max-w-[85%]">
+          <div
+            class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1"
+          >
             <span class="text-white text-xs font-medium">AI</span>
           </div>
           <div class="bg-gray-700/50 rounded-2xl rounded-bl-sm px-4 py-3">
             <!-- 載入狀態 -->
             <div v-if="message.isLoading" class="flex items-center gap-2 text-gray-400">
               <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
               <span class="text-sm">AI 正在思考...</span>
             </div>
@@ -124,7 +151,7 @@
             </div>
             <!-- 正常內容 -->
             <div v-else>
-              <div 
+              <div
                 class="text-gray-100 text-sm leading-relaxed prose prose-invert prose-sm max-w-none"
                 v-html="renderMarkdown(message.content)"
               ></div>
@@ -138,7 +165,12 @@
                   title="複製訊息"
                 >
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
                   </svg>
                 </button>
               </div>
@@ -167,16 +199,16 @@ const formatTime = (timestamp: Date): string => {
   const now = new Date()
   const diff = now.getTime() - timestamp.getTime()
   const minutes = Math.floor(diff / 60000)
-  
+
   if (minutes < 1) return '剛剛'
   if (minutes < 60) return `${minutes} 分鐘前`
   if (minutes < 1440) return `${Math.floor(minutes / 60)} 小時前`
-  
+
   return timestamp.toLocaleDateString('zh-TW', {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   })
 }
 
@@ -188,21 +220,21 @@ const formatTokenCount = (count: number): string => {
   return count.toString()
 }
 
-// 滾動到底部
-const scrollToBottom = () => {
+// 滾動到頂部（顯示最新訊息）
+const scrollToTop = () => {
   nextTick(() => {
     if (chatContainer.value) {
-      chatContainer.value.scrollTop = chatContainer.value.scrollHeight
+      chatContainer.value.scrollTop = 0
     }
   })
 }
 
-// 監聽訊息變化，自動滾動到底部
+// 監聽訊息變化，自動滾動到頂部
 watch(
   () => chat.conversationHistory.length,
   () => {
-    scrollToBottom()
-  }
+    scrollToTop()
+  },
 )
 
 // 監聽載入狀態變化
@@ -210,9 +242,9 @@ watch(
   () => chat.isLoading,
   (isLoading) => {
     if (isLoading) {
-      scrollToBottom()
+      scrollToTop()
     }
-  }
+  },
 )
 
 // 確認清除對話記錄
@@ -240,9 +272,9 @@ const copyMessage = async (content: string) => {
   }
 }
 
-// 初始化時滾動到底部
+// 初始化時滾動到頂部
 onMounted(() => {
-  scrollToBottom()
+  scrollToTop()
 })
 </script>
 
