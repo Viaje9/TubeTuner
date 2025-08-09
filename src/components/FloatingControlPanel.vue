@@ -9,26 +9,35 @@
         <!-- 頂部標籤列 -->
         <div class="flex items-center justify-between px-6 py-3 border-b border-gray-700/30">
           <!-- 標籤切換 -->
-          <div class="flex justify-center gap-1">
+          <div class="flex gap-1">
             <button
               v-for="tab in tabs"
               :key="tab.id"
               @click="currentTab = tab.id"
               :class="[
-                'px-4 py-2 rounded-md text-sm font-medium transition-all',
+                'px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 whitespace-nowrap',
                 currentTab === tab.id
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-700/30',
+                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
+                  : 'text-gray-400 hover:text-white hover:bg-gray-700/50',
               ]"
             >
-              <div class="flex items-center gap-2">
-                <component :is="tab.icon" class="w-4 h-4" />
-                {{ tab.name }}
-                <span
-                  v-if="tab.id === 'ai' && !aiConfig.canUseAI"
-                  class="w-2 h-2 bg-orange-400 rounded-full"
-                ></span>
-              </div>
+              <!-- 控制頁籤圖示 -->
+              <svg v-if="tab.id === 'control'" class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"/>
+              </svg>
+              <!-- 載入影片頁籤圖示 -->
+              <svg v-else-if="tab.id === 'load'" class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              </svg>
+              <!-- AI 設定頁籤圖示 -->
+              <svg v-else-if="tab.id === 'ai'" class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <span class="text-xs">{{ tab.name }}</span>
+              <span
+                v-if="tab.id === 'ai' && !aiConfig.canUseAI"
+                class="w-2 h-2 bg-orange-400 rounded-full flex-shrink-0"
+              ></span>
             </button>
           </div>
 
@@ -609,17 +618,17 @@ const tabs = [
   {
     id: 'control',
     name: '控制',
-    icon: 'svg',
+    icon: 'control-icon',
   },
   {
     id: 'load',
     name: '載入影片',
-    icon: 'svg',
+    icon: 'video-icon',
   },
   {
     id: 'ai',
     name: 'AI 設定',
-    icon: 'svg',
+    icon: 'ai-icon',
   },
 ]
 

@@ -45,7 +45,6 @@
                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
               />
             </svg>
-            控制
             <span v-if="!aiConfig.canUseAI" class="w-2 h-2 bg-orange-400 rounded-full"></span>
           </button>
         </div>
@@ -89,7 +88,6 @@
 import { ref, onMounted, watch } from 'vue'
 import { useYouTubePlayer } from '@/composables/useYouTubePlayer'
 import { useAIConfigStore } from '@/stores/aiConfig'
-import { LocalStorageService } from '@/services/localStorage'
 import YouTubePlayer from '@/components/YouTubePlayer.vue'
 import FloatingControlPanel from '@/components/FloatingControlPanel.vue'
 import MessageBox from '@/components/MessageBox.vue'
