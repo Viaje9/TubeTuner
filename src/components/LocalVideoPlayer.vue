@@ -58,7 +58,7 @@
         <!-- 載入提示 -->
         <div
           v-if="showLoadingOverlay || showIndexedDBLoading"
-          class="absolute inset-0 flex items-center justify-center bg-gray-900/80 backdrop-blur-sm"
+          class="absolute inset-0 flex items-center justify-center bg-gray-900/80 backdrop-blur-sm z-10"
         >
           <div class="text-center space-y-3">
             <!-- 載入動畫 -->
@@ -137,8 +137,11 @@ const {
 
 const hasVideo = ref(false)
 
+const isManualLoading = ref(false)
+
 const handleVideoLoaded = async (file: File) => {
   try {
+    isManualLoading.value = true // 標記為手動載入
     showLoadingOverlay.value = true
     loadingMessage.value = '載入影片...'
 
@@ -154,16 +157,6 @@ const handleVideoLoaded = async (file: File) => {
     // 載入影片檔案
     const success = await loadVideoFile(file)
     if (success) {
-      // 顯示背景儲存提示，但不阻塞播放
-      showIndexedDBLoading.value = true
-      loadingMessage.value = '儲存中...'
-
-      // 短暫顯示儲存提示後隱藏
-      setTimeout(() => {
-        showIndexedDBLoading.value = false
-        loadingMessage.value = ''
-      }, 1500)
-
       emit('videoLoaded', file)
     } else {
       hasVideo.value = false // 如果載入失敗，重置狀態
@@ -177,7 +170,21 @@ const handleVideoLoaded = async (file: File) => {
     emit('error', error instanceof Error ? error.message : '載入影片失敗')
   } finally {
     showLoadingOverlay.value = false
-    // 正常情況下，IndexedDB 載入狀態由 setTimeout 控制
+
+    // 如果成功載入，顯示儲存提示
+    if (hasVideo.value) {
+      showIndexedDBLoading.value = true
+      loadingMessage.value = '儲存中...'
+
+      // 短暫顯示儲存提示後隱藏
+      setTimeout(() => {
+        showIndexedDBLoading.value = false
+        loadingMessage.value = ''
+        isManualLoading.value = false // 重置手動載入標記
+      }, 1500)
+    } else {
+      isManualLoading.value = false // 失敗時也要重置
+    }
   }
 }
 
@@ -342,8 +349,8 @@ const autoRestoreVideo = async () => {
 watch(
   hasVideo,
   async (newValue, oldValue) => {
-    // 只有從 false 變成 true 且沒有影片檔案時，才執行自動恢復
-    if (newValue && !oldValue && !localPlayer.videoFile.value) {
+    // 只有從 false 變成 true 且沒有影片檔案且不是手動載入時，才執行自動恢復
+    if (newValue && !oldValue && !localPlayer.videoFile.value && !isManualLoading.value) {
       await autoRestoreVideo()
     }
   },
