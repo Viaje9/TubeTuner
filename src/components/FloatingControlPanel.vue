@@ -36,21 +36,6 @@
                   d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"
                 />
               </svg>
-              <!-- 載入影片頁籤圖示 -->
-              <svg
-                v-else-if="tab.id === 'load'"
-                class="w-4 h-4 flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                />
-              </svg>
               <span class="text-xs">{{ tab.name }}</span>
             </button>
           </div>
@@ -231,102 +216,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- 載入影片頁籤內容 -->
-            <div v-else-if="currentTab === 'load'" key="load" class="p-6 space-y-6">
-              <h3
-                class="text-white font-semibold text-center flex items-center justify-center gap-2"
-              >
-                <svg
-                  class="w-5 h-5 text-blue-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M7 4v16M17 4v16M3 8h4m10 0h4M3 16h4m10 0h4"
-                  />
-                </svg>
-                載入 YouTube 影片
-              </h3>
-
-              <div class="space-y-4">
-                <!-- 輸入框 -->
-                <div class="space-y-2">
-                  <label class="text-sm font-medium text-gray-300">YouTube 網址或影片 ID</label>
-                  <div class="flex items-center gap-2">
-                    <input
-                      v-model="videoUrl"
-                      type="text"
-                      placeholder="貼上 YouTube 影片網址或影片 ID..."
-                      class="flex-1 bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      @keyup.enter="loadVideo"
-                    />
-                    <button
-                      @click="clearVideoInput"
-                      class="text-gray-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-gray-700/50"
-                      title="清除"
-                    >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- 操作按鈕 -->
-                <div class="flex gap-2">
-                  <button
-                    @click="pasteFromClipboard"
-                    class="flex-1 bg-gray-700/50 hover:bg-gray-600/50 text-white px-4 py-2 rounded-lg transition-all flex items-center justify-center gap-2"
-                  >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                      />
-                    </svg>
-                    貼上
-                  </button>
-                  <button
-                    @click="loadVideo"
-                    :disabled="!videoUrl.trim()"
-                    :class="[
-                      'flex-1 px-4 py-2 rounded-lg transition-all flex items-center justify-center gap-2',
-                      videoUrl.trim()
-                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
-                        : 'bg-gray-600 text-gray-400 cursor-not-allowed',
-                    ]"
-                  >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    載入影片
-                  </button>
-                </div>
-
-                <!-- 說明文字 -->
-                <div class="text-xs text-gray-500 text-center">
-                  <p>支援 YouTube 完整網址或 11 位影片 ID</p>
-                  <p>例如：https://youtube.com/watch?v=xxxxx 或 xxxxx</p>
-                </div>
-              </div>
-            </div>
           </Transition>
         </div>
       </div>
@@ -495,7 +384,6 @@ interface Props {
     getCurrentTime?: () => number
     seekTo?: (time: number, allowSeekAhead: boolean) => void
     togglePlayPause?: () => void
-    loadVideo?: (url: string) => boolean
     isPlaying?: { value: boolean }
     currentVideoId?: { value: string }
   }
@@ -525,11 +413,6 @@ const tabs = [
     name: '控制',
     icon: 'control-icon',
   },
-  {
-    id: 'load',
-    name: '載入影片',
-    icon: 'video-icon',
-  },
 ]
 
 // 狀態
@@ -544,7 +427,6 @@ const chatMessage = ref('')
 const isPlaying = ref(false)
 
 // 載入影片相關狀態
-const videoUrl = ref('https://www.youtube.com/watch?v=6XIPkMFZf-0')
 
 // 點擊反饋狀態
 const forwardClicked = ref(false)
@@ -731,51 +613,6 @@ const sendChatMessage = async () => {
     await chat.sendMessage(message)
   } catch (error) {
     console.error('發送訊息失敗:', error)
-  }
-}
-
-// 載入影片功能
-const loadVideo = () => {
-  if (!videoUrl.value.trim()) {
-    emit('error', '請輸入 YouTube 影片網址或 ID')
-    return
-  }
-
-  // 從 URL 提取影片 ID 或直接使用 ID
-  const videoId = extractVideoId(videoUrl.value)
-  if (videoId && props.player?.loadVideo) {
-    const success = props.player.loadVideo(videoUrl.value)
-    if (success) {
-      emit('video-loaded', videoId)
-      collapse() // 載入成功後關閉面板
-    }
-  } else {
-    emit('error', '無法識別的 YouTube 網址')
-  }
-}
-
-const extractVideoId = (urlOrId: string): string | null => {
-  // 如果是純 ID（11 個字符）
-  if (/^[a-zA-Z0-9_-]{11}$/.test(urlOrId)) {
-    return urlOrId
-  }
-
-  // 從 URL 提取 ID
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
-  const match = urlOrId.match(regExp)
-  return match && match[2].length === 11 ? match[2] : null
-}
-
-const clearVideoInput = () => {
-  videoUrl.value = ''
-}
-
-const pasteFromClipboard = async () => {
-  try {
-    const text = await navigator.clipboard.readText()
-    videoUrl.value = text
-  } catch {
-    emit('error', '無法存取剪貼簿，請手動貼上')
   }
 }
 

@@ -7,57 +7,57 @@
 
     <div class="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
       <!-- 標題區域 -->
-      <div class="text-center mb-6">
-        <h1
-          class="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-3"
-        >
-          搜尋影片
-        </h1>
-        <p class="text-sm sm:text-base md:text-lg text-gray-300 break-words px-2">
-          搜尋並載入 YouTube 影片
-        </p>
-        <div
-          class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"
-        ></div>
-      </div>
+      <div class="flex items-center justify-between mb-4 sm:mb-6">
+        <div class="flex flex-col">
+          <h1
+            class="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent break-words"
+          >
+            TubeTuner
+          </h1>
+          <p class="text-sm sm:text-base text-gray-300 break-words">搜尋 YouTube 影片</p>
+        </div>
+        <!-- 控制按鈕群組 -->
+        <div class="flex items-center gap-3">
+          <button
+            @click="goToHome"
+            class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-3 sm:px-4 sm:py-3 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-75 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] min-w-[44px] whitespace-nowrap"
+            title="播放器"
+          >
+            <svg
+              class="w-5 h-5 sm:w-6 sm:h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m0 0V11a1 1 0 011-1h2a1 1 0 011 1v10m0 0h3a1 1 0 001-1V10m-11 10h3m-3 0v-3"
+              />
+            </svg>
+          </button>
 
-      <!-- 導航按鈕 -->
-      <div class="mb-6 flex justify-center gap-3 sm:gap-4">
-        <button
-          @click="goToMenu"
-          class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95 touch-manipulation text-sm sm:text-base font-medium whitespace-nowrap"
-        >
-          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-          返回選單
-        </button>
-
-        <button
-          @click="goToHome"
-          class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95 touch-manipulation text-sm sm:text-base font-medium whitespace-nowrap"
-        >
-          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
-            />
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M8 5v6l3-2 3 2V5"
-            />
-          </svg>
-          播放器
-        </button>
+          <button
+            @click="goToMenu"
+            class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-3 py-3 sm:px-4 sm:py-3 rounded-lg hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] min-w-[44px] whitespace-nowrap"
+            title="功能選單"
+          >
+            <svg
+              class="w-5 h-5 sm:w-6 sm:h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <!-- 搜尋區域 -->
