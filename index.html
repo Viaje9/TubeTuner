@@ -28,7 +28,7 @@
         background-color: #111827;
         height: var(--vvh);
         overflow-x: hidden;
-        /* 防止雙擊縮放和滑動 */
+        /* 防止雙擊縮放和滑動，但允許字幕文字選取 */
         touch-action: manipulation;
         -webkit-text-size-adjust: 100%;
       }
@@ -86,25 +86,39 @@
           }
         })
 
-        // 防止 iOS 雙擊導致的意外滑動
+        // 防止 iOS 雙擊導致的意外滑動（但允許字幕選取）
         let lastTouchEnd = 0
         document.addEventListener(
           'touchend',
           (e) => {
-            const now = Date.now()
-            if (now - lastTouchEnd <= 300) {
-              e.preventDefault()
+            // 檢查是否是字幕元素或其子元素
+            const isSubtitleElement = e.target.closest('[class*="subtitle"]') || 
+                                     e.target.closest('.select-text') ||
+                                     e.target.hasAttribute('data-subtitle-text')
+            
+            // 如果不是字幕元素，才執行防雙擊邏輯
+            if (!isSubtitleElement) {
+              const now = Date.now()
+              if (now - lastTouchEnd <= 300) {
+                e.preventDefault()
+              }
+              lastTouchEnd = now
             }
-            lastTouchEnd = now
           },
           { passive: false },
         )
 
-        // 防止多指觸控縮放
+        // 防止多指觸控縮放（但允許字幕選取）
         document.addEventListener(
           'touchstart',
           (e) => {
-            if (e.touches.length > 1) {
+            // 檢查是否是字幕元素或其子元素
+            const isSubtitleElement = e.target.closest('[class*="subtitle"]') || 
+                                     e.target.closest('.select-text') ||
+                                     e.target.hasAttribute('data-subtitle-text')
+            
+            // 如果不是字幕元素且是多指觸控，才阻止
+            if (!isSubtitleElement && e.touches.length > 1) {
               e.preventDefault()
             }
           },

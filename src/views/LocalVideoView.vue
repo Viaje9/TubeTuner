@@ -121,11 +121,6 @@
             @error="showError"
           />
         </div>
-
-        <!-- AI 聊天記錄區域 -->
-        <div v-if="hasVideoLoaded" class="mt-4 sm:mt-6 mb-24 sm:mb-32">
-          <ChatHistory />
-        </div>
       </div>
     </div>
 
@@ -153,7 +148,6 @@ import { useAIConfigStore } from '@/stores/aiConfig'
 import LocalVideoPlayer from '@/components/LocalVideoPlayer.vue'
 import FloatingControlPanel from '@/components/FloatingControlPanel.vue'
 import MessageBox from '@/components/MessageBox.vue'
-import ChatHistory from '@/components/ChatHistory.vue'
 
 // 時間格式化工具函數
 const formatTime = (seconds: number): string => {

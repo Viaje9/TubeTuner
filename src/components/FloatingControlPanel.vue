@@ -301,81 +301,13 @@
           </button>
         </div>
       </div>
-
-      <div class="p-4">
-        <!-- AI 未設定時的提示 -->
-        <div v-if="!aiConfig.canUseAI" class="text-center text-gray-500 text-sm mb-3">
-          設定完成後即可開始與 AI 對話
-        </div>
-
-        <div class="flex gap-3">
-          <input
-            v-model="chatMessage"
-            @keydown="handleKeydown"
-            @compositionstart="handleCompositionStart"
-            @compositionend="handleCompositionEnd"
-            @focus="handleInputFocus"
-            @blur="handleInputBlur"
-            @click="handleInputClick"
-            :disabled="chat.isLoading"
-            :readonly="!aiConfig.canUseAI"
-            type="text"
-            :placeholder="
-              aiConfig.canUseAI ? '向 AI 詢問影片相關問題 (Ctrl+Enter 送出)...' : '點擊設定 AI 助手'
-            "
-            data-dialog-input="true"
-            :class="[
-              'flex-1 bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-              !aiConfig.canUseAI ? 'cursor-pointer hover:bg-gray-700/70' : '',
-              chat.isLoading ? 'opacity-50 cursor-not-allowed' : '',
-            ]"
-          />
-          <button
-            @click="sendChatMessage"
-            :disabled="!aiConfig.canUseAI || chat.isLoading || !chatMessage.trim()"
-            :class="[
-              'px-6 py-3 rounded-lg transition-all flex items-center gap-2',
-              !aiConfig.canUseAI || chat.isLoading || !chatMessage.trim()
-                ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:scale-105',
-            ]"
-          >
-            <svg v-if="chat.isLoading" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-              ></circle>
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-            <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-              />
-            </svg>
-            {{ chat.isLoading ? '發送中' : '發送' }}
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAIConfigStore } from '@/stores/aiConfig'
-import { useChatStore } from '@/stores/chat'
 import { LocalStorageService } from '@/services/localStorage'
 
 interface Props {
@@ -390,20 +322,10 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-const emit = defineEmits([
-  'speed-changed',
-  'seeked',
-  'error',
-  'play-state-changed',
-  'video-loaded',
-  'input-focused',
-  'input-blurred',
-])
+const emit = defineEmits(['speed-changed', 'seeked', 'error', 'play-state-changed', 'video-loaded'])
 
 // Stores
-const router = useRouter()
 const aiConfig = useAIConfigStore()
-const chat = useChatStore()
 
 // 頁籤系統
 const currentTab = ref('control')
@@ -423,7 +345,6 @@ const savedState = LocalStorageService.getPlaybackState()
 const speed = ref(savedState.playbackRate || 1)
 const seekSeconds = ref(savedState.seekSeconds || 10)
 const speedPresets = [0.5, 1, 1.5, 2]
-const chatMessage = ref('')
 const isPlaying = ref(false)
 
 // 載入影片相關狀態
@@ -438,20 +359,9 @@ const currentSpeed = computed(() => {
   return formatted.replace(/\.0$/, '')
 })
 
-// 更新 YouTube 上下文
-const updateYouTubeContext = () => {
-  if (props.player?.getCurrentTime) {
-    chat.setYouTubeContext({
-      currentTime: props.player.getCurrentTime(),
-      playbackRate: speed.value,
-    })
-  }
-}
-
 // 初始化
 onMounted(() => {
   aiConfig.loadFromStorage()
-  updateYouTubeContext()
 })
 
 // 監聽播放狀態變化
@@ -460,7 +370,6 @@ watch(
   (newValue) => {
     if (newValue !== undefined) {
       isPlaying.value = newValue
-      updateYouTubeContext()
     }
   },
   { immediate: true },
@@ -469,9 +378,7 @@ watch(
 // 監聽影片變化
 watch(
   () => props.player?.currentVideoId?.value,
-  () => {
-    updateYouTubeContext()
-  },
+  () => {},
 )
 
 // 監聽 seekSeconds 變化並保存
@@ -493,7 +400,6 @@ const updateSpeed = () => {
   if (props.player?.setPlaybackRate) {
     props.player.setPlaybackRate(speed.value)
     emit('speed-changed', speed.value)
-    updateYouTubeContext()
   }
 }
 
@@ -521,7 +427,6 @@ const forward = () => {
     const currentTime = props.player.getCurrentTime()
     props.player.seekTo(currentTime + seekSeconds.value, true)
     emit('seeked', seekSeconds.value)
-    updateYouTubeContext()
 
     // 觸發點擊反饋動畫
     forwardClicked.value = true
@@ -536,7 +441,6 @@ const rewind = () => {
     const currentTime = props.player.getCurrentTime()
     props.player.seekTo(Math.max(0, currentTime - seekSeconds.value), true)
     emit('seeked', -seekSeconds.value)
-    updateYouTubeContext()
 
     // 觸發點擊反饋動畫
     rewindClicked.value = true
@@ -551,67 +455,6 @@ const togglePlayPause = () => {
     props.player.togglePlayPause()
   } else {
     emit('error', '播放器尚未準備好')
-  }
-}
-
-// 中文輸入法狀態追蹤
-const isComposing = ref(false)
-
-// 輸入法事件處理
-const handleCompositionStart = () => {
-  isComposing.value = true
-}
-
-const handleCompositionEnd = () => {
-  isComposing.value = false
-}
-
-// 輸入框焦點和點擊事件處理
-const handleInputFocus = () => {
-  emit('input-focused')
-}
-
-const handleInputClick = () => {
-  // 如果 AI 還沒設定，導航到 AI 設定頁面
-  if (!aiConfig.canUseAI) {
-    router.push('/settings/ai')
-  }
-}
-
-const handleInputBlur = () => {
-  emit('input-blurred')
-}
-
-// 鍵盤事件處理
-const handleKeydown = (event: KeyboardEvent) => {
-  // 如果正在使用中文輸入法選字，不處理 Enter 鍵
-  if (isComposing.value) return
-
-  // 只有在按下 Ctrl+Enter 或 Cmd+Enter 時才發送訊息
-  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-    event.preventDefault()
-    sendChatMessage()
-  }
-  // 防止單獨的 Enter 鍵觸發事件
-  else if (event.key === 'Enter' && !event.ctrlKey && !event.metaKey) {
-    event.preventDefault()
-  }
-}
-
-// AI 聊天功能
-const sendChatMessage = async () => {
-  if (!chatMessage.value.trim() || !chat.canSendMessage) return
-
-  const message = chatMessage.value.trim()
-  chatMessage.value = ''
-
-  // 確保有最新的 YouTube 上下文
-  updateYouTubeContext()
-
-  try {
-    await chat.sendMessage(message)
-  } catch (error) {
-    console.error('發送訊息失敗:', error)
   }
 }
 

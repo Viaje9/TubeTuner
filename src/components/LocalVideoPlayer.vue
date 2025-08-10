@@ -144,25 +144,26 @@
         />
       </div>
 
-      <!-- 字幕顯示區域（在進度條下方） -->
-      <div v-if="hasSubtitles" class="mt-4 flex justify-center">
-        <div
-          class="px-4 py-2 rounded-lg max-w-4xl mx-auto shadow-lg backdrop-blur-sm bg-black/60 border border-gray-800/30"
-        >
-          <div
-            class="text-center font-medium leading-relaxed text-white"
-            style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); font-size: 18px"
-            v-html="formattedSubtitleText"
-          />
-        </div>
+      <!-- 字幕顯示區域（支援選取和翻譯） -->
+      <div v-if="hasSubtitles" class="mt-4">
+        <SubtitleDisplay
+          :current-subtitle="currentSubtitle"
+          :position="'bottom'"
+          :font-size="18"
+          :text-color="'white'"
+          :background-color="'semi'"
+          :show-shadow="true"
+          :position-style="'relative'"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted, computed } from 'vue'
+import { ref, watch, nextTick, onMounted } from 'vue'
 import VideoUploader from '@/components/VideoUploader.vue'
+import SubtitleDisplay from '@/components/SubtitleDisplay.vue'
 import { useLocalVideoPlayer } from '@/composables/useLocalVideoPlayer'
 
 const props = defineProps<{
@@ -206,14 +207,6 @@ const {
 const hasVideo = ref(false)
 
 const isManualLoading = ref(false)
-
-// 格式化字幕文字
-const formattedSubtitleText = computed(() => {
-  if (!currentSubtitle.value?.text) return ''
-
-  // 將換行符轉換為 HTML <br> 標籤
-  return currentSubtitle.value.text.replace(/\n/g, '<br>').replace(/\\n/g, '<br>')
-})
 
 const handleVideoLoaded = async (file: File) => {
   try {
