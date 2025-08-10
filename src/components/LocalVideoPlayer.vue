@@ -45,17 +45,6 @@
           @timeupdate="handleTimeUpdate"
         />
 
-        <!-- 字幕顯示 -->
-        <SubtitleDisplay
-          v-if="hasSubtitles"
-          :current-subtitle="currentSubtitle"
-          :font-size="18"
-          :text-color="'white'"
-          :background-color="'semi'"
-          :position="'bottom'"
-          :show-shadow="true"
-        />
-
         <!-- 載入提示 -->
         <div
           v-if="showLoadingOverlay || showIndexedDBLoading"
@@ -128,14 +117,52 @@
           </svg>
         </button>
       </div>
+
+      <!-- 字幕上傳按鈕（左上角） -->
+      <div v-if="!hasSubtitles" class="absolute top-2 left-2 flex items-center gap-2">
+        <button
+          @click="triggerSubtitleUpload"
+          class="bg-blue-500/80 hover:bg-blue-500 text-white p-2 rounded-lg transition-colors backdrop-blur-sm"
+          title="上傳字幕"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+        </button>
+        <!-- 隱藏的字幕檔案輸入 -->
+        <input
+          ref="subtitleFileInput"
+          type="file"
+          accept=".srt,.json"
+          class="hidden"
+          @change="handleSubtitleFileSelect"
+        />
+      </div>
+
+      <!-- 字幕顯示區域（在進度條下方） -->
+      <div v-if="hasSubtitles" class="mt-4 flex justify-center">
+        <div
+          class="px-4 py-2 rounded-lg max-w-4xl mx-auto shadow-lg backdrop-blur-sm bg-black/60 border border-gray-800/30"
+        >
+          <div
+            class="text-center font-medium leading-relaxed text-white"
+            style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); font-size: 18px"
+            v-html="formattedSubtitleText"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted } from 'vue'
+import { ref, watch, nextTick, onMounted, computed } from 'vue'
 import VideoUploader from '@/components/VideoUploader.vue'
-import SubtitleDisplay from '@/components/SubtitleDisplay.vue'
 import { useLocalVideoPlayer } from '@/composables/useLocalVideoPlayer'
 
 const props = defineProps<{
@@ -151,6 +178,7 @@ const emit = defineEmits<{
 const localPlayer = props.player
 const videoElement = ref<HTMLVideoElement>()
 const progressBar = ref<HTMLDivElement>()
+const subtitleFileInput = ref<HTMLInputElement>()
 const showLoadingOverlay = ref(false)
 const showIndexedDBLoading = ref(false)
 const loadingMessage = ref('')
@@ -178,6 +206,14 @@ const {
 const hasVideo = ref(false)
 
 const isManualLoading = ref(false)
+
+// 格式化字幕文字
+const formattedSubtitleText = computed(() => {
+  if (!currentSubtitle.value?.text) return ''
+
+  // 將換行符轉換為 HTML <br> 標籤
+  return currentSubtitle.value.text.replace(/\n/g, '<br>').replace(/\\n/g, '<br>')
+})
 
 const handleVideoLoaded = async (file: File) => {
   try {
@@ -252,6 +288,44 @@ const handleSubtitleCleared = () => {
 
 const handleError = (message: string) => {
   emit('error', message)
+}
+
+// 字幕上傳相關功能
+const triggerSubtitleUpload = () => {
+  subtitleFileInput.value?.click()
+}
+
+const handleSubtitleFileSelect = async (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    try {
+      const fileName = file.name.toLowerCase()
+
+      // 檢查檔案類型
+      if (!fileName.endsWith('.srt') && !fileName.endsWith('.json')) {
+        throw new Error('請選擇 SRT 或 JSON 格式的字幕檔案')
+      }
+
+      // 檢查檔案大小（限制 10MB）
+      const maxSize = 10 * 1024 * 1024 // 10MB
+      if (file.size > maxSize) {
+        throw new Error('字幕檔案太大，請選擇小於 10MB 的檔案')
+      }
+
+      const success = await loadSubtitleFile(file)
+      if (!success) {
+        throw new Error('載入字幕檔案失敗')
+      }
+
+      // 清除檔案選擇
+      if (subtitleFileInput.value) {
+        subtitleFileInput.value.value = ''
+      }
+    } catch (error) {
+      emit('error', error instanceof Error ? error.message : '載入字幕失敗')
+    }
+  }
 }
 
 const handleVideoError = (e: Event) => {

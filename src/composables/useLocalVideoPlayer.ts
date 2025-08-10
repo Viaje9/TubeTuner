@@ -1,6 +1,7 @@
 import { ref, onUnmounted, watch } from 'vue'
 import type { SubtitleData } from '@/types/player'
 import { getCurrentSubtitle, loadSRTFile } from '@/utils/srtParser'
+import { parseJSONSubtitles, isValidJSONSubtitle } from '@/utils/jsonSubtitleParser'
 import { indexedDBService } from '@/services/indexedDB'
 
 export function useLocalVideoPlayer() {
@@ -128,15 +129,31 @@ export function useLocalVideoPlayer() {
 
       // 在背景儲存到 IndexedDB，不影響播放
       try {
+        console.log('🔍 檢查影片是否已存在於 IndexedDB...')
         const existingVideoId = await indexedDBService.hasVideo(file)
+
         if (!existingVideoId) {
+          console.log('📥 影片不存在，開始儲存到 IndexedDB...')
+          console.log(`   檔名: ${file.name}`)
+          console.log(`   大小: ${(file.size / 1024 / 1024).toFixed(2)} MB`)
+          console.log(`   類型: ${file.type}`)
+
           // 如果檔案不存在，儲存到 IndexedDB（背景進行）
-          indexedDBService.saveVideo(file).catch((error) => {
-            console.warn('背景儲存到 IndexedDB 失敗:', error)
-          })
+          indexedDBService
+            .saveVideo(file)
+            .then((videoId) => {
+              console.log('✅ 影片成功儲存到 IndexedDB')
+              console.log(`   影片 ID: ${videoId}`)
+            })
+            .catch((error) => {
+              console.warn('❌ 背景儲存到 IndexedDB 失敗:', error)
+            })
+        } else {
+          console.log('♻️ 影片已存在於 IndexedDB，跳過儲存')
+          console.log(`   影片 ID: ${existingVideoId}`)
         }
       } catch (error) {
-        console.warn('IndexedDB 操作失敗:', error)
+        console.warn('⚠️ IndexedDB 操作失敗:', error)
       }
       return true
     } catch (error) {
@@ -147,7 +164,28 @@ export function useLocalVideoPlayer() {
 
   const loadSubtitleFile = async (file: File): Promise<boolean> => {
     try {
-      const parsedSubtitles = await loadSRTFile(file)
+      let parsedSubtitles: SubtitleData[] = []
+
+      // 根據檔案類型決定解析方式
+      const fileName = file.name.toLowerCase()
+
+      if (fileName.endsWith('.json')) {
+        // 讀取 JSON 檔案內容
+        const text = await file.text()
+
+        // 檢查是否為有效的 JSON 字幕格式
+        if (isValidJSONSubtitle(text)) {
+          parsedSubtitles = parseJSONSubtitles(text)
+        } else {
+          throw new Error('無效的 JSON 字幕格式')
+        }
+      } else if (fileName.endsWith('.srt')) {
+        // 使用原有的 SRT 解析器
+        parsedSubtitles = await loadSRTFile(file)
+      } else {
+        throw new Error('不支援的字幕格式，請使用 .srt 或 .json 檔案')
+      }
+
       subtitles.value = parsedSubtitles
       hasSubtitles.value = parsedSubtitles.length > 0
 
@@ -155,12 +193,20 @@ export function useLocalVideoPlayer() {
       if (videoFile.value) {
         try {
           const videoId = `${videoFile.value.name}_${videoFile.value.size}_${videoFile.value.lastModified}`
+          console.log('📝 開始儲存字幕到 IndexedDB...')
+          console.log(`   字幕檔案: ${file.name}`)
+          console.log(`   關聯影片 ID: ${videoId}`)
+
           await indexedDBService.saveSubtitle(file, videoId)
+          console.log('✅ 字幕成功儲存到 IndexedDB')
         } catch (error) {
-          console.warn('儲存字幕到 IndexedDB 失敗:', error)
+          console.warn('❌ 儲存字幕到 IndexedDB 失敗:', error)
         }
       }
 
+      console.log(
+        `成功載入 ${parsedSubtitles.length} 條字幕（${fileName.endsWith('.json') ? 'JSON' : 'SRT'} 格式）`,
+      )
       return true
     } catch (error) {
       console.error('載入字幕失敗:', error)
@@ -321,24 +367,38 @@ export function useLocalVideoPlayer() {
   const autoRestoreLastVideo = async () => {
     try {
       const lastVideoInfo = getLastVideoInfo()
-      if (!lastVideoInfo) return false
+      if (!lastVideoInfo) {
+        console.log('🔍 沒有找到上次播放的影片資訊')
+        return false
+      }
+
+      console.log('🔄 開始自動恢復上次播放的影片...')
+      console.log(`   檔名: ${lastVideoInfo.name}`)
+      console.log(`   大小: ${(lastVideoInfo.size / 1024 / 1024).toFixed(2)} MB`)
 
       // 嘗試從 IndexedDB 載入影片
       const videoId = `${lastVideoInfo.name}_${lastVideoInfo.size}_${lastVideoInfo.lastModified}`
+      console.log(`   嘗試從 IndexedDB 載入，影片 ID: ${videoId}`)
+
       const storedFile = await indexedDBService.loadVideo(videoId)
 
       if (storedFile) {
+        console.log('✅ 成功從 IndexedDB 載入影片檔案')
         const success = await loadVideoFile(storedFile)
 
         if (success) {
           // 嘗試載入相關字幕
           try {
+            console.log('📝 嘗試載入相關字幕...')
             const subtitleFile = await indexedDBService.loadSubtitle(videoId)
             if (subtitleFile) {
+              console.log('✅ 找到相關字幕，開始載入...')
               await loadSubtitleFile(subtitleFile)
+            } else {
+              console.log('ℹ️ 沒有找到相關字幕')
             }
-          } catch {
-            // 字幕載入失敗，繼續
+          } catch (error) {
+            console.log('⚠️ 字幕載入失敗，繼續播放影片', error)
           }
 
           // 等待影片準備好後恢復播放狀態

@@ -362,12 +362,12 @@ class IndexedDBService {
       }
 
       clearVideosRequest.onsuccess = () => {
-        console.log('所有影片資料已清除')
+        console.log('🗑️ 所有影片資料已清除')
         checkComplete()
       }
 
       clearSubtitlesRequest.onsuccess = () => {
-        console.log('所有字幕資料已清除')
+        console.log('🗑️ 所有字幕資料已清除')
         checkComplete()
       }
 

@@ -61,7 +61,7 @@
           <input
             ref="subtitleFileInput"
             type="file"
-            accept=".srt"
+            accept=".srt,.json"
             class="hidden"
             @change="handleSubtitleFileSelect"
           />
@@ -83,7 +83,7 @@
               />
             </svg>
             <span :class="selectedSubtitleFile ? 'text-white' : 'text-gray-400'">
-              {{ selectedSubtitleFile ? selectedSubtitleFile.name : '選擇 SRT 字幕檔案...' }}
+              {{ selectedSubtitleFile ? selectedSubtitleFile.name : '選擇字幕檔案 (SRT/JSON)...' }}
             </span>
           </button>
         </div>
@@ -263,9 +263,11 @@ const uploadSubtitle = async () => {
   isUploadingSubtitle.value = true
 
   try {
+    const fileName = selectedSubtitleFile.value.name.toLowerCase()
+
     // 檢查檔案類型
-    if (!selectedSubtitleFile.value.name.toLowerCase().endsWith('.srt')) {
-      throw new Error('請選擇 SRT 格式的字幕檔案')
+    if (!fileName.endsWith('.srt') && !fileName.endsWith('.json')) {
+      throw new Error('請選擇 SRT 或 JSON 格式的字幕檔案')
     }
 
     // 檢查檔案大小（限制 10MB）
