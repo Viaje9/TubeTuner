@@ -549,7 +549,6 @@ const rewind = () => {
 const togglePlayPause = () => {
   if (props.player?.togglePlayPause) {
     props.player.togglePlayPause()
-    emit('play-state-changed', !isPlaying.value)
   } else {
     emit('error', '播放器尚未準備好')
   }

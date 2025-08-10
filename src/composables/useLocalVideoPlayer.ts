@@ -134,7 +134,7 @@ export function useLocalVideoPlayer() {
   }
 
   const playVideo = () => {
-    if (videoElement.value && isReady.value) {
+    if (videoElement.value) {
       videoElement.value.play().catch((error) => {
         console.error('播放失敗:', error)
       })
@@ -142,7 +142,7 @@ export function useLocalVideoPlayer() {
   }
 
   const pauseVideo = () => {
-    if (videoElement.value && isReady.value) {
+    if (videoElement.value) {
       videoElement.value.pause()
     }
   }
@@ -155,7 +155,8 @@ export function useLocalVideoPlayer() {
     }
   }
 
-  const seekTo = (time: number) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const seekTo = (time: number, _allowSeekAhead: boolean = true) => {
     if (videoElement.value && isReady.value) {
       // 確保時間在有效範圍內
       const clampedTime = Math.max(0, Math.min(time, duration.value))

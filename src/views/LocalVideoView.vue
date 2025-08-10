@@ -117,22 +117,22 @@
         <!-- 本機影片播放器區域（全寬） -->
         <div :class="hasVideoLoaded ? 'w-full sticky top-0' : 'max-w-4xl mx-auto'">
           <LocalVideoPlayer
+            :player="localPlayer"
             @player-ready="handlePlayerReady"
             @video-loaded="handleVideoLoaded"
             @error="showError"
           />
         </div>
 
-        <!-- AI 聊天記錄區域（如果需要的話） -->
-        <!-- 本機影片可能不需要 AI 聊天功能，因為沒有影片描述資訊 -->
-        <!-- <div v-if="hasVideoLoaded" class="mt-4 sm:mt-6 mb-24 sm:mb-32">
+        <!-- AI 聊天記錄區域 -->
+        <div v-if="hasVideoLoaded" class="mt-4 sm:mt-6 mb-24 sm:mb-32">
           <ChatHistory />
-        </div> -->
+        </div>
       </div>
     </div>
 
     <!-- 浮動控制面板 -->
-    <LocalVideoControlPanel
+    <FloatingControlPanel
       ref="controlPanelRef"
       v-if="hasVideoLoaded"
       :player="localPlayer"
@@ -140,6 +140,7 @@
       @seeked="handleSeeked"
       @play-state-changed="handlePlayStateChanged"
       @error="showError"
+      @video-loaded="handleVideoLoaded"
       @input-focused="handleInputFocused"
       @input-blurred="handleInputBlurred"
     />
@@ -150,9 +151,11 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLocalVideoPlayer } from '@/composables/useLocalVideoPlayer'
+import { useAIConfigStore } from '@/stores/aiConfig'
 import LocalVideoPlayer from '@/components/LocalVideoPlayer.vue'
-import LocalVideoControlPanel from '@/components/LocalVideoControlPanel.vue'
+import FloatingControlPanel from '@/components/FloatingControlPanel.vue'
 import MessageBox from '@/components/MessageBox.vue'
+import ChatHistory from '@/components/ChatHistory.vue'
 
 // 時間格式化工具函數
 const formatTime = (seconds: number): string => {
@@ -169,6 +172,7 @@ const formatTime = (seconds: number): string => {
 
 const router = useRouter()
 const localPlayer = useLocalVideoPlayer()
+const aiConfig = useAIConfigStore()
 const errorMessage = ref('')
 const hasVideoLoaded = ref(false)
 const controlPanelRef = ref()
@@ -228,7 +232,8 @@ const handleInputBlurred = () => {
 }
 
 onMounted(() => {
-  // 本機影片不需要初始化外部 API，直接準備播放器
+  // 載入 AI 配置以支援聊天功能
+  aiConfig.loadFromStorage()
   console.log('本機影片頁面已載入')
 })
 </script>
