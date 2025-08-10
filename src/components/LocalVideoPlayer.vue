@@ -42,6 +42,7 @@
           @loadeddata="handleLoadedData"
           @canplay="handleCanPlay"
           @canplaythrough="handleCanPlayThrough"
+          @timeupdate="handleTimeUpdate"
         />
 
         <!-- 字幕顯示 -->
@@ -72,6 +73,38 @@
             <!-- 載入訊息 -->
             <div class="text-white text-sm">
               {{ loadingMessage || '載入中...' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- 自定義進度條 -->
+        <div v-if="hasVideo" class="absolute bottom-0 left-0 right-0 p-4">
+          <div class="relative">
+            <!-- 進度條容器（擴大觸控區域） -->
+            <div
+              class="w-full py-2 -my-2 cursor-pointer relative"
+              @mousedown="handleProgressMouseDown"
+              @touchstart.prevent="handleProgressTouchStart"
+              ref="progressBar"
+            >
+              <!-- 進度條背景 -->
+              <div
+                class="w-full h-2 bg-gray-600 rounded-full hover:h-3 transition-all duration-200 relative"
+              >
+                <!-- 已播放進度 -->
+                <div
+                  class="h-full bg-blue-500 rounded-full"
+                  :class="{ 'transition-all duration-100': !isDragging }"
+                  :style="{ width: `${progressPercentage}%` }"
+                ></div>
+              </div>
+              <!-- 拖曳圓點 -->
+              <div
+                class="absolute top-1/2 transform -translate-y-1/2 w-6 h-6 bg-blue-500 rounded-full cursor-grab active:cursor-grabbing border-2 border-white shadow-lg md:w-4 md:h-4"
+                :style="{ left: `calc(${progressPercentage}% - 12px)` }"
+                @mousedown.stop="handleThumbMouseDown"
+                @touchstart.stop.prevent="handleThumbTouchStart"
+              ></div>
             </div>
           </div>
         </div>
@@ -117,9 +150,16 @@ const emit = defineEmits<{
 
 const localPlayer = props.player
 const videoElement = ref<HTMLVideoElement>()
+const progressBar = ref<HTMLDivElement>()
 const showLoadingOverlay = ref(false)
 const showIndexedDBLoading = ref(false)
 const loadingMessage = ref('')
+
+// 進度條狀態
+const currentTime = ref(0)
+const duration = ref(0)
+const progressPercentage = ref(0)
+const isDragging = ref(false)
 
 // 從 composable 中取得狀態
 const {
@@ -256,6 +296,9 @@ const handleLoadedMetadata = (e: Event) => {
   if (video.videoWidth === 0 || video.videoHeight === 0) {
     emit('error', '此檔案可能只有音頻軌道，沒有視訊內容')
   }
+
+  // 設定影片總長度
+  duration.value = video.duration
 }
 
 const handleLoadedData = () => {
@@ -268,6 +311,95 @@ const handleCanPlay = () => {
 
 const handleCanPlayThrough = () => {
   // 影片可以流暢播放
+}
+
+// 處理時間更新
+const handleTimeUpdate = (e: Event) => {
+  if (isDragging.value) return // 拖曳時不更新進度
+
+  const video = e.target as HTMLVideoElement
+  currentTime.value = video.currentTime
+
+  if (duration.value > 0) {
+    progressPercentage.value = (currentTime.value / duration.value) * 100
+  }
+}
+
+// 處理進度條點擊和拖曳
+const updateProgress = (clientX: number) => {
+  if (!progressBar.value || !videoElement.value) return
+
+  // 獲取實際進度條（內層 div）的位置
+  const progressBarElement = progressBar.value.querySelector('div') as HTMLElement
+  if (!progressBarElement) return
+
+  const rect = progressBarElement.getBoundingClientRect()
+  const clickX = clientX - rect.left
+  const progressWidth = rect.width
+  const clickPercentage = Math.max(0, Math.min(1, clickX / progressWidth))
+
+  const newTime = clickPercentage * duration.value
+  videoElement.value.currentTime = newTime
+  currentTime.value = newTime
+  progressPercentage.value = clickPercentage * 100
+}
+
+// 處理進度條點擊（非拖曳）
+const handleProgressMouseDown = (e: MouseEvent) => {
+  updateProgress(e.clientX)
+}
+
+// 處理進度條觸控點擊
+const handleProgressTouchStart = (e: TouchEvent) => {
+  const touch = e.touches[0]
+  updateProgress(touch.clientX)
+}
+
+// 處理圓點拖曳（滑鼠）
+const handleThumbMouseDown = (e: MouseEvent) => {
+  e.preventDefault()
+  isDragging.value = true
+
+  const handleMouseMove = (e: MouseEvent) => {
+    e.preventDefault()
+    if (isDragging.value) {
+      updateProgress(e.clientX)
+    }
+  }
+
+  const handleMouseUp = (e: MouseEvent) => {
+    e.preventDefault()
+    isDragging.value = false
+    document.removeEventListener('mousemove', handleMouseMove)
+    document.removeEventListener('mouseup', handleMouseUp)
+  }
+
+  document.addEventListener('mousemove', handleMouseMove)
+  document.addEventListener('mouseup', handleMouseUp)
+}
+
+// 處理圓點拖曳（觸控）
+const handleThumbTouchStart = (e: TouchEvent) => {
+  e.preventDefault()
+  isDragging.value = true
+
+  const handleTouchMove = (e: TouchEvent) => {
+    e.preventDefault()
+    if (isDragging.value && e.touches.length > 0) {
+      const touch = e.touches[0]
+      updateProgress(touch.clientX)
+    }
+  }
+
+  const handleTouchEnd = (e: TouchEvent) => {
+    e.preventDefault()
+    isDragging.value = false
+    document.removeEventListener('touchmove', handleTouchMove)
+    document.removeEventListener('touchend', handleTouchEnd)
+  }
+
+  document.addEventListener('touchmove', handleTouchMove, { passive: false })
+  document.addEventListener('touchend', handleTouchEnd)
 }
 
 // 監聽播放器就緒狀態
