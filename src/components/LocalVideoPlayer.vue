@@ -94,9 +94,6 @@
             />
           </svg>
         </button>
-
-        <!-- 播放器狀態指示器 -->
-        <div v-if="isReady" class="w-2 h-2 rounded-full bg-green-400"></div>
       </div>
     </div>
   </div>
