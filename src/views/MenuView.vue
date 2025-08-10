@@ -9,102 +9,69 @@
       <!-- 標題區域 -->
       <div class="text-center mb-8">
         <h1
-          class="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-3"
+          class="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-3 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95"
+          @click="reloadPage"
+          title="點擊重新載入頁面"
         >
-          功能選單
+          TubeTuner
         </h1>
-        <p class="text-base sm:text-lg text-gray-300">TubeTuner 功能設定</p>
         <div
           class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"
         ></div>
       </div>
 
-      <!-- 播放器選擇區域 -->
-      <div class="mb-8 flex flex-col sm:flex-row gap-4 justify-center">
-        <button
-          @click="goToHome"
-          class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-200 flex items-center gap-3 active:scale-95 touch-manipulation font-medium"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          YouTube 播放器
-        </button>
-
-        <button
-          @click="goToLocalVideo"
-          class="bg-gradient-to-r from-orange-600 to-red-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-orange-500/30 transition-all duration-200 flex items-center gap-3 active:scale-95 touch-manipulation font-medium"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M7 4a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h2zM14 4a2 2 0 012 2v12a2 2 0 01-2 2h-2a2 2 0 01-2-2V6a2 2 0 012-2h2z"
-            />
-          </svg>
-          本機影片播放器
-        </button>
-      </div>
-
-      <!-- 功能選項卡片 -->
-      <div class="max-w-sm sm:max-w-4xl mx-auto grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <!-- AI 設定卡片 -->
+      <!-- 功能選項列表 -->
+      <div class="max-w-2xl mx-auto space-y-3">
+        <!-- YouTube 播放器 -->
         <div
-          @click="goToAISettings"
-          class="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 sm:p-8 cursor-pointer hover:shadow-2xl hover:shadow-purple-500/20 hover:border-purple-500/50 transition-all duration-300 active:scale-[0.98] touch-manipulation"
+          @click="selectFunction('youtube')"
+          class="group bg-gradient-to-r from-gray-800/30 to-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-xl p-4 cursor-pointer hover:bg-gradient-to-r hover:from-blue-800/20 hover:to-blue-900/20 hover:border-blue-500/30 transition-all duration-200 active:scale-[0.99] touch-manipulation"
         >
-          <div class="flex flex-col items-center text-center">
-            <!-- AI 圖示 -->
+          <div class="flex items-center gap-4">
             <div
-              class="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300"
+              class="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200"
             >
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
             </div>
-            <h3
-              class="text-lg sm:text-xl md:text-2xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
-            >
-              AI 設定
-            </h3>
-            <p class="text-sm sm:text-base text-gray-400 leading-relaxed break-words">
-              設定 AI 聊天功能，包含 API 金鑰<br class="sm:hidden" />、模型選擇和參數調整
-            </p>
-            <!-- 狀態指示器 -->
-            <div class="mt-4 flex items-center gap-2">
-              <div
-                :class="aiConfig.canUseAI ? 'bg-green-400' : 'bg-orange-400'"
-                class="w-2 h-2 rounded-full"
-              ></div>
-              <span class="text-sm text-gray-500">
-                {{ aiConfig.canUseAI ? '已配置' : '需要設定' }}
-              </span>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-lg font-semibold text-white mb-1">YouTube 播放器</h3>
+              <p class="text-sm text-gray-400 truncate">載入 YouTube 影片並控制播放速度</p>
+            </div>
+            <div class="flex-shrink-0">
+              <svg
+                class="w-5 h-5 text-gray-500 group-hover:text-blue-400 transition-colors duration-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
             </div>
           </div>
         </div>
 
-        <!-- 本機影片卡片 -->
+        <!-- 本機影片播放器 -->
         <div
-          @click="goToLocalVideo"
-          class="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 sm:p-8 cursor-pointer hover:shadow-2xl hover:shadow-orange-500/20 hover:border-orange-500/50 transition-all duration-300 active:scale-[0.98] touch-manipulation"
+          @click="selectFunction('local')"
+          class="group bg-gradient-to-r from-gray-800/30 to-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-xl p-4 cursor-pointer hover:bg-gradient-to-r hover:from-orange-800/20 hover:to-orange-900/20 hover:border-orange-500/30 transition-all duration-200 active:scale-[0.99] touch-manipulation"
         >
-          <div class="flex flex-col items-center text-center">
-            <!-- 本機影片圖示 -->
+          <div class="flex items-center gap-4">
             <div
-              class="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300"
+              class="w-12 h-12 bg-gradient-to-r from-orange-600 to-red-600 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200"
             >
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -113,34 +80,43 @@
                 />
               </svg>
             </div>
-            <h3
-              class="text-lg sm:text-xl md:text-2xl font-bold mb-3 bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent"
-            >
-              本機影片
-            </h3>
-            <p class="text-sm sm:text-base text-gray-400 leading-relaxed break-words">
-              上傳本機影片檔案並播放<br class="sm:hidden" />支援 SRT 字幕檔案
-            </p>
-            <!-- 功能標籤 -->
-            <div class="mt-4">
-              <span class="bg-orange-500/20 text-orange-400 px-3 py-1 rounded-full text-sm">
-                全新功能
-              </span>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <h3 class="text-lg font-semibold text-white">本機影片播放器</h3>
+                <span class="bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full text-xs"
+                  >新功能</span
+                >
+              </div>
+              <p class="text-sm text-gray-400 truncate">上傳本機影片檔案，支援字幕功能</p>
+            </div>
+            <div class="flex-shrink-0">
+              <svg
+                class="w-5 h-5 text-gray-500 group-hover:text-orange-400 transition-colors duration-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
             </div>
           </div>
         </div>
 
-        <!-- 搜尋影片卡片 -->
+        <!-- 搜尋影片 -->
         <div
-          @click="goToSearch"
-          class="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 sm:p-8 cursor-pointer hover:shadow-2xl hover:shadow-green-500/20 hover:border-green-500/50 transition-all duration-300 active:scale-[0.98] touch-manipulation"
+          @click="selectFunction('search')"
+          class="group bg-gradient-to-r from-gray-800/30 to-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-xl p-4 cursor-pointer hover:bg-gradient-to-r hover:from-green-800/20 hover:to-green-900/20 hover:border-green-500/30 transition-all duration-200 active:scale-[0.99] touch-manipulation"
         >
-          <div class="flex flex-col items-center text-center">
-            <!-- 搜尋圖示 -->
+          <div class="flex items-center gap-4">
             <div
-              class="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300"
+              class="w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200"
             >
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -149,19 +125,78 @@
                 />
               </svg>
             </div>
-            <h3
-              class="text-lg sm:text-xl md:text-2xl font-bold mb-3 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent"
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <h3 class="text-lg font-semibold text-white">搜尋影片</h3>
+                <span class="bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full text-xs"
+                  >新功能</span
+                >
+              </div>
+              <p class="text-sm text-gray-400 truncate">搜尋 YouTube 影片並快速載入播放</p>
+            </div>
+            <div class="flex-shrink-0">
+              <svg
+                class="w-5 h-5 text-gray-500 group-hover:text-green-400 transition-colors duration-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI 設定 -->
+        <div
+          @click="selectFunction('ai-settings')"
+          class="group bg-gradient-to-r from-gray-800/30 to-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-xl p-4 cursor-pointer hover:bg-gradient-to-r hover:from-purple-800/20 hover:to-purple-900/20 hover:border-purple-500/30 transition-all duration-200 active:scale-[0.99] touch-manipulation"
+        >
+          <div class="flex items-center gap-4">
+            <div
+              class="w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200"
             >
-              搜尋影片
-            </h3>
-            <p class="text-sm sm:text-base text-gray-400 leading-relaxed break-words">
-              搜尋 YouTube 影片並快速載入<br class="sm:hidden" />到播放器中，支援縮略圖預覽
-            </p>
-            <!-- 功能標籤 -->
-            <div class="mt-4">
-              <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm">
-                全新功能
-              </span>
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-lg font-semibold text-white mb-1">AI 設定</h3>
+              <p class="text-sm text-gray-400 truncate">設定 AI 聊天功能和參數調整</p>
+            </div>
+            <div class="flex items-center gap-3 flex-shrink-0">
+              <div class="flex items-center gap-2">
+                <div
+                  :class="aiConfig.canUseAI ? 'bg-green-400' : 'bg-orange-400'"
+                  class="w-2 h-2 rounded-full"
+                ></div>
+                <span class="text-xs text-gray-500">
+                  {{ aiConfig.canUseAI ? '已配置' : '需要設定' }}
+                </span>
+              </div>
+              <svg
+                class="w-5 h-5 text-gray-500 group-hover:text-purple-400 transition-colors duration-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
             </div>
           </div>
         </div>
@@ -176,31 +211,50 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAIConfigStore } from '@/stores/aiConfig'
+import { useUserPreferencesStore, type UserPreferenceFunction } from '@/stores/userPreferences'
 import MessageBox from '@/components/MessageBox.vue'
 
 const router = useRouter()
 const aiConfig = useAIConfigStore()
+const userPreferences = useUserPreferencesStore()
 const errorMessage = ref('')
 
-// 導航函數
-const goToHome = () => {
-  router.push('/')
+// 功能選擇處理
+const selectFunction = (func: UserPreferenceFunction) => {
+  // 記錄使用者選擇
+  userPreferences.setLastSelectedFunction(func)
+
+  // 導航到相應頁面
+  switch (func) {
+    case 'youtube':
+      router.push('/youtube')
+      break
+    case 'local':
+      router.push('/local-video')
+      break
+    case 'search':
+      router.push('/search')
+      break
+    case 'ai-settings':
+      router.push('/settings/ai')
+      break
+  }
 }
 
-const goToAISettings = () => {
-  router.push('/settings/ai')
+// 重新載入頁面函數
+const reloadPage = () => {
+  window.location.reload()
 }
 
-const goToLocalVideo = () => {
-  router.push('/local-video')
-}
-
-const goToSearch = () => {
-  router.push('/search')
-}
+onMounted(() => {
+  // 載入 AI 配置
+  aiConfig.loadFromStorage()
+  // 載入使用者偏好設定
+  userPreferences.loadPreferences()
+})
 </script>
 
 <style scoped>

@@ -175,9 +175,6 @@
                   class="bg-gray-700"
                 >
                   {{ model.name }}
-                  <span v-if="model.description" class="text-gray-400">
-                    - {{ model.description }}
-                  </span>
                 </option>
               </select>
               <p class="text-sm sm:text-base text-gray-500">
