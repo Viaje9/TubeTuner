@@ -32,7 +32,6 @@
           id="local-video-player"
           ref="videoElement"
           class="w-full h-full object-contain"
-          controls
           preload="metadata"
           :src="videoUrl || undefined"
         />

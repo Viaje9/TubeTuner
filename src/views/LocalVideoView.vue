@@ -50,13 +50,7 @@
             TubeTuner
           </h1>
           <div
-            v-if="localPlayer.hasSubtitles && localPlayer.currentSubtitle"
-            class="text-sm sm:text-base text-gray-300 mt-1 break-words max-w-md"
-          >
-            字幕: {{ localPlayer.currentSubtitle.value?.text }}
-          </div>
-          <div
-            v-else-if="localPlayer.isReady.value"
+            v-if="hasVideoLoaded && localPlayer.videoFile.value"
             class="text-sm sm:text-base text-gray-300 mt-1 break-words"
           >
             播放時間: {{ formatTime(localPlayer.currentTime.value) }}
