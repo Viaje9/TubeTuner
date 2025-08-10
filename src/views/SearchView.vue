@@ -35,7 +35,7 @@
           </svg>
           返回選單
         </button>
-        
+
         <button
           @click="goToHome"
           class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95"
@@ -74,7 +74,12 @@
               class="w-full px-6 py-4 pl-14 pr-12 bg-gray-800/50 backdrop-blur-sm border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500/70 focus:ring-4 focus:ring-purple-500/20 transition-all duration-200"
             />
             <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
-              <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                class="w-6 h-6 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -91,11 +96,16 @@
               title="清除搜尋"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
-          
+
           <!-- 搜尋按鈕 -->
           <div class="mt-4 flex justify-center gap-4">
             <button
@@ -103,9 +113,25 @@
               :disabled="!searchState.query.trim() || searchState.isSearching"
               class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-3 rounded-xl hover:shadow-lg hover:shadow-green-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg v-if="searchState.isSearching" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <svg
+                v-if="searchState.isSearching"
+                class="w-5 h-5 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
               <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -123,14 +149,14 @@
         <!-- 搜尋結果區域 -->
         <div v-if="hasResults" class="space-y-4">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+            <h2
+              class="text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent"
+            >
               搜尋結果 ({{ searchState.results.length }})
             </h2>
-            <div class="text-sm text-gray-400">
-              搜尋: "{{ searchState.query }}"
-            </div>
+            <div class="text-sm text-gray-400">搜尋: "{{ searchState.query }}"</div>
           </div>
-          
+
           <!-- 影片結果網格 -->
           <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div
@@ -147,31 +173,49 @@
                   :alt="video.title"
                   class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                   loading="lazy"
-                  @error="(event) => { const target = event.target as HTMLImageElement; if (target) target.style.display = 'none' }"
+                  @error="
+                    (event) => {
+                      const target = event.target as HTMLImageElement
+                      if (target) target.style.display = 'none'
+                    }
+                  "
                 />
-                <div
-                  v-else
-                  class="w-full h-full flex items-center justify-center"
-                >
-                  <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293L12 11l.707-.707A1 1 0 0113.414 10H15M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <div v-else class="w-full h-full flex items-center justify-center">
+                  <svg
+                    class="w-16 h-16 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293L12 11l.707-.707A1 1 0 0113.414 10H15M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
                 <!-- 影片時長 -->
-                <div class="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">
+                <div
+                  class="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded"
+                >
                   {{ video.duration }}
                 </div>
                 <!-- 播放圖示覆層 -->
-                <div class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div
+                  class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
                   <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 </div>
               </div>
-              
+
               <!-- 影片資訊 -->
               <div class="p-4">
-                <h3 class="font-semibold text-white group-hover:text-green-400 transition-colors line-clamp-2 mb-2">
+                <h3
+                  class="font-semibold text-white group-hover:text-green-400 transition-colors line-clamp-2 mb-2"
+                >
                   {{ video.title }}
                 </h3>
                 <p class="text-sm text-gray-400 mb-1">{{ video.channelTitle }}</p>
@@ -183,7 +227,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- 載入更多按鈕 -->
           <div v-if="searchState.hasMore" class="text-center mt-8">
             <button
@@ -191,12 +235,33 @@
               :disabled="isLoadingMore"
               class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-200 flex items-center gap-2 mx-auto active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg v-if="isLoadingMore" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <svg
+                v-if="isLoadingMore"
+                class="w-5 h-5 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
               <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
               </svg>
               {{ isLoadingMore ? '載入中...' : '載入更多' }}
             </button>
@@ -205,10 +270,23 @@
 
         <!-- 載入狀態 -->
         <div v-else-if="searchState.isSearching" class="text-center py-16">
-          <div class="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div
+            class="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6"
+          >
             <svg class="w-12 h-12 text-white animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
             </svg>
           </div>
           <h3 class="text-xl font-semibold text-blue-400 mb-2">搜尋中...</h3>
@@ -216,10 +294,20 @@
         </div>
 
         <!-- 無結果狀態 -->
-        <div v-else-if="searchState.query && !hasResults && !searchState.isSearching" class="text-center py-16">
-          <div class="w-24 h-24 bg-gradient-to-r from-orange-600 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div
+          v-else-if="searchState.query && !hasResults && !searchState.isSearching"
+          class="text-center py-16"
+        >
+          <div
+            class="w-24 h-24 bg-gradient-to-r from-orange-600 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6"
+          >
             <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
             </svg>
           </div>
           <h3 class="text-xl font-semibold text-orange-400 mb-2">未找到結果</h3>
@@ -234,8 +322,15 @@
 
         <!-- 空狀態 -->
         <div v-else-if="isEmpty" class="text-center py-16">
-          <div class="w-24 h-24 bg-gradient-to-r from-gray-700 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div
+            class="w-24 h-24 bg-gradient-to-r from-gray-700 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-6"
+          >
+            <svg
+              class="w-12 h-12 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -249,7 +344,9 @@
         </div>
 
         <!-- 功能說明 -->
-        <div class="mt-12 bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-xl p-6 border border-blue-500/20">
+        <div
+          class="mt-12 bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-xl p-6 border border-blue-500/20"
+        >
           <h3 class="text-lg font-semibold mb-4 text-blue-400">功能說明</h3>
           <div class="grid md:grid-cols-2 gap-4 text-gray-300">
             <div class="space-y-3">
@@ -307,7 +404,7 @@ const {
   isValidYouTubeUrl,
   extractVideoId,
   formatViewCount,
-  formatPublishedTime
+  formatPublishedTime,
 } = useYouTubeSearch()
 
 // UI 狀態
@@ -333,7 +430,7 @@ const handleSearch = async (loadMore = false) => {
   if (loadMore) {
     isLoadingMore.value = true
   }
-  
+
   try {
     // 檢查是否為 YouTube 網址
     if (isValidYouTubeUrl(query)) {
@@ -347,7 +444,6 @@ const handleSearch = async (loadMore = false) => {
 
     // 執行搜尋
     await search(query, loadMore)
-    
   } catch (error) {
     console.error('搜尋失敗:', error)
     const errorMsg = error instanceof Error ? error.message : '搜尋失敗，請檢查網路連線或稍後再試'
@@ -468,7 +564,7 @@ input:focus {
 }
 
 /* 圖片載入失敗時隱藏 */
-img[style*="display: none"] + div {
+img[style*='display: none'] + div {
   display: flex !important;
 }
 
@@ -521,7 +617,8 @@ img[style*="display: none"] + div {
 
 /* 載入更多按鈕動畫 */
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {

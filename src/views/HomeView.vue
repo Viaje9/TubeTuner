@@ -26,7 +26,7 @@
             選單
           </button>
         </div>
-        
+
         <h1
           class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2"
         >
@@ -67,7 +67,7 @@
               />
             </svg>
           </button>
-          
+
           <button
             @click="toggleControlPanel"
             class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-75 flex items-center gap-2 active:scale-95"
@@ -161,7 +161,7 @@ const isInputFocused = ref(false)
 onMounted(async () => {
   await youtubePlayer.initPlayer('youtube-player')
   aiConfig.loadFromStorage()
-  
+
   // 檢查 URL 查詢參數中是否有影片 ID
   const videoId = route.query.v as string
   if (videoId && typeof videoId === 'string') {

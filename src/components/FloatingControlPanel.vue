@@ -327,7 +327,6 @@
                 </div>
               </div>
             </div>
-
           </Transition>
         </div>
       </div>

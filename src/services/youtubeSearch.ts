@@ -37,9 +37,9 @@ interface InvidiousVideoInfo {
 export class YouTubeSearchService {
   private static readonly INVIDIOUS_INSTANCES = [
     'https://inv.riverside.rocks',
-    'https://invidious.snopyta.org', 
+    'https://invidious.snopyta.org',
     'https://invidious.kavin.rocks',
-    'https://invidious.flokinet.to'
+    'https://invidious.flokinet.to',
   ]
 
   /**
@@ -58,7 +58,7 @@ export class YouTubeSearchService {
         return {
           items: [videoInfo],
           nextPageToken: null,
-          totalResults: 1
+          totalResults: 1,
         }
       } catch (error) {
         console.error('獲取影片資訊失敗:', error)
@@ -79,10 +79,10 @@ export class YouTubeSearchService {
           {
             method: 'GET',
             headers: {
-              'Accept': 'application/json'
+              Accept: 'application/json',
             },
-            signal: controller.signal
-          }
+            signal: controller.signal,
+          },
         )
 
         clearTimeout(timeoutId)
@@ -92,7 +92,7 @@ export class YouTubeSearchService {
         }
 
         const data = await response.json()
-        
+
         if (!Array.isArray(data)) {
           throw new Error('無效的回應格式')
         }
@@ -103,25 +103,30 @@ export class YouTubeSearchService {
           channelTitle: item.author || '未知頻道',
           description: item.description || '',
           thumbnails: {
-            default: item.videoThumbnails?.find((t: InvidiousThumbnail) => t.quality === 'medium')?.url || 
-                     item.videoThumbnails?.[0]?.url || '',
-            medium: item.videoThumbnails?.find((t: InvidiousThumbnail) => t.quality === 'medium')?.url || 
-                    item.videoThumbnails?.[0]?.url || '',
-            high: item.videoThumbnails?.find((t: InvidiousThumbnail) => t.quality === 'high')?.url || 
-                  item.videoThumbnails?.[0]?.url || ''
+            default:
+              item.videoThumbnails?.find((t: InvidiousThumbnail) => t.quality === 'medium')?.url ||
+              item.videoThumbnails?.[0]?.url ||
+              '',
+            medium:
+              item.videoThumbnails?.find((t: InvidiousThumbnail) => t.quality === 'medium')?.url ||
+              item.videoThumbnails?.[0]?.url ||
+              '',
+            high:
+              item.videoThumbnails?.find((t: InvidiousThumbnail) => t.quality === 'high')?.url ||
+              item.videoThumbnails?.[0]?.url ||
+              '',
           },
           duration: this.formatDuration(item.lengthSeconds || 0),
           publishedAt: new Date(item.published * 1000).toISOString(),
           viewCount: item.viewCount || 0,
-          url: `https://www.youtube.com/watch?v=${item.videoId}`
+          url: `https://www.youtube.com/watch?v=${item.videoId}`,
         }))
 
         return {
           items,
           nextPageToken: null,
-          totalResults: items.length
+          totalResults: items.length,
         }
-
       } catch (error) {
         console.warn(`Invidious 實例 ${instance} 失敗:`, error)
         continue
@@ -140,12 +145,12 @@ export class YouTubeSearchService {
     for (const instance of this.INVIDIOUS_INSTANCES) {
       try {
         const response = await fetch(`${instance}/api/v1/videos/${videoId}`)
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`)
         }
 
-        const data = await response.json() as InvidiousVideoInfo
+        const data = (await response.json()) as InvidiousVideoInfo
 
         return {
           id: videoId,
@@ -153,14 +158,20 @@ export class YouTubeSearchService {
           channelTitle: data.author || '未知頻道',
           description: data.description || '',
           thumbnails: {
-            default: data.videoThumbnails?.find((t: InvidiousThumbnail) => t.quality === 'medium')?.url || '',
-            medium: data.videoThumbnails?.find((t: InvidiousThumbnail) => t.quality === 'medium')?.url || '',
-            high: data.videoThumbnails?.find((t: InvidiousThumbnail) => t.quality === 'high')?.url || ''
+            default:
+              data.videoThumbnails?.find((t: InvidiousThumbnail) => t.quality === 'medium')?.url ||
+              '',
+            medium:
+              data.videoThumbnails?.find((t: InvidiousThumbnail) => t.quality === 'medium')?.url ||
+              '',
+            high:
+              data.videoThumbnails?.find((t: InvidiousThumbnail) => t.quality === 'high')?.url ||
+              '',
           },
           duration: this.formatDuration(data.lengthSeconds || 0),
           publishedAt: data.published ? new Date(data.published * 1000).toISOString() : '',
           viewCount: data.viewCount || 0,
-          url: `https://www.youtube.com/watch?v=${videoId}`
+          url: `https://www.youtube.com/watch?v=${videoId}`,
         }
       } catch (error) {
         console.warn(`獲取影片資訊失敗 (${instance}):`, error)
@@ -177,16 +188,16 @@ export class YouTubeSearchService {
   static extractVideoId(url: string): string | null {
     const patterns = [
       /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
-      /youtube\.com\/watch\?.*v=([^&\n?#]+)/
+      /youtube\.com\/watch\?.*v=([^&\n?#]+)/,
     ]
-    
+
     for (const pattern of patterns) {
       const match = url.match(pattern)
       if (match && match[1] && match[1].length === 11) {
         return match[1]
       }
     }
-    
+
     return null
   }
 
@@ -218,12 +229,12 @@ export class YouTubeSearchService {
         thumbnails: {
           default: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/mqdefault.jpg',
           medium: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/mqdefault.jpg',
-          high: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg'
+          high: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
         },
         duration: '3:32',
         publishedAt: new Date().toISOString(),
         viewCount: 1000000,
-        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
       },
       {
         id: 'jNQXAC9IVRw',
@@ -233,19 +244,19 @@ export class YouTubeSearchService {
         thumbnails: {
           default: 'https://i.ytimg.com/vi/jNQXAC9IVRw/mqdefault.jpg',
           medium: 'https://i.ytimg.com/vi/jNQXAC9IVRw/mqdefault.jpg',
-          high: 'https://i.ytimg.com/vi/jNQXAC9IVRw/hqdefault.jpg'
+          high: 'https://i.ytimg.com/vi/jNQXAC9IVRw/hqdefault.jpg',
         },
         duration: '15:24',
         publishedAt: new Date().toISOString(),
         viewCount: 500000,
-        url: 'https://www.youtube.com/watch?v=jNQXAC9IVRw'
-      }
+        url: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
+      },
     ]
 
     return {
       items: mockVideos.slice(0, maxResults),
       nextPageToken: null,
-      totalResults: mockVideos.length
+      totalResults: mockVideos.length,
     }
   }
 

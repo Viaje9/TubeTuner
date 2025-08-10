@@ -10,7 +10,7 @@ export function useYouTubeSearch() {
     results: [],
     error: null,
     hasMore: false,
-    nextPageToken: null
+    nextPageToken: null,
   })
 
   // 計算屬性
@@ -55,22 +55,22 @@ export function useYouTubeSearch() {
 
       // 執行關鍵字搜尋
       const searchResult = await YouTubeSearchService.searchVideos(searchQuery, 20)
-      
+
       if (loadMore) {
         searchState.value.results.push(...searchResult.items)
       } else {
         searchState.value.results = searchResult.items
       }
-      
+
       searchState.value.nextPageToken = searchResult.nextPageToken
       searchState.value.hasMore = !!searchResult.nextPageToken
-      
+
       if (searchResult.items.length === 0 && !loadMore) {
         throw new Error('未找到相關影片，請嘗試其他關鍵字')
       }
-      
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '搜尋失敗，請檢查網路連線或稍後再試'
+      const errorMessage =
+        error instanceof Error ? error.message : '搜尋失敗，請檢查網路連線或稍後再試'
       searchState.value.error = errorMessage
       throw error
     } finally {
@@ -83,7 +83,7 @@ export function useYouTubeSearch() {
     if (!searchState.value.hasMore || searchState.value.isSearching) {
       return
     }
-    
+
     try {
       await search(undefined, true)
     } catch (error) {
@@ -129,12 +129,12 @@ export function useYouTubeSearch() {
   return {
     // 狀態
     searchState,
-    
+
     // 計算屬性
     hasResults,
     isLoading,
     isEmpty,
-    
+
     // 方法
     search,
     loadMore,
@@ -142,9 +142,9 @@ export function useYouTubeSearch() {
     setQuery,
     isValidYouTubeUrl,
     extractVideoId,
-    
+
     // 工具函數
     formatViewCount,
-    formatPublishedTime
+    formatPublishedTime,
   }
 }

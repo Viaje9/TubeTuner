@@ -58,7 +58,9 @@
                 />
               </svg>
             </div>
-            <h3 class="text-2xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+            <h3
+              class="text-2xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
+            >
               AI 設定
             </h3>
             <p class="text-gray-400 leading-relaxed">
@@ -66,7 +68,10 @@
             </p>
             <!-- 狀態指示器 -->
             <div class="mt-4 flex items-center gap-2">
-              <div :class="aiConfig.canUseAI ? 'bg-green-400' : 'bg-orange-400'" class="w-2 h-2 rounded-full"></div>
+              <div
+                :class="aiConfig.canUseAI ? 'bg-green-400' : 'bg-orange-400'"
+                class="w-2 h-2 rounded-full"
+              ></div>
               <span class="text-sm text-gray-500">
                 {{ aiConfig.canUseAI ? '已配置' : '需要設定' }}
               </span>
@@ -93,7 +98,9 @@
                 />
               </svg>
             </div>
-            <h3 class="text-2xl font-bold mb-3 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+            <h3
+              class="text-2xl font-bold mb-3 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent"
+            >
               搜尋影片
             </h3>
             <p class="text-gray-400 leading-relaxed">
@@ -153,7 +160,8 @@ const goToSearch = () => {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1.1);
   }
   50% {

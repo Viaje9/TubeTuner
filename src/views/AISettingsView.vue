@@ -206,7 +206,9 @@
                 <div class="space-y-3">
                   <div class="flex justify-between items-center">
                     <label class="text-base font-medium text-gray-300">創造性 (Temperature)</label>
-                    <span class="text-sm text-gray-400 bg-gray-700 px-2 py-1 rounded">{{ aiConfig.temperature }}</span>
+                    <span class="text-sm text-gray-400 bg-gray-700 px-2 py-1 rounded">{{
+                      aiConfig.temperature
+                    }}</span>
                   </div>
                   <input
                     v-model.number="aiConfig.temperature"
@@ -229,7 +231,9 @@
                 <div class="space-y-3">
                   <div class="flex justify-between items-center">
                     <label class="text-base font-medium text-gray-300">最大回應長度</label>
-                    <span class="text-sm text-gray-400 bg-gray-700 px-2 py-1 rounded">{{ aiConfig.maxTokens }} tokens</span>
+                    <span class="text-sm text-gray-400 bg-gray-700 px-2 py-1 rounded"
+                      >{{ aiConfig.maxTokens }} tokens</span
+                    >
                   </div>
                   <input
                     v-model.number="aiConfig.maxTokens"
@@ -245,7 +249,9 @@
                     <span>中等 (2000)</span>
                     <span>詳細 (4000)</span>
                   </div>
-                  <p class="text-sm text-gray-500">控制 AI 回應的最大長度，較高的值允許更詳細的回答</p>
+                  <p class="text-sm text-gray-500">
+                    控制 AI 回應的最大長度，較高的值允許更詳細的回答
+                  </p>
                 </div>
 
                 <!-- 系統提示 -->
@@ -258,7 +264,9 @@
                     class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all"
                     placeholder="設定 AI 助手的行為和回應風格..."
                   />
-                  <p class="text-sm text-gray-500">定義 AI 助手的人格和行為模式，影響所有對話的回應風格</p>
+                  <p class="text-sm text-gray-500">
+                    定義 AI 助手的人格和行為模式，影響所有對話的回應風格
+                  </p>
                 </div>
               </div>
             </div>
