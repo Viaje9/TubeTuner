@@ -19,26 +19,41 @@
         ></div>
       </div>
 
-      <!-- 返回播放器按鈕 -->
-      <div class="mb-6 flex justify-center">
+      <!-- 播放器選擇區域 -->
+      <div class="mb-8 flex flex-col sm:flex-row gap-4 justify-center">
         <button
           @click="goToHome"
-          class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-8 py-4 rounded-xl hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-3 active:scale-95 touch-manipulation text-base sm:text-lg font-medium whitespace-nowrap"
+          class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-200 flex items-center gap-3 active:scale-95 touch-manipulation font-medium"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          返回播放器
+          YouTube 播放器
+        </button>
+
+        <button
+          @click="goToLocalVideo"
+          class="bg-gradient-to-r from-orange-600 to-red-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-orange-500/30 transition-all duration-200 flex items-center gap-3 active:scale-95 touch-manipulation font-medium"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7 4a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h2zM14 4a2 2 0 012 2v12a2 2 0 01-2 2h-2a2 2 0 01-2-2V6a2 2 0 012-2h2z"
+            />
+          </svg>
+          本機影片播放器
         </button>
       </div>
 
       <!-- 功能選項卡片 -->
-      <div class="max-w-sm sm:max-w-2xl mx-auto grid gap-4 sm:gap-6 sm:grid-cols-2">
+      <div class="max-w-sm sm:max-w-4xl mx-auto grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <!-- AI 設定卡片 -->
         <div
           @click="goToAISettings"
@@ -74,6 +89,42 @@
               ></div>
               <span class="text-sm text-gray-500">
                 {{ aiConfig.canUseAI ? '已配置' : '需要設定' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 本機影片卡片 -->
+        <div
+          @click="goToLocalVideo"
+          class="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 sm:p-8 cursor-pointer hover:shadow-2xl hover:shadow-orange-500/20 hover:border-orange-500/50 transition-all duration-300 active:scale-[0.98] touch-manipulation"
+        >
+          <div class="flex flex-col items-center text-center">
+            <!-- 本機影片圖示 -->
+            <div
+              class="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300"
+            >
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2z"
+                />
+              </svg>
+            </div>
+            <h3
+              class="text-lg sm:text-xl md:text-2xl font-bold mb-3 bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent"
+            >
+              本機影片
+            </h3>
+            <p class="text-sm sm:text-base text-gray-400 leading-relaxed break-words">
+              上傳本機影片檔案並播放<br class="sm:hidden" />支援 SRT 字幕檔案
+            </p>
+            <!-- 功能標籤 -->
+            <div class="mt-4">
+              <span class="bg-orange-500/20 text-orange-400 px-3 py-1 rounded-full text-sm">
+                全新功能
               </span>
             </div>
           </div>
@@ -141,6 +192,10 @@ const goToHome = () => {
 
 const goToAISettings = () => {
   router.push('/settings/ai')
+}
+
+const goToLocalVideo = () => {
+  router.push('/local-video')
 }
 
 const goToSearch = () => {

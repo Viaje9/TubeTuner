@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
+import LocalVideoView from '@/views/LocalVideoView.vue'
 import MenuView from '@/views/MenuView.vue'
 import SearchView from '@/views/SearchView.vue'
 import AISettingsView from '@/views/AISettingsView.vue'
@@ -11,6 +12,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+    },
+    {
+      path: '/local-video',
+      name: 'local-video',
+      component: LocalVideoView,
     },
     {
       path: '/menu',
