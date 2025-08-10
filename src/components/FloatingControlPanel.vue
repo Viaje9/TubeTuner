@@ -51,26 +51,7 @@
                   d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
                 />
               </svg>
-              <!-- AI 設定頁籤圖示 -->
-              <svg
-                v-else-if="tab.id === 'ai'"
-                class="w-4 h-4 flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
               <span class="text-xs">{{ tab.name }}</span>
-              <span
-                v-if="tab.id === 'ai' && !aiConfig.canUseAI"
-                class="w-2 h-2 bg-orange-400 rounded-full flex-shrink-0"
-              ></span>
             </button>
           </div>
 
@@ -347,140 +328,6 @@
               </div>
             </div>
 
-            <!-- AI 設定頁籤內容 -->
-            <div v-else-if="currentTab === 'ai'" key="ai" class="p-6 space-y-6">
-              <h3
-                class="text-white font-semibold text-center flex items-center justify-center gap-2"
-              >
-                <svg
-                  class="w-5 h-5 text-purple-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-                AI 助手設定
-              </h3>
-
-              <!-- API Key 設定 -->
-              <div class="space-y-3">
-                <div class="flex items-center justify-between">
-                  <label class="text-sm font-medium text-gray-300">OpenRouter API Key</label>
-                  <a
-                    href="https://openrouter.ai/keys"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-xs text-blue-400 hover:text-blue-300 underline"
-                  >
-                    取得 API Key
-                  </a>
-                </div>
-                <div class="relative">
-                  <input
-                    v-model="localApiKey"
-                    :type="showApiKey ? 'text' : 'password'"
-                    placeholder="請輸入您的 OpenRouter API Key..."
-                    class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 pr-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    @input="clearError"
-                  />
-                  <button
-                    @click="showApiKey = !showApiKey"
-                    type="button"
-                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
-                  >
-                    <svg
-                      v-if="showApiKey"
-                      class="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                      />
-                    </svg>
-                    <svg
-                      v-else
-                      class="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
-                      />
-                    </svg>
-                  </button>
-                </div>
-                <p class="text-xs text-gray-500">
-                  API Key 僅保存在您的瀏覽器中，不會發送到任何第三方伺服器
-                </p>
-              </div>
-
-              <!-- 錯誤訊息 -->
-              <div v-if="error" class="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
-                <p class="text-red-400 text-sm">{{ error }}</p>
-              </div>
-
-              <!-- 成功訊息 -->
-              <div
-                v-if="aiConfig.isConfigured"
-                class="bg-green-500/10 border border-green-500/30 rounded-lg p-3"
-              >
-                <p class="text-green-400 text-sm flex items-center gap-2">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  AI 助手已成功設定！
-                </p>
-              </div>
-
-              <!-- 操作按鈕 -->
-              <div class="flex gap-2">
-                <button
-                  v-if="aiConfig.isConfigured"
-                  @click="resetAISettings"
-                  class="flex-1 bg-red-600/20 hover:bg-red-600/30 text-red-400 px-4 py-2 rounded-lg transition-all text-sm font-medium"
-                >
-                  重置設定
-                </button>
-                <button
-                  @click="saveAISettings"
-                  :disabled="isSavingAI || !localApiKey.trim()"
-                  :class="[
-                    'flex-1 px-4 py-2 rounded-lg transition-all text-sm font-medium',
-                    isSavingAI || !localApiKey.trim()
-                      ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white',
-                  ]"
-                >
-                  {{ isSavingAI ? '驗證中...' : aiConfig.isConfigured ? '更新設定' : '儲存設定' }}
-                </button>
-              </div>
-            </div>
           </Transition>
         </div>
       </div>
@@ -638,6 +485,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAIConfigStore } from '@/stores/aiConfig'
 import { useChatStore } from '@/stores/chat'
 import { LocalStorageService } from '@/services/localStorage'
@@ -666,6 +514,7 @@ const emit = defineEmits([
 ])
 
 // Stores
+const router = useRouter()
 const aiConfig = useAIConfigStore()
 const chat = useChatStore()
 
@@ -682,11 +531,6 @@ const tabs = [
     name: '載入影片',
     icon: 'video-icon',
   },
-  {
-    id: 'ai',
-    name: 'AI 設定',
-    icon: 'ai-icon',
-  },
 ]
 
 // 狀態
@@ -702,12 +546,6 @@ const isPlaying = ref(false)
 
 // 載入影片相關狀態
 const videoUrl = ref('https://www.youtube.com/watch?v=6XIPkMFZf-0')
-
-// AI 設定相關狀態
-const localApiKey = ref('')
-const showApiKey = ref(false)
-const isSavingAI = ref(false)
-const error = ref('')
 
 // 點擊反饋狀態
 const forwardClicked = ref(false)
@@ -732,7 +570,6 @@ const updateYouTubeContext = () => {
 // 初始化
 onMounted(() => {
   aiConfig.loadFromStorage()
-  localApiKey.value = aiConfig.apiKey
   updateYouTubeContext()
 })
 
@@ -855,10 +692,9 @@ const handleInputFocus = () => {
 }
 
 const handleInputClick = () => {
-  // 如果 AI 還沒設定，自動切換到 AI 設定頁籤並展開控制面板
+  // 如果 AI 還沒設定，導航到 AI 設定頁面
   if (!aiConfig.canUseAI) {
-    currentTab.value = 'ai'
-    isExpanded.value = true
+    router.push('/settings/ai')
   }
 }
 
@@ -941,35 +777,6 @@ const pasteFromClipboard = async () => {
     videoUrl.value = text
   } catch {
     emit('error', '無法存取剪貼簿，請手動貼上')
-  }
-}
-
-// AI 設定功能
-const clearError = () => {
-  error.value = ''
-}
-
-const saveAISettings = async () => {
-  if (!localApiKey.value.trim()) return
-
-  isSavingAI.value = true
-  error.value = ''
-
-  try {
-    await aiConfig.setApiKey(localApiKey.value)
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : '設定失敗'
-  } finally {
-    isSavingAI.value = false
-  }
-}
-
-const resetAISettings = () => {
-  if (confirm('確定要重置所有 AI 設定嗎？這將清除您的 API Key 和所有自訂設定。')) {
-    aiConfig.resetConfig()
-    localApiKey.value = ''
-    showApiKey.value = false
-    error.value = ''
   }
 }
 

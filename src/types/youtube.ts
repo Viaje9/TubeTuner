@@ -31,3 +31,38 @@ export interface YTPlayerVars {
   showinfo?: number
   autoplay?: number
 }
+
+// 搜尋相關類型定義
+export interface VideoThumbnails {
+  default: string
+  medium: string
+  high: string
+}
+
+export interface VideoInfo {
+  id: string
+  title: string
+  channelTitle: string
+  description: string
+  thumbnails: VideoThumbnails
+  duration: string
+  publishedAt: string
+  viewCount: number
+  url: string
+}
+
+export interface SearchResult {
+  items: VideoInfo[]
+  nextPageToken: string | null
+  totalResults: number
+}
+
+// 搜尋狀態
+export interface SearchState {
+  isSearching: boolean
+  query: string
+  results: VideoInfo[]
+  error: string | null
+  hasMore: boolean
+  nextPageToken: string | null
+}

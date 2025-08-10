@@ -8,6 +8,25 @@
     <div class="container mx-auto px-4 py-4">
       <!-- 標題區域（會根據影片載入狀態調整，輸入框有焦點時隱藏） -->
       <div v-if="!hasVideoLoaded && !isInputFocused" class="text-center mb-8">
+        <!-- 功能選單按鈕（固定在右上角） -->
+        <div class="absolute top-4 right-4">
+          <button
+            @click="goToMenu"
+            class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95"
+            title="功能選單"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+            選單
+          </button>
+        </div>
+        
         <h1
           class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2"
         >
@@ -32,28 +51,45 @@
             播放時間: {{ formatTime(youtubePlayer.currentTime.value) }}
           </div>
         </div>
-        <!-- 統一控制按鈕 -->
-        <button
-          @click="toggleControlPanel"
-          class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-75 flex items-center gap-2 active:scale-95"
-          title="打開控制面板"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-            />
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
-          <span v-if="!aiConfig.canUseAI" class="w-2 h-2 bg-orange-400 rounded-full"></span>
-        </button>
+        <!-- 控制按鈕群組 -->
+        <div class="flex items-center gap-3">
+          <button
+            @click="goToMenu"
+            class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95"
+            title="功能選單"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+          
+          <button
+            @click="toggleControlPanel"
+            class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-75 flex items-center gap-2 active:scale-95"
+            title="打開控制面板"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+            <span v-if="!aiConfig.canUseAI" class="w-2 h-2 bg-orange-400 rounded-full"></span>
+          </button>
+        </div>
       </div>
 
       <div class="max-w-7xl mx-auto flex-1">
@@ -92,6 +128,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useYouTubePlayer } from '@/composables/useYouTubePlayer'
 import { useAIConfigStore } from '@/stores/aiConfig'
 import YouTubePlayer from '@/components/YouTubePlayer.vue'
@@ -112,6 +149,8 @@ const formatTime = (seconds: number): string => {
   }
 }
 
+const router = useRouter()
+const route = useRoute()
 const youtubePlayer = useYouTubePlayer()
 const aiConfig = useAIConfigStore()
 const errorMessage = ref('')
@@ -122,6 +161,15 @@ const isInputFocused = ref(false)
 onMounted(async () => {
   await youtubePlayer.initPlayer('youtube-player')
   aiConfig.loadFromStorage()
+  
+  // 檢查 URL 查詢參數中是否有影片 ID
+  const videoId = route.query.v as string
+  if (videoId && typeof videoId === 'string') {
+    const success = youtubePlayer.loadVideo(`https://www.youtube.com/watch?v=${videoId}`)
+    if (success) {
+      console.log('從查詢參數載入影片:', videoId)
+    }
+  }
 })
 
 // 監聽影片載入狀態
@@ -165,6 +213,11 @@ const showError = (message: string) => {
   setTimeout(() => {
     errorMessage.value = message
   }, 150)
+}
+
+// 導航函數
+const goToMenu = () => {
+  router.push('/menu')
 }
 
 // 控制面板切換函數

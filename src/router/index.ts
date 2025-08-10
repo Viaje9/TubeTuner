@@ -1,13 +1,31 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
+import MenuView from '@/views/MenuView.vue'
+import SearchView from '@/views/SearchView.vue'
+import AISettingsView from '@/views/AISettingsView.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
       name: 'home',
       component: HomeView,
+    },
+    {
+      path: '/menu',
+      name: 'menu',
+      component: MenuView,
+    },
+    {
+      path: '/search',
+      name: 'search', 
+      component: SearchView,
+    },
+    {
+      path: '/settings/ai',
+      name: 'ai-settings',
+      component: AISettingsView,
     },
   ],
 })
