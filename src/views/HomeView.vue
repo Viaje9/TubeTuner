@@ -5,17 +5,22 @@
     <!-- 訊息提示框 -->
     <MessageBox :message="errorMessage" />
 
-    <div class="container mx-auto px-4 py-4">
+    <div class="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
       <!-- 標題區域（會根據影片載入狀態調整，輸入框有焦點時隱藏） -->
-      <div v-if="!hasVideoLoaded && !isInputFocused" class="text-center mb-8">
+      <div v-if="!hasVideoLoaded && !isInputFocused" class="text-center mb-6 sm:mb-8">
         <!-- 功能選單按鈕（固定在右上角） -->
-        <div class="absolute top-4 right-4">
+        <div class="absolute top-3 right-3 sm:top-4 sm:right-4">
           <button
             @click="goToMenu"
-            class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95"
+            class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-3 py-2 sm:px-4 sm:py-3 rounded-lg hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] text-sm sm:text-base whitespace-nowrap"
             title="功能選單"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              class="w-4 h-4 sm:w-5 sm:h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -23,16 +28,18 @@
                 d="M4 6h16M4 12h16M4 18h16"
               />
             </svg>
-            選單
+            <span class="hidden xs:inline sm:inline">選單</span>
           </button>
         </div>
 
         <h1
-          class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2"
+          class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2 break-words"
         >
           TubeTuner
         </h1>
-        <p class="text-xl text-gray-300">YouTube 影片速度控制器</p>
+        <p class="text-lg sm:text-xl md:text-2xl text-gray-300 break-words px-2">
+          YouTube 影片速度控制器
+        </p>
         <div
           class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"
         ></div>
@@ -40,13 +47,13 @@
       <div v-else-if="!isInputFocused" class="flex items-center justify-between mb-4">
         <div class="flex flex-col">
           <h1
-            class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+            class="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent break-words"
           >
             TubeTuner
           </h1>
           <div
             v-if="youtubePlayer.currentVideoId.value && youtubePlayer.isReady.value"
-            class="text-sm text-gray-300 mt-1"
+            class="text-sm sm:text-base text-gray-300 mt-1 break-words"
           >
             播放時間: {{ formatTime(youtubePlayer.currentTime.value) }}
           </div>
@@ -55,10 +62,15 @@
         <div class="flex items-center gap-3">
           <button
             @click="goToMenu"
-            class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95"
+            class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-3 py-3 sm:px-4 sm:py-3 rounded-lg hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] min-w-[44px] whitespace-nowrap"
             title="功能選單"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              class="w-5 h-5 sm:w-6 sm:h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -70,10 +82,15 @@
 
           <button
             @click="toggleControlPanel"
-            class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-75 flex items-center gap-2 active:scale-95"
+            class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-3 sm:px-4 sm:py-3 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-75 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] min-w-[44px] whitespace-nowrap"
             title="打開控制面板"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              class="w-5 h-5 sm:w-6 sm:h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -104,7 +121,7 @@
         </div>
 
         <!-- AI 聊天記錄區域 -->
-        <div v-if="hasVideoLoaded" class="mt-6 mb-32">
+        <div v-if="hasVideoLoaded" class="mt-4 sm:mt-6 mb-24 sm:mb-32">
           <ChatHistory />
         </div>
       </div>

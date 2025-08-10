@@ -5,27 +5,29 @@
     <!-- 訊息提示框 -->
     <MessageBox :message="errorMessage" />
 
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
       <!-- 標題區域 -->
-      <div class="text-center mb-8">
+      <div class="text-center mb-6">
         <h1
-          class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2"
+          class="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-3"
         >
           搜尋影片
         </h1>
-        <p class="text-xl text-gray-300">搜尋並載入 YouTube 影片</p>
+        <p class="text-sm sm:text-base md:text-lg text-gray-300 break-words px-2">
+          搜尋並載入 YouTube 影片
+        </p>
         <div
           class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"
         ></div>
       </div>
 
       <!-- 導航按鈕 -->
-      <div class="mb-8 flex justify-center gap-4">
+      <div class="mb-6 flex justify-center gap-3 sm:gap-4">
         <button
           @click="goToMenu"
-          class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95"
+          class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95 touch-manipulation text-sm sm:text-base font-medium whitespace-nowrap"
         >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -38,9 +40,9 @@
 
         <button
           @click="goToHome"
-          class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95"
+          class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95 touch-manipulation text-sm sm:text-base font-medium whitespace-nowrap"
         >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -111,7 +113,7 @@
             <button
               @click="() => handleSearch()"
               :disabled="!searchState.query.trim() || searchState.isSearching"
-              class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-3 rounded-xl hover:shadow-lg hover:shadow-green-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-3 rounded-xl hover:shadow-lg hover:shadow-green-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
               <svg
                 v-if="searchState.isSearching"
@@ -148,25 +150,27 @@
 
         <!-- 搜尋結果區域 -->
         <div v-if="hasResults" class="space-y-4">
-          <div class="flex items-center justify-between mb-6">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
             <h2
-              class="text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent"
+              class="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent"
             >
               搜尋結果 ({{ searchState.results.length }})
             </h2>
-            <div class="text-sm text-gray-400">搜尋: "{{ searchState.query }}"</div>
+            <div class="text-xs sm:text-sm text-gray-400 break-words">
+              搜尋: "{{ searchState.query }}"
+            </div>
           </div>
 
           <!-- 影片結果網格 -->
-          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div class="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <div
               v-for="video in searchState.results"
               :key="video.id"
               @click="loadVideo(video)"
-              class="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg hover:shadow-green-500/20 hover:border-green-500/50 transition-all duration-200 active:scale-[0.98]"
+              class="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg hover:shadow-green-500/20 hover:border-green-500/50 transition-all duration-200 active:scale-[0.98] touch-manipulation"
             >
               <!-- 縮略圖 -->
-              <div class="relative aspect-video bg-gray-700">
+              <div class="relative aspect-video bg-gray-700 rounded-t-xl overflow-hidden">
                 <img
                   v-if="video.thumbnails.medium"
                   :src="video.thumbnails.medium"
@@ -197,7 +201,7 @@
                 </div>
                 <!-- 影片時長 -->
                 <div
-                  class="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded"
+                  class="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded font-mono"
                 >
                   {{ video.duration }}
                 </div>
@@ -205,21 +209,27 @@
                 <div
                   class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white drop-shadow-lg"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 </div>
               </div>
 
               <!-- 影片資訊 -->
-              <div class="p-4">
+              <div class="p-3 sm:p-4">
                 <h3
-                  class="font-semibold text-white group-hover:text-green-400 transition-colors line-clamp-2 mb-2"
+                  class="text-sm sm:text-base font-semibold text-white group-hover:text-green-400 transition-colors line-clamp-2 mb-2 leading-tight"
                 >
                   {{ video.title }}
                 </h3>
-                <p class="text-sm text-gray-400 mb-1">{{ video.channelTitle }}</p>
-                <div class="flex items-center gap-2 text-xs text-gray-500">
+                <p class="text-xs sm:text-sm text-gray-400 mb-1 break-words">
+                  {{ video.channelTitle }}
+                </p>
+                <div class="flex items-center gap-1 sm:gap-2 text-xs text-gray-500 flex-wrap">
                   <span>{{ formatNumber(video.viewCount) }}</span>
                   <span>•</span>
                   <span>{{ formatTime(video.publishedAt) }}</span>
@@ -229,11 +239,11 @@
           </div>
 
           <!-- 載入更多按鈕 -->
-          <div v-if="searchState.hasMore" class="text-center mt-8">
+          <div v-if="searchState.hasMore" class="text-center mt-6">
             <button
               @click="loadMoreResults"
               :disabled="isLoadingMore"
-              class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-200 flex items-center gap-2 mx-auto active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-200 flex items-center gap-2 mx-auto active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-base sm:text-lg font-medium whitespace-nowrap"
             >
               <svg
                 v-if="isLoadingMore"
@@ -269,11 +279,15 @@
         </div>
 
         <!-- 載入狀態 -->
-        <div v-else-if="searchState.isSearching" class="text-center py-16">
+        <div v-else-if="searchState.isSearching" class="text-center py-12 sm:py-16">
           <div
-            class="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6"
+            class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6"
           >
-            <svg class="w-12 h-12 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+            <svg
+              class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
               <circle
                 class="opacity-25"
                 cx="12"
@@ -289,8 +303,10 @@
               ></path>
             </svg>
           </div>
-          <h3 class="text-xl font-semibold text-blue-400 mb-2">搜尋中...</h3>
-          <p class="text-gray-400">正在搜尋 "{{ searchState.query }}"</p>
+          <h3 class="text-lg sm:text-xl font-semibold text-blue-400 mb-2">搜尋中...</h3>
+          <p class="text-sm sm:text-base text-gray-400 px-4 break-words">
+            正在搜尋 "{{ searchState.query }}"
+          </p>
         </div>
 
         <!-- 無結果狀態 -->
@@ -314,7 +330,7 @@
           <p class="text-gray-400 mb-4">搜尋 "{{ searchState.query }}" 沒有找到相關影片</p>
           <button
             @click="clearSearch"
-            class="bg-gradient-to-r from-gray-600 to-gray-500 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-200 active:scale-95"
+            class="bg-gradient-to-r from-gray-600 to-gray-500 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-200 active:scale-95 whitespace-nowrap"
           >
             重新搜尋
           </button>

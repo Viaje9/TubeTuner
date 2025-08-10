@@ -5,25 +5,25 @@
     <!-- 訊息提示框 -->
     <MessageBox :message="errorMessage" />
 
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4 py-6 sm:py-8">
       <!-- 標題區域 -->
-      <div class="text-center mb-12">
+      <div class="text-center mb-8">
         <h1
-          class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2"
+          class="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-3"
         >
           功能選單
         </h1>
-        <p class="text-xl text-gray-300">TubeTuner 功能設定</p>
+        <p class="text-base sm:text-lg text-gray-300">TubeTuner 功能設定</p>
         <div
           class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"
         ></div>
       </div>
 
       <!-- 返回播放器按鈕 -->
-      <div class="mb-8 flex justify-center">
+      <div class="mb-6 flex justify-center">
         <button
           @click="goToHome"
-          class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95"
+          class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-8 py-4 rounded-xl hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-3 active:scale-95 touch-manipulation text-base sm:text-lg font-medium whitespace-nowrap"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -38,16 +38,16 @@
       </div>
 
       <!-- 功能選項卡片 -->
-      <div class="max-w-2xl mx-auto grid gap-6 md:grid-cols-2">
+      <div class="max-w-sm sm:max-w-2xl mx-auto grid gap-4 sm:gap-6 sm:grid-cols-2">
         <!-- AI 設定卡片 -->
         <div
           @click="goToAISettings"
-          class="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 cursor-pointer hover:shadow-2xl hover:shadow-purple-500/20 hover:border-purple-500/50 transition-all duration-300 active:scale-95"
+          class="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 sm:p-8 cursor-pointer hover:shadow-2xl hover:shadow-purple-500/20 hover:border-purple-500/50 transition-all duration-300 active:scale-[0.98] touch-manipulation"
         >
           <div class="flex flex-col items-center text-center">
             <!-- AI 圖示 -->
             <div
-              class="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300"
+              class="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300"
             >
               <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -59,12 +59,12 @@
               </svg>
             </div>
             <h3
-              class="text-2xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
+              class="text-lg sm:text-xl md:text-2xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
             >
               AI 設定
             </h3>
-            <p class="text-gray-400 leading-relaxed">
-              設定 AI 聊天功能，包含 API 金鑰、模型選擇和參數調整
+            <p class="text-sm sm:text-base text-gray-400 leading-relaxed break-words">
+              設定 AI 聊天功能，包含 API 金鑰<br class="sm:hidden" />、模型選擇和參數調整
             </p>
             <!-- 狀態指示器 -->
             <div class="mt-4 flex items-center gap-2">
@@ -82,12 +82,12 @@
         <!-- 搜尋影片卡片 -->
         <div
           @click="goToSearch"
-          class="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 cursor-pointer hover:shadow-2xl hover:shadow-green-500/20 hover:border-green-500/50 transition-all duration-300 active:scale-95"
+          class="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 sm:p-8 cursor-pointer hover:shadow-2xl hover:shadow-green-500/20 hover:border-green-500/50 transition-all duration-300 active:scale-[0.98] touch-manipulation"
         >
           <div class="flex flex-col items-center text-center">
             <!-- 搜尋圖示 -->
             <div
-              class="w-16 h-16 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300"
+              class="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300"
             >
               <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -99,12 +99,12 @@
               </svg>
             </div>
             <h3
-              class="text-2xl font-bold mb-3 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent"
+              class="text-lg sm:text-xl md:text-2xl font-bold mb-3 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent"
             >
               搜尋影片
             </h3>
-            <p class="text-gray-400 leading-relaxed">
-              搜尋 YouTube 影片並快速載入到播放器中，支援縮略圖預覽
+            <p class="text-sm sm:text-base text-gray-400 leading-relaxed break-words">
+              搜尋 YouTube 影片並快速載入<br class="sm:hidden" />到播放器中，支援縮略圖預覽
             </p>
             <!-- 功能標籤 -->
             <div class="mt-4">
