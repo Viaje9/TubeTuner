@@ -33,7 +33,9 @@
         </div>
 
         <h1
-          class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2 break-words"
+          class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2 break-words cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95"
+          @click="reloadPage"
+          title="點擊重新載入頁面"
         >
           TubeTuner
         </h1>
@@ -47,7 +49,9 @@
       <div v-else-if="!isInputFocused" class="flex items-center justify-between mb-4">
         <div class="flex flex-col">
           <h1
-            class="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent break-words"
+            class="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent break-words cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95"
+            @click="reloadPage"
+            title="點擊重新載入頁面"
           >
             TubeTuner
           </h1>
@@ -234,6 +238,13 @@ const showError = (message: string) => {
 // 導航函數
 const goToMenu = () => {
   router.push('/menu')
+}
+
+// 重新載入頁面函數
+const reloadPage = () => {
+  console.log('Reloading page...')
+
+  window.location.reload()
 }
 
 // 控制面板切換函數
