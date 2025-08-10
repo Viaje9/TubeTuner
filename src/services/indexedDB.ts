@@ -333,6 +333,53 @@ class IndexedDBService {
       totalSize,
     }
   }
+
+  /**
+   * 清除所有 IndexedDB 資料
+   */
+  async clearAllData(): Promise<void> {
+    const db = await this.ensureDB()
+
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([STORE_VIDEOS, STORE_SUBTITLES], 'readwrite')
+      const videoStore = transaction.objectStore(STORE_VIDEOS)
+      const subtitleStore = transaction.objectStore(STORE_SUBTITLES)
+
+      // 清除所有影片
+      const clearVideosRequest = videoStore.clear()
+
+      // 清除所有字幕
+      const clearSubtitlesRequest = subtitleStore.clear()
+
+      let completedOperations = 0
+      const totalOperations = 2
+
+      const checkComplete = () => {
+        completedOperations++
+        if (completedOperations === totalOperations) {
+          resolve()
+        }
+      }
+
+      clearVideosRequest.onsuccess = () => {
+        console.log('所有影片資料已清除')
+        checkComplete()
+      }
+
+      clearSubtitlesRequest.onsuccess = () => {
+        console.log('所有字幕資料已清除')
+        checkComplete()
+      }
+
+      clearVideosRequest.onerror = () => {
+        reject(new Error('清除影片資料失敗'))
+      }
+
+      clearSubtitlesRequest.onerror = () => {
+        reject(new Error('清除字幕資料失敗'))
+      }
+    })
+  }
 }
 
 // 單例模式

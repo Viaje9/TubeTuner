@@ -200,11 +200,132 @@
             </div>
           </div>
         </div>
+
+        <!-- 分隔線 -->
+        <div class="border-t border-gray-700/30 my-2"></div>
+
+        <!-- 清除 IndexedDB 資料 -->
+        <div
+          @click="showClearDataDialog"
+          class="group bg-gradient-to-r from-gray-800/30 to-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-xl p-4 cursor-pointer hover:bg-gradient-to-r hover:from-red-800/20 hover:to-red-900/20 hover:border-red-500/30 transition-all duration-200 active:scale-[0.99] touch-manipulation"
+        >
+          <div class="flex items-center gap-4">
+            <div
+              class="w-12 h-12 bg-gradient-to-r from-red-600 to-red-700 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-lg font-semibold text-white mb-1">清除本機資料</h3>
+              <p class="text-sm text-gray-400 truncate">清除所有儲存的影片和字幕檔案</p>
+            </div>
+            <div class="flex-shrink-0">
+              <svg
+                class="w-5 h-5 text-gray-500 group-hover:text-red-400 transition-colors duration-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- 底部版權資訊 -->
       <div class="mt-16 text-center text-gray-500 text-sm">
         <p>TubeTuner - YouTube 影片速度控制器</p>
+      </div>
+    </div>
+
+    <!-- 清除資料確認對話框 -->
+    <div
+      v-if="showConfirmDialog"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      @click="cancelClearData"
+    >
+      <div
+        class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-2xl max-w-md w-full p-6 border border-gray-700/50"
+        @click.stop
+      >
+        <!-- 警告圖示 -->
+        <div class="flex items-center justify-center mb-6">
+          <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+            <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <!-- 標題和描述 -->
+        <div class="text-center mb-8">
+          <h3 class="text-xl font-bold text-white mb-3">確認清除資料</h3>
+          <p class="text-gray-400 leading-relaxed">
+            此操作將會清除所有儲存在本機的影片和字幕檔案。
+            <strong class="text-red-400">此操作無法復原</strong>，請確認是否繼續？
+          </p>
+          <div v-if="storageInfo" class="mt-4 p-3 bg-gray-800/50 rounded-lg text-sm text-gray-300">
+            <div class="flex justify-between">
+              <span>影片數量：</span>
+              <span class="text-white font-medium">{{ storageInfo.videos }} 個</span>
+            </div>
+            <div class="flex justify-between mt-1">
+              <span>佔用空間：</span>
+              <span class="text-white font-medium">{{
+                formatFileSize(storageInfo.totalSize)
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 按鈕群組 -->
+        <div class="flex gap-3">
+          <button
+            @click="cancelClearData"
+            class="flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-xl transition-colors duration-200 font-medium"
+          >
+            取消
+          </button>
+          <button
+            @click="confirmClearData"
+            :disabled="isClearingData"
+            class="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 disabled:bg-red-600/50 text-white rounded-xl transition-colors duration-200 font-medium flex items-center justify-center gap-2"
+          >
+            <svg
+              v-if="isClearingData"
+              class="w-4 h-4 animate-spin"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
+            <span>{{ isClearingData ? '清除中...' : '確認清除' }}</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -215,12 +336,18 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAIConfigStore } from '@/stores/aiConfig'
 import { useUserPreferencesStore, type UserPreferenceFunction } from '@/stores/userPreferences'
+import { indexedDBService } from '@/services/indexedDB'
 import MessageBox from '@/components/MessageBox.vue'
 
 const router = useRouter()
 const aiConfig = useAIConfigStore()
 const userPreferences = useUserPreferencesStore()
 const errorMessage = ref('')
+
+// 清除資料相關狀態
+const showConfirmDialog = ref(false)
+const isClearingData = ref(false)
+const storageInfo = ref<{ videos: number; totalSize: number } | null>(null)
 
 // 功能選擇處理
 const selectFunction = (func: UserPreferenceFunction) => {
@@ -247,6 +374,77 @@ const selectFunction = (func: UserPreferenceFunction) => {
 // 重新載入頁面函數
 const reloadPage = () => {
   window.location.reload()
+}
+
+// 格式化檔案大小
+const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return '0 B'
+  const k = 1024
+  const sizes = ['B', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
+
+// 顯示清除資料確認對話框
+const showClearDataDialog = async () => {
+  try {
+    // 先獲取目前的儲存使用情況
+    storageInfo.value = await indexedDBService.getStorageUsage()
+    showConfirmDialog.value = true
+  } catch (error) {
+    console.error('獲取儲存資訊失敗:', error)
+    errorMessage.value = '獲取儲存資訊失敗'
+    // 觸發 MessageBox 的 watch
+    setTimeout(() => {
+      errorMessage.value = ''
+    }, 100)
+    setTimeout(() => {
+      errorMessage.value = '獲取儲存資訊失敗'
+    }, 150)
+  }
+}
+
+// 取消清除資料
+const cancelClearData = () => {
+  showConfirmDialog.value = false
+  storageInfo.value = null
+}
+
+// 確認清除資料
+const confirmClearData = async () => {
+  isClearingData.value = true
+
+  try {
+    await indexedDBService.clearAllData()
+
+    // 清除成功提示
+    showConfirmDialog.value = false
+    storageInfo.value = null
+
+    // 顯示成功訊息
+    errorMessage.value = '本機資料清除成功'
+    setTimeout(() => {
+      errorMessage.value = ''
+    }, 100)
+    setTimeout(() => {
+      errorMessage.value = '本機資料清除成功'
+    }, 150)
+
+    console.log('IndexedDB 資料清除成功')
+  } catch (error) {
+    console.error('清除 IndexedDB 資料失敗:', error)
+
+    // 顯示錯誤訊息
+    errorMessage.value = '清除資料失敗，請稍後再試'
+    setTimeout(() => {
+      errorMessage.value = ''
+    }, 100)
+    setTimeout(() => {
+      errorMessage.value = '清除資料失敗，請稍後再試'
+    }, 150)
+  } finally {
+    isClearingData.value = false
+  }
 }
 
 onMounted(() => {
