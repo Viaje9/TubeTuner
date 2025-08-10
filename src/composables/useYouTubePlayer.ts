@@ -59,9 +59,11 @@ export function useYouTubePlayer() {
   const currentVideoId = ref('')
   const playbackRate = ref(1)
   const isPlaying = ref(false)
+  const currentTime = ref(0)
 
   let playerElement: HTMLElement | null = null
   let saveInterval: number | null = null
+  let timeUpdateInterval: number | null = null
 
   const loadYouTubeAPI = () => {
     return new Promise<void>((resolve) => {
@@ -296,11 +298,27 @@ export function useYouTubePlayer() {
     }
   }
 
+  const updateCurrentTime = () => {
+    if (player.value && isReady.value) {
+      try {
+        currentTime.value = player.value.getCurrentTime()
+      } catch (error) {
+        console.error('Failed to get current time:', error)
+      }
+    }
+  }
+
   const destroyPlayer = () => {
     // 清除自動保存定時器
     if (saveInterval) {
       clearInterval(saveInterval)
       saveInterval = null
+    }
+
+    // 清除時間更新定時器
+    if (timeUpdateInterval) {
+      clearInterval(timeUpdateInterval)
+      timeUpdateInterval = null
     }
 
     // 最後保存一次狀態
@@ -311,10 +329,11 @@ export function useYouTubePlayer() {
       player.value = null
       isReady.value = false
       isPlaying.value = false
+      currentTime.value = 0
     }
   }
 
-  // 當播放狀態改變時，啟動或停止自動保存
+  // 當播放狀態改變時，啟動或停止自動保存和時間更新
   watch(isPlaying, (playing) => {
     if (playing) {
       // 播放中，每 5 秒保存一次
@@ -323,13 +342,25 @@ export function useYouTubePlayer() {
           savePlaybackState()
         }, 5000)
       }
+      // 播放中，每 1 秒更新一次時間
+      if (!timeUpdateInterval) {
+        timeUpdateInterval = setInterval(() => {
+          updateCurrentTime()
+        }, 1000)
+      }
     } else {
       // 暫停時立即保存並停止定時器
       if (saveInterval) {
         clearInterval(saveInterval)
         saveInterval = null
       }
+      if (timeUpdateInterval) {
+        clearInterval(timeUpdateInterval)
+        timeUpdateInterval = null
+      }
       savePlaybackState()
+      // 暫停時也更新一次時間
+      updateCurrentTime()
     }
   })
 
@@ -343,6 +374,7 @@ export function useYouTubePlayer() {
     currentVideoId,
     playbackRate,
     isPlaying,
+    currentTime,
     initPlayer,
     loadVideo,
     setSpeed,

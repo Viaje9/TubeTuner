@@ -19,11 +19,19 @@
         ></div>
       </div>
       <div v-else-if="!isInputFocused" class="flex items-center justify-between mb-4">
-        <h1
-          class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
-        >
-          TubeTuner
-        </h1>
+        <div class="flex flex-col">
+          <h1
+            class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+          >
+            TubeTuner
+          </h1>
+          <div
+            v-if="youtubePlayer.currentVideoId.value && youtubePlayer.isReady.value"
+            class="text-sm text-gray-300 mt-1"
+          >
+            播放時間: {{ formatTime(youtubePlayer.currentTime.value) }}
+          </div>
+        </div>
         <!-- 統一控制按鈕 -->
         <button
           @click="toggleControlPanel"
@@ -90,6 +98,19 @@ import YouTubePlayer from '@/components/YouTubePlayer.vue'
 import FloatingControlPanel from '@/components/FloatingControlPanel.vue'
 import MessageBox from '@/components/MessageBox.vue'
 import ChatHistory from '@/components/ChatHistory.vue'
+
+// 時間格式化工具函數
+const formatTime = (seconds: number): string => {
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const secs = Math.floor(seconds % 60)
+
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+  } else {
+    return `${minutes}:${secs.toString().padStart(2, '0')}`
+  }
+}
 
 const youtubePlayer = useYouTubePlayer()
 const aiConfig = useAIConfigStore()
