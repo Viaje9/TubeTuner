@@ -232,6 +232,15 @@ const handleVideoFile = (file: File) => {
     return
   }
 
+  // 檢查瀏覽器是否支援這種影片格式
+  const video = document.createElement('video')
+  const canPlay = video.canPlayType(file.type)
+
+  if (canPlay === '') {
+    emit('error', `不支援的影片格式: ${file.type}。建議使用 MP4 (H.264) 格式`)
+    return
+  }
+
   emit('videoLoaded', file)
 
   // 清除之前選擇的檔案

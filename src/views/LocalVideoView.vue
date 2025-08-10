@@ -173,24 +173,27 @@ const controlPanelRef = ref()
 const isInputFocused = ref(false)
 
 const handlePlayerReady = () => {
-  console.log('本機播放器已準備好')
+  // 本機播放器已準備好
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const handleVideoLoaded = (file: File) => {
-  console.log('本機影片已載入:', file.name)
   hasVideoLoaded.value = true
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const handleSpeedChanged = (speed: number) => {
-  console.log('播放速度已變更:', speed)
+  // 播放速度已變更
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const handleSeeked = (seconds: number) => {
-  console.log('已跳轉:', seconds, '秒')
+  // 已跳轉
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const handlePlayStateChanged = (isPlaying: boolean) => {
-  console.log('播放狀態已變更:', isPlaying ? '播放中' : '已暫停')
+  // 播放狀態已變更
 }
 
 const showError = (message: string) => {
@@ -225,10 +228,19 @@ const handleInputBlurred = () => {
   isInputFocused.value = false
 }
 
-onMounted(() => {
+onMounted(async () => {
   // 載入 AI 配置以支援聊天功能
   aiConfig.loadFromStorage()
-  console.log('本機影片頁面已載入')
+
+  // 檢查是否有上次的影片需要恢復
+  try {
+    const lastVideoInfo = localPlayer.getLastVideoInfo()
+    if (lastVideoInfo) {
+      hasVideoLoaded.value = true
+    }
+  } catch (error) {
+    console.error('檢查影片狀態失敗:', error)
+  }
 })
 </script>
 
