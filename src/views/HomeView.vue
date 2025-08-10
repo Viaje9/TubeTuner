@@ -84,7 +84,6 @@
                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
               />
             </svg>
-            <span v-if="!aiConfig.canUseAI" class="w-2 h-2 bg-orange-400 rounded-full"></span>
           </button>
 
           <button
