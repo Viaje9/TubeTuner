@@ -100,7 +100,7 @@
       </div>
 
       <!-- 播放器控制按鈕 -->
-      <div class="absolute top-2 right-2 flex items-center gap-2">
+      <div class="absolute -top-2 -right-2 flex items-center gap-2">
         <!-- 移除影片按鈕 -->
         <button
           @click="handleVideoCleared"
@@ -119,7 +119,7 @@
       </div>
 
       <!-- 字幕上傳按鈕（左上角） -->
-      <div v-if="!hasSubtitles" class="absolute top-2 left-2 flex items-center gap-2">
+      <div v-if="!hasSubtitles" class="absolute -top-2 -left-2 flex items-center gap-2">
         <button
           @click="triggerSubtitleUpload"
           class="bg-blue-500/80 hover:bg-blue-500 text-white p-2 rounded-lg transition-colors backdrop-blur-sm"
@@ -486,59 +486,119 @@ watch(videoFile, (file) => {
   }
 })
 
-// 監聽父元件傳入的 hasVideoLoaded 狀態變化（通過檢查 props 或其他方式）
-// 因為沒有直接的 props，我們需要通過其他方式來檢測需要恢復的狀態
-// 讓我們在 mounted 時檢查是否需要恢復，但使用延遲確保父元件已執行
+// 在組件掛載時自動檢查並恢復影片
 onMounted(async () => {
-  // 延遲一點時間，確保父元件的 onMounted 已執行
-  setTimeout(async () => {
-    // 檢查是否有影片需要恢復但當前沒有載入任何影片
-    const lastVideoInfo = await localPlayer.getLastVideoInfo()
-    console.log('檢查最新影片資訊:', lastVideoInfo)
+  console.log('🚀 LocalVideoPlayer 組件已掛載，檢查是否需要恢復影片...')
 
-    if (lastVideoInfo && !localPlayer.videoFile.value) {
-      hasVideo.value = true
-      await autoRestoreVideo()
-    }
-  }, 100) // 延遲 100ms
+  // 直接檢查並恢復，不使用 setTimeout
+  await checkAndRestoreVideo()
 })
+
+// 精準檢查並恢復影片的邏輯
+const checkAndRestoreVideo = async () => {
+  try {
+    // 檢查是否已有影片載入（避免重複恢復）
+    if (localPlayer.videoFile.value) {
+      console.log('ℹ️ 已有影片載入，跳過恢復')
+      return
+    }
+
+    // 檢查 IndexedDB 中是否有影片
+    const lastVideoInfo = await localPlayer.getLastVideoInfo()
+    console.log('🔍 檢查最新影片資訊:', lastVideoInfo)
+
+    if (!lastVideoInfo) {
+      console.log('ℹ️ IndexedDB 中沒有找到影片')
+      return
+    }
+
+    console.log('🔄 發現需要恢復的影片，開始恢復程序...')
+
+    // 設定 hasVideo 狀態，觸發 DOM 渲染 video 元素
+    hasVideo.value = true
+
+    // 等待 DOM 更新完成
+    await nextTick()
+
+    // 確保 video 元素已存在
+    await waitForVideoElement()
+
+    // 執行恢復
+    const restored = await autoRestoreVideo()
+    if (!restored) {
+      console.warn('⚠️ 影片恢復失敗，重置狀態')
+      hasVideo.value = false
+    } else {
+      console.log('✅ 影片恢復成功')
+    }
+  } catch (error) {
+    console.error('❌ 檢查恢復影片時發生錯誤:', error)
+    hasVideo.value = false
+  }
+}
+
+// 等待 video 元素出現的精準方法
+const waitForVideoElement = async (maxAttempts = 50, interval = 500): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    let attempts = 0
+
+    const checkElement = () => {
+      const videoEl = document.getElementById('local-video-player')
+      if (videoEl) {
+        console.log('✅ Video 元素已準備就緒')
+        resolve()
+        return
+      }
+
+      attempts++
+      if (attempts >= maxAttempts) {
+        reject(new Error(`Video 元素在 ${maxAttempts * interval}ms 內未出現`))
+        return
+      }
+
+      setTimeout(checkElement, interval)
+    }
+
+    checkElement()
+  })
+}
 
 // 檢查是否需要自動恢復影片
 
-// 自動恢復影片的邏輯
-const autoRestoreVideo = async () => {
+// 精準的自動恢復影片邏輯
+const autoRestoreVideo = async (): Promise<boolean> => {
   try {
+    console.log('🔄 開始自動恢復影片...')
+
     // 顯示載入狀態
     showIndexedDBLoading.value = true
-    loadingMessage.value = '恢復影片...'
+    loadingMessage.value = '正在恢復影片...'
 
-    // 等待 DOM 更新以確保 video 元素已渲染
-    await nextTick()
-
-    // 初始化播放器
+    // 初始化播放器（此時 video 元素已確保存在）
+    console.log('🎬 初始化播放器...')
     await initPlayer('local-video-player')
 
-    // 更新載入訊息
-    loadingMessage.value = '載入中...'
-
-    // 自動恢復影片
+    // 執行恢復
+    console.log('📥 從 IndexedDB 恢復影片...')
     const restored = await localPlayer.autoRestoreLastVideo()
 
     if (restored) {
-      loadingMessage.value = '恢復中...'
+      console.log('✅ 影片恢復成功')
       emit('playerReady')
 
-      // 檢查是否有對應的影片檔案，如果有就發送 videoLoaded 事件
+      // 如果有影片檔案，發送事件
       if (localPlayer.videoFile.value) {
         emit('videoLoaded', localPlayer.videoFile.value)
       }
+
+      return true
     } else {
-      // 如果恢復失敗，重置狀態
-      hasVideo.value = false
+      console.log('❌ 影片恢復失敗')
+      return false
     }
   } catch (error) {
-    console.error('自動恢復影片失敗:', error)
-    hasVideo.value = false
+    console.error('💥 自動恢復影片時發生錯誤:', error)
+    return false
   } finally {
     // 隱藏載入狀態
     showIndexedDBLoading.value = false
@@ -546,15 +606,6 @@ const autoRestoreVideo = async () => {
   }
 }
 
-// 監聽 hasVideo 變化來觸發自動恢復
-watch(
-  hasVideo,
-  async (newValue, oldValue) => {
-    // 只有從 false 變成 true 且沒有影片檔案且不是手動載入時，才執行自動恢復
-    if (newValue && !oldValue && !localPlayer.videoFile.value && !isManualLoading.value) {
-      await autoRestoreVideo()
-    }
-  },
-  { immediate: false },
-)
+// 移除自動觸發的監聽器，改為在 onMounted 中手動控制
+// 這樣可以避免時序問題和重複觸發
 </script>
