@@ -493,7 +493,9 @@ onMounted(async () => {
   // 延遲一點時間，確保父元件的 onMounted 已執行
   setTimeout(async () => {
     // 檢查是否有影片需要恢復但當前沒有載入任何影片
-    const lastVideoInfo = localPlayer.getLastVideoInfo()
+    const lastVideoInfo = await localPlayer.getLastVideoInfo()
+    console.log('檢查最新影片資訊:', lastVideoInfo)
+
     if (lastVideoInfo && !localPlayer.videoFile.value) {
       hasVideo.value = true
       await autoRestoreVideo()

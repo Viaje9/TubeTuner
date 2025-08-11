@@ -274,13 +274,10 @@ export function useLocalVideoPlayer() {
 
   const savePlaybackState = () => {
     if (videoFile.value && videoElement.value) {
+      // 只儲存播放狀態，不儲存檔案資訊（檔案資訊從 IndexedDB 獲取）
       const state = {
-        videoFile: {
-          name: videoFile.value.name,
-          size: videoFile.value.size,
-          type: videoFile.value.type,
-          lastModified: videoFile.value.lastModified,
-        },
+        // 保留影片識別資訊，用於匹配
+        videoId: `${videoFile.value.name}_${videoFile.value.size}_${videoFile.value.lastModified}`,
         currentTime: currentTime.value,
         playbackRate: playbackRate.value,
         isPaused: !isPlaying.value,
@@ -288,29 +285,28 @@ export function useLocalVideoPlayer() {
         timestamp: Date.now(),
       }
 
-      localStorage.setItem('localVideoState', JSON.stringify(state))
+      localStorage.setItem('localVideoPlaybackState', JSON.stringify(state))
     }
   }
 
   const restorePlaybackState = (forceRestore = false) => {
     try {
-      const saved = localStorage.getItem('localVideoState')
+      const saved = localStorage.getItem('localVideoPlaybackState')
       if (!saved) return
 
       const state = JSON.parse(saved)
 
       // 檢查是否過期（7天）
       if (Date.now() - state.timestamp > 7 * 24 * 60 * 60 * 1000) {
-        localStorage.removeItem('localVideoState')
+        localStorage.removeItem('localVideoPlaybackState')
         return
       }
 
-      // 如果是同一個檔案，恢復播放狀態
-      const isSameFile =
-        videoFile.value &&
-        state.videoFile &&
-        state.videoFile.name === videoFile.value.name &&
-        state.videoFile.size === videoFile.value.size
+      // 檢查是否是同一個檔案
+      const currentVideoId = videoFile.value
+        ? `${videoFile.value.name}_${videoFile.value.size}_${videoFile.value.lastModified}`
+        : null
+      const isSameFile = currentVideoId && state.videoId === currentVideoId
 
       if (isSameFile || forceRestore) {
         const attemptRestore = () => {
@@ -342,23 +338,34 @@ export function useLocalVideoPlayer() {
     }
   }
 
-  // 獲取上次影片的資訊（不載入檔案）
-  const getLastVideoInfo = () => {
+  // 獲取上次影片的資訊（直接從 IndexedDB 獲取最新影片）
+  const getLastVideoInfo = async () => {
     try {
-      const saved = localStorage.getItem('localVideoState')
-      if (!saved) return null
-
-      const state = JSON.parse(saved)
-
-      // 檢查是否過期（7天）
-      if (Date.now() - state.timestamp > 7 * 24 * 60 * 60 * 1000) {
-        localStorage.removeItem('localVideoState')
+      const videos = await indexedDBService.getAllVideos()
+      if (videos.length === 0) {
+        console.log('🔍 IndexedDB 中沒有找到任何影片')
         return null
       }
 
-      return state.videoFile || null
+      // 返回最新的影片（按 createdAt 排序）
+      const latestVideo = videos.sort((a, b) => {
+        // 如果沒有 createdAt，使用 id 作為備用排序
+        const aTime = a.createdAt || 0
+        const bTime = b.createdAt || 0
+        return bTime - aTime
+      })[0]
+
+      console.log('📁 從 IndexedDB 找到最新影片:', latestVideo.name)
+
+      // 轉換成與原本格式相容的物件
+      return {
+        name: latestVideo.name,
+        size: latestVideo.size,
+        type: latestVideo.type,
+        lastModified: latestVideo.lastModified || 0,
+      }
     } catch (error) {
-      console.error('獲取影片資訊失敗:', error)
+      console.error('從 IndexedDB 獲取影片資訊失敗:', error)
       return null
     }
   }
@@ -366,7 +373,7 @@ export function useLocalVideoPlayer() {
   // 自動恢復上次的影片（需要 video 元素已初始化）
   const autoRestoreLastVideo = async () => {
     try {
-      const lastVideoInfo = getLastVideoInfo()
+      const lastVideoInfo = await getLastVideoInfo()
       if (!lastVideoInfo) {
         console.log('🔍 沒有找到上次播放的影片資訊')
         return false
@@ -506,8 +513,8 @@ export function useLocalVideoPlayer() {
         await indexedDBService.deleteVideo(videoId)
       }
 
-      // 清除 localStorage
-      localStorage.removeItem('localVideoState')
+      // 清除 localStorage 播放狀態
+      localStorage.removeItem('localVideoPlaybackState')
 
       // 清理播放器狀態，不保存狀態
       destroyPlayer(false)

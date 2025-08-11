@@ -171,38 +171,30 @@ const controlPanelRef = ref()
 const isInputFocused = ref(false)
 
 const handlePlayerReady = () => {
-  // 本機播放器已準備好
+  console.log('本機播放器已準備好')
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const handleVideoLoaded = (file: File) => {
   hasVideoLoaded.value = true
+  console.log('影片已載入:', file.name)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const handleSpeedChanged = (speed: number) => {
-  // 播放速度已變更
+  console.log('播放速度已變更:', speed)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const handleSeeked = (seconds: number) => {
-  // 已跳轉
+  console.log('已跳轉:', seconds, '秒')
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const handlePlayStateChanged = (isPlaying: boolean) => {
-  // 播放狀態已變更
+  console.log('播放狀態:', isPlaying ? '播放中' : '已暫停')
 }
 
 const showError = (message: string) => {
+  // 直接設定錯誤訊息
   errorMessage.value = message
-  // 觸發 MessageBox 的 watch
-  setTimeout(() => {
-    errorMessage.value = ''
-  }, 100)
-  setTimeout(() => {
-    errorMessage.value = message
-  }, 150)
+  console.error('錯誤:', message)
 }
 
 // 導航函數
@@ -236,9 +228,13 @@ onMounted(async () => {
   aiConfig.loadFromStorage()
 
   // 檢查是否有上次的影片需要恢復
+  // LocalVideoPlayer 元件會自動處理恢復邏輯
+  // 這裡只需要檢查是否有保存的影片資訊來決定初始 UI 狀態
   try {
-    const lastVideoInfo = localPlayer.getLastVideoInfo()
+    const lastVideoInfo = await localPlayer.getLastVideoInfo()
     if (lastVideoInfo) {
+      console.log('偵測到上次播放的影片:', lastVideoInfo.name)
+      // 設定 hasVideoLoaded 為 true，讓 LocalVideoPlayer 元件觸發自動恢復
       hasVideoLoaded.value = true
     }
   } catch (error) {

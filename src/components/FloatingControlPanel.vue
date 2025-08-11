@@ -232,7 +232,7 @@
       style="bottom: var(--keyboard-height, 0px)"
     >
       <!-- 水平播放控制條 -->
-      <div class="flex items-center px-6 py-3 border-b border-gray-700/30">
+      <div class="flex items-center px-6 py-3 pb-10 border-b border-gray-700/30">
         <!-- 左側：快速後退 -->
         <div class="flex-1 flex justify-start">
           <button
