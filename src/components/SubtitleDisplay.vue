@@ -31,23 +31,6 @@
         title="點擊選取文字進行翻譯"
       />
 
-      <!-- 長按提示和測試按鈕 -->
-      <div
-        v-if="!selectedText && !translationResult"
-        class="absolute -bottom-12 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2"
-      >
-        <div class="text-xs text-gray-400 pointer-events-none opacity-70 animate-pulse">
-          點擊選取文字翻譯
-        </div>
-        <!-- 測試按鈕 -->
-        <button
-          @click="selectAllText"
-          class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs"
-        >
-          測試選取
-        </button>
-      </div>
-
       <!-- 翻譯按鈕 -->
       <div
         v-if="selectedText && !isTranslating"
@@ -294,6 +277,7 @@ const translateSelectedText = async () => {
         {
           role: 'system',
           content:
+            aiConfig.systemPrompt ||
             '你是一個專業的翻譯助手。請將用戶提供的文字翻譯成繁體中文。只需要提供翻譯結果，不需要額外的解釋或說明。',
         },
         {
@@ -301,8 +285,8 @@ const translateSelectedText = async () => {
           content: `請將以下文字翻譯成繁體中文：${selectedText.value}`,
         },
       ],
-      temperature: 0.3,
-      max_tokens: 500,
+      temperature: aiConfig.temperature || 0.3,
+      max_tokens: aiConfig.maxTokens || 500,
     })
 
     if (response.choices && response.choices.length > 0) {
