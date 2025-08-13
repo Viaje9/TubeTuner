@@ -248,6 +248,7 @@
       <!-- 底部版權資訊 -->
       <div class="mt-16 text-center text-gray-500 text-sm">
         <p>TubeTuner - YouTube 影片速度控制器</p>
+        <p class="mt-1 text-xs">v{{ appVersion }}</p>
       </div>
     </div>
 
@@ -338,11 +339,13 @@ import { useAIConfigStore } from '@/stores/aiConfig'
 import { useUserPreferencesStore, type UserPreferenceFunction } from '@/stores/userPreferences'
 import { indexedDBService } from '@/services/indexedDB'
 import MessageBox from '@/components/MessageBox.vue'
+import packageJson from '../../package.json'
 
 const router = useRouter()
 const aiConfig = useAIConfigStore()
 const userPreferences = useUserPreferencesStore()
 const errorMessage = ref('')
+const appVersion = ref(packageJson.version)
 
 // 清除資料相關狀態
 const showConfirmDialog = ref(false)
