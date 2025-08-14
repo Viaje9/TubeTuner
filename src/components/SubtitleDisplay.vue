@@ -167,6 +167,7 @@ const subtitleTextRef = ref<HTMLElement>()
 const selectedText = ref('')
 const isTranslating = ref(false)
 const translationResult = ref('')
+const lastTranslatedText = ref('')
 
 // AI 配置
 const aiConfig = useAIConfigStore()
@@ -316,9 +317,6 @@ const clearTranslation = () => {
   }
 }
 
-// 儲存上一次翻譯的原文，用於判斷是否需要保留翻譯
-const lastTranslatedText = ref('')
-
 // 監聽字幕變化
 watch(
   () => props.currentSubtitle,
@@ -332,8 +330,12 @@ watch(
     }
 
     // 如果新字幕包含之前翻譯的文字，保留翻譯結果
-    // 這樣即使字幕切換，只要原文還在顯示，翻譯就會保留
-    if (lastTranslatedText.value && newSubtitle.text.includes(lastTranslatedText.value)) {
+    // 使用更精確的比對：確保是完整的翻譯文字，而非部分匹配
+    if (
+      lastTranslatedText.value &&
+      translationResult.value &&
+      newSubtitle.text.includes(lastTranslatedText.value)
+    ) {
       // 保留翻譯結果
       return
     }
