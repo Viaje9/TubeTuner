@@ -111,7 +111,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import type { SubtitleData } from '@/types/player'
 import { useAIConfigStore } from '@/stores/aiConfig'
 
@@ -167,6 +167,7 @@ const subtitleTextRef = ref<HTMLElement>()
 const selectedText = ref('')
 const isTranslating = ref(false)
 const translationResult = ref('')
+const lastTranslatedText = ref('')
 
 // AI 配置
 const aiConfig = useAIConfigStore()
@@ -291,6 +292,8 @@ const translateSelectedText = async () => {
 
     if (response.choices && response.choices.length > 0) {
       translationResult.value = response.choices[0].message.content.trim()
+      // 記錄翻譯的原文
+      lastTranslatedText.value = selectedText.value
     } else {
       throw new Error('翻譯服務回應格式錯誤')
     }
@@ -306,12 +309,50 @@ const translateSelectedText = async () => {
 const clearTranslation = () => {
   translationResult.value = ''
   selectedText.value = ''
+  lastTranslatedText.value = ''
   // 清除選取
   const selection = window.getSelection()
   if (selection) {
     selection.removeAllRanges()
   }
 }
+
+// 監聽字幕變化
+watch(
+  () => props.currentSubtitle,
+  (newSubtitle) => {
+    // 如果沒有新字幕，清除所有狀態
+    if (!newSubtitle) {
+      translationResult.value = ''
+      selectedText.value = ''
+      lastTranslatedText.value = ''
+      return
+    }
+
+    // 如果新字幕包含之前翻譯的文字，保留翻譯結果
+    // 使用更精確的比對：確保是完整的翻譯文字，而非部分匹配
+    if (
+      lastTranslatedText.value &&
+      translationResult.value &&
+      newSubtitle.text.includes(lastTranslatedText.value)
+    ) {
+      // 保留翻譯結果
+      return
+    }
+
+    // 否則清除選取和翻譯
+    if (selectedText.value || translationResult.value) {
+      selectedText.value = ''
+      translationResult.value = ''
+      lastTranslatedText.value = ''
+      // 清除文字選取
+      const selection = window.getSelection()
+      if (selection) {
+        selection.removeAllRanges()
+      }
+    }
+  },
+)
 
 // 點擊外部時清除選取
 const handleClickOutside = (event: Event) => {
