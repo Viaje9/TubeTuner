@@ -81,12 +81,7 @@
               </svg>
             </div>
             <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <h3 class="text-lg font-semibold text-white">本機影片播放器</h3>
-                <span class="bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full text-xs"
-                  >新功能</span
-                >
-              </div>
+              <h3 class="text-lg font-semibold text-white mb-1">本機影片播放器</h3>
               <p class="text-sm text-gray-400 truncate">上傳本機影片檔案，支援字幕功能</p>
             </div>
             <div class="flex-shrink-0">
@@ -126,12 +121,7 @@
               </svg>
             </div>
             <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <h3 class="text-lg font-semibold text-white">搜尋影片</h3>
-                <span class="bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full text-xs"
-                  >新功能</span
-                >
-              </div>
+              <h3 class="text-lg font-semibold text-white mb-1">搜尋影片</h3>
               <p class="text-sm text-gray-400 truncate">搜尋 YouTube 影片並快速載入播放</p>
             </div>
             <div class="flex-shrink-0">
