@@ -181,6 +181,7 @@
               :current-time="localPlayer.currentTime.value"
               :current-subtitle="localPlayer.currentSubtitle.value"
               :is-playing="localPlayer.isPlaying.value"
+              :video-id="localPlayer.videoId.value"
               @close="showSubtitlePanel = false"
               @seek-to="handleSubtitleSeekTo"
             />

@@ -12,18 +12,51 @@
           :key="subtitle.index"
           :ref="(el) => setSubtitleRef(el, index)"
           :class="[
-            'p-3 rounded cursor-pointer transition-all duration-200 text-xl leading-relaxed',
+            'p-3 rounded transition-all duration-200 text-xl leading-relaxed flex items-center justify-between group',
             isCurrentSubtitle(subtitle)
               ? 'bg-blue-500/20 text-blue-100'
               : 'text-gray-400 hover:bg-gray-700/20',
           ]"
-          @click="seekToSubtitle(subtitle)"
-          :title="`跳轉到 ${formatTime(subtitle.startTime)}`"
         >
           <!-- 字幕內容 -->
-          <div class="break-words">
+          <div
+            class="break-words flex-1 cursor-pointer mr-2"
+            @click="seekToSubtitle(subtitle)"
+            :title="`跳轉到 ${formatTime(subtitle.startTime)}`"
+          >
             {{ subtitle.text }}
           </div>
+
+          <!-- 收藏按鈕 -->
+          <button
+            @click.stop="toggleFavorite(subtitle)"
+            :class="[
+              'flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200',
+              isFavorite(subtitle)
+                ? 'text-yellow-400 hover:text-yellow-300 bg-yellow-400/10 hover:bg-yellow-400/20'
+                : 'text-gray-500 hover:text-yellow-400 hover:bg-yellow-400/10',
+            ]"
+            :title="isFavorite(subtitle) ? '取消收藏' : '收藏字幕'"
+          >
+            <svg
+              v-if="isFavorite(subtitle)"
+              class="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+              />
+            </svg>
+            <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+              />
+            </svg>
+          </button>
         </div>
 
         <!-- 佔位符，確保最後一個字幕可以滾動到頂部 -->
@@ -36,6 +69,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick, type ComponentPublicInstance } from 'vue'
 import type { SubtitleData } from '@/types/player'
+import { useFavoritesStore } from '@/stores/favorites'
 
 // Props
 interface Props {
@@ -43,16 +77,21 @@ interface Props {
   currentTime: number
   currentSubtitle?: SubtitleData | null
   isPlaying?: boolean
+  videoId?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isPlaying: false,
+  videoId: '',
 })
 
 // Emits
 const emit = defineEmits<{
   seekTo: [time: number]
 }>()
+
+// Store
+const favoritesStore = useFavoritesStore()
 
 // 響應式變量
 const scrollContainer = ref<HTMLElement>()
@@ -96,6 +135,17 @@ const formatTime = (seconds: number): string => {
 // 跳轉到指定字幕
 const seekToSubtitle = (subtitle: SubtitleData) => {
   emit('seekTo', subtitle.startTime)
+}
+
+// 收藏功能
+const isFavorite = (subtitle: SubtitleData): boolean => {
+  if (!props.videoId) return false
+  return favoritesStore.isFavorite(props.videoId, subtitle)
+}
+
+const toggleFavorite = (subtitle: SubtitleData) => {
+  if (!props.videoId) return
+  favoritesStore.toggleFavorite(props.videoId, subtitle)
 }
 
 // 滾動到當前字幕

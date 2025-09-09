@@ -15,6 +15,7 @@ export function useLocalVideoPlayer() {
   // 本機影片專用狀態
   const videoFile = ref<File | null>(null)
   const videoUrl = ref<string | null>(null)
+  const videoId = ref<string>('')
   const subtitles = ref<SubtitleData[]>([])
   const currentSubtitle = ref<SubtitleData | null>(null)
   const hasSubtitles = ref(false)
@@ -118,6 +119,7 @@ export function useLocalVideoPlayer() {
       const url = URL.createObjectURL(file)
       videoUrl.value = url
       videoFile.value = file
+      videoId.value = `${file.name}_${file.size}_${file.lastModified}`
       videoElement.value.src = url
 
       // 等待一下再調用 load()，確保 src 已設置
@@ -192,12 +194,13 @@ export function useLocalVideoPlayer() {
       // 如果有影片檔案，將字幕儲存到 IndexedDB
       if (videoFile.value) {
         try {
-          const videoId = `${videoFile.value.name}_${videoFile.value.size}_${videoFile.value.lastModified}`
+          const currentVideoId = `${videoFile.value.name}_${videoFile.value.size}_${videoFile.value.lastModified}`
+          videoId.value = currentVideoId
           console.log('📝 開始儲存字幕到 IndexedDB...')
           console.log(`   字幕檔案: ${file.name}`)
-          console.log(`   關聯影片 ID: ${videoId}`)
+          console.log(`   關聯影片 ID: ${currentVideoId}`)
 
-          await indexedDBService.saveSubtitle(file, videoId)
+          await indexedDBService.saveSubtitle(file, currentVideoId)
           console.log('✅ 字幕成功儲存到 IndexedDB')
         } catch (error) {
           console.warn('❌ 儲存字幕到 IndexedDB 失敗:', error)
@@ -275,9 +278,11 @@ export function useLocalVideoPlayer() {
   const savePlaybackState = () => {
     if (videoFile.value && videoElement.value) {
       // 只儲存播放狀態，不儲存檔案資訊（檔案資訊從 IndexedDB 獲取）
+      const currentVideoId = `${videoFile.value.name}_${videoFile.value.size}_${videoFile.value.lastModified}`
+      videoId.value = currentVideoId
       const state = {
         // 保留影片識別資訊，用於匹配
-        videoId: `${videoFile.value.name}_${videoFile.value.size}_${videoFile.value.lastModified}`,
+        videoId: currentVideoId,
         currentTime: currentTime.value,
         playbackRate: playbackRate.value,
         isPaused: !isPlaying.value,
@@ -572,6 +577,7 @@ export function useLocalVideoPlayer() {
     // 本機影片專用
     videoFile,
     videoUrl,
+    videoId,
     subtitles,
     currentSubtitle,
     hasSubtitles,
