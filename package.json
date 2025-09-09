@@ -18,6 +18,8 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@google/genai": "^1.18.0",
+    "mime": "^4.0.7",
     "pinia": "^3.0.3",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1"
@@ -25,7 +27,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.11",
     "@tsconfig/node22": "^22.0.2",
-    "@types/node": "^22.16.5",
+    "@types/node": "^22.18.1",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vitejs/plugin-vue-jsx": "^5.0.1",
     "@vue/eslint-config-prettier": "^10.2.0",

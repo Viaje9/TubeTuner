@@ -14,7 +14,7 @@ export interface AIConfig {
 export const useAIConfigStore = defineStore('aiConfig', () => {
   // 狀態
   const apiKey = ref('')
-  const selectedModel = ref('openai/gpt-4o-mini')
+  const selectedModel = ref('gemini-2.5-flash')
   const temperature = ref(0.7)
   const maxTokens = ref(1000)
   const systemPrompt = ref(
@@ -55,7 +55,7 @@ export const useAIConfigStore = defineStore('aiConfig', () => {
         apiKey.value = savedSettings.aiApiKey
         isConfigured.value = true
 
-        // 創建 OpenRouter 服務實例
+        // 創建 Gemini 服務實例（沿用 OpenRouterService 名稱）
         openRouterService.value = new OpenRouterService(savedSettings.aiApiKey)
 
         // 載入可用模型
@@ -140,11 +140,20 @@ export const useAIConfigStore = defineStore('aiConfig', () => {
       const models = await openRouterService.value.getModels()
       if (models.length > 0) {
         availableModels.value = models
+        // 如果當前選擇的模型不在清單中，回退到第一個
+        if (!models.find((m) => m.id === selectedModel.value)) {
+          selectedModel.value = models[0].id
+          saveToStorage()
+        }
       }
     } catch (error) {
       console.error('載入模型列表失敗:', error)
       // 如果載入失敗，使用預設模型
       availableModels.value = POPULAR_MODELS
+      if (!POPULAR_MODELS.find((m) => m.id === selectedModel.value)) {
+        selectedModel.value = POPULAR_MODELS[0].id
+        saveToStorage()
+      }
     }
   }
 
@@ -178,7 +187,7 @@ export const useAIConfigStore = defineStore('aiConfig', () => {
   // 重置設定
   const resetConfig = () => {
     apiKey.value = ''
-    selectedModel.value = 'openai/gpt-4o-mini'
+    selectedModel.value = 'gemini-2.5-flash'
     temperature.value = 0.7
     maxTokens.value = 1000
     systemPrompt.value =

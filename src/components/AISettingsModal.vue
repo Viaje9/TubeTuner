@@ -41,9 +41,9 @@
           <!-- API Key 設定 -->
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <label class="text-sm font-medium text-gray-300">OpenRouter API Key</label>
+              <label class="text-sm font-medium text-gray-300">Gemini API Key</label>
               <a
-                href="https://openrouter.ai/keys"
+                href="https://aistudio.google.com/app/apikey"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-xs text-blue-400 hover:text-blue-300 underline"
@@ -55,7 +55,7 @@
               <input
                 v-model="localApiKey"
                 :type="showApiKey ? 'text' : 'password'"
-                placeholder="請輸入您的 OpenRouter API Key..."
+                placeholder="請輸入您的 Gemini API Key..."
                 class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 pr-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 @input="clearError"
               />

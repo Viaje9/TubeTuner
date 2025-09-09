@@ -67,10 +67,10 @@
                 class="flex items-start sm:items-center justify-between flex-col sm:flex-row gap-2 sm:gap-0"
               >
                 <label class="text-base sm:text-lg font-semibold text-gray-200"
-                  >OpenRouter API Key</label
+                  >Gemini API Key</label
                 >
                 <a
-                  href="https://openrouter.ai/keys"
+                  href="https://aistudio.google.com/app/apikey"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="text-sm sm:text-base text-blue-400 hover:text-blue-300 underline transition-colors touch-manipulation min-h-[44px] flex items-center"
@@ -82,7 +82,7 @@
                 <input
                   v-model="localApiKey"
                   :type="showApiKey ? 'text' : 'password'"
-                  placeholder="請輸入您的 OpenRouter API Key..."
+                  placeholder="請輸入您的 Gemini API Key..."
                   class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-4 pr-14 text-base text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all touch-manipulation"
                   @input="clearError"
                 />
@@ -332,7 +332,7 @@
             使用說明
           </h4>
           <ul class="text-blue-300 text-sm sm:text-base space-y-2 sm:space-y-3">
-            <li>• AI 功能需要有效的 OpenRouter API Key 才能使用</li>
+            <li>• AI 功能需要有效的 Gemini API Key 才能使用</li>
             <li>• 不同模型有不同的特色和性能表現，可根據需求選擇</li>
             <li>• Temperature 控制回應的創造性：0=保守準確，2=富創意性</li>
             <li>• 系統提示可以定義 AI 的人格和專業領域</li>

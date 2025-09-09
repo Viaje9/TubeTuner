@@ -212,6 +212,80 @@ export const useChatStore = defineStore('chat', () => {
     }
   }
 
+  // 串流發送訊息給 AI（逐步更新助手回應）
+  const sendMessageStream = async (userMessage: string): Promise<void> => {
+    if (!canSendMessage.value) {
+      throw new Error('無法發送訊息：AI 未設定或正在處理中')
+    }
+
+    const aiService = aiConfig.getService()
+    if (!aiService) {
+      throw new Error('AI 服務未初始化')
+    }
+
+    error.value = ''
+    isLoading.value = true
+
+    // 添加使用者訊息
+    const userMsg = addMessage({
+      role: 'user',
+      content: userMessage,
+      tokens: aiService.estimateTokens(userMessage),
+    })
+
+    // 添加載入中的助手訊息
+    const assistantMsg = addMessage({
+      role: 'assistant',
+      content: '',
+      isLoading: true,
+    })
+
+    try {
+      const messagesToSend = prepareMessagesForAI()
+
+      await aiService.chatCompletionStream(
+        {
+          model: aiConfig.selectedModel,
+          messages: messagesToSend,
+          temperature: aiConfig.temperature,
+          max_tokens: aiConfig.maxTokens,
+          stream: true,
+        },
+        (delta) => {
+          // 追加文字（簡單串接）
+          updateMessage(assistantMsg.id, {
+            content: (messages.value.find((m) => m.id === assistantMsg.id)?.content || '') + delta,
+          })
+        },
+        (errMsg) => {
+          error.value = errMsg
+          updateMessage(assistantMsg.id, {
+            content: '抱歉，我遇到了一個錯誤，無法回答您的問題。',
+            isLoading: false,
+            error: errMsg,
+          })
+        },
+        () => {
+          // 完成：關閉 loading
+          updateMessage(assistantMsg.id, {
+            isLoading: false,
+          })
+        },
+      )
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '發生未知錯誤'
+      error.value = errorMessage
+      updateMessage(assistantMsg.id, {
+        content: '抱歉，我遇到了一個錯誤，無法回答您的問題。',
+        isLoading: false,
+        error: errorMessage,
+      })
+      throw err
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   // 重新發送最後一條訊息
   const resendLastMessage = async (): Promise<void> => {
     const lastUserMessage = messages.value
@@ -297,6 +371,7 @@ export const useChatStore = defineStore('chat', () => {
     updateMessage,
     sendMessage,
     resendLastMessage,
+    sendMessageStream,
     clearHistory,
     deleteMessage,
     exportHistory,

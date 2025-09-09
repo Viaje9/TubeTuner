@@ -165,7 +165,7 @@ const handleEnterKey = (event: KeyboardEvent) => {
   sendMessage()
 }
 
-// 發送訊息
+// 發送訊息（使用串流）
 const sendMessage = async () => {
   if (!inputMessage.value.trim() || isLoading.value) return
 
@@ -175,8 +175,8 @@ const sendMessage = async () => {
   try {
     isLoading.value = true
 
-    // 使用 chatStore 的 sendMessage 方法
-    await chatStore.sendMessage(userMessage)
+    // 使用 chatStore 的串流方法
+    await chatStore.sendMessageStream(userMessage)
   } catch (error) {
     console.error('AI 回覆失敗:', error)
     // 錯誤已由 chatStore 處理，這裡不需要額外處理
