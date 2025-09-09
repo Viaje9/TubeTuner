@@ -1,27 +1,5 @@
 <template>
-  <div
-    v-if="subtitles.length > 0"
-    class="w-full h-96 bg-black/80 border border-gray-600 rounded-lg backdrop-blur-sm flex flex-col"
-  >
-    <!-- 標題列 -->
-    <div class="flex items-center justify-between p-3 border-b border-gray-600">
-      <h3 class="text-white font-medium text-sm">字幕列表</h3>
-      <button
-        @click="$emit('close')"
-        class="text-gray-400 hover:text-white transition-colors p-1"
-        title="關閉字幕面板"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
-    </div>
-
+  <div v-if="subtitles.length > 0" class="w-full max-h-[370px] flex flex-col">
     <!-- 字幕滾動區域 -->
     <div
       ref="scrollContainer"
@@ -34,53 +12,22 @@
           :key="subtitle.index"
           :ref="(el) => setSubtitleRef(el, index)"
           :class="[
-            'p-3 rounded-md border cursor-pointer transition-all duration-200 text-sm leading-relaxed',
+            'p-3 rounded cursor-pointer transition-all duration-200 text-xl leading-relaxed',
             isCurrentSubtitle(subtitle)
-              ? 'bg-blue-600/50 border-blue-400 text-white shadow-lg'
-              : isUpcomingSubtitle(subtitle)
-                ? 'bg-gray-700/50 border-gray-500 text-gray-200 hover:bg-gray-600/50'
-                : 'bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50',
+              ? 'bg-blue-500/20 text-blue-100'
+              : 'text-gray-400 hover:bg-gray-700/20',
           ]"
           @click="seekToSubtitle(subtitle)"
           :title="`跳轉到 ${formatTime(subtitle.startTime)}`"
         >
-          <!-- 時間標籤 -->
-          <div class="flex items-center justify-between mb-2">
-            <span
-              :class="[
-                'text-xs px-2 py-1 rounded-full',
-                isCurrentSubtitle(subtitle)
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-600 text-gray-300',
-              ]"
-            >
-              {{ formatTime(subtitle.startTime) }}
-            </span>
-            <span class="text-xs text-gray-400">
-              {{ formatDuration(subtitle.endTime - subtitle.startTime) }}
-            </span>
-          </div>
-
           <!-- 字幕內容 -->
-          <div
-            :class="['break-words', isCurrentSubtitle(subtitle) ? 'font-medium' : 'font-normal']"
-          >
+          <div class="break-words">
             {{ subtitle.text }}
           </div>
         </div>
 
         <!-- 佔位符，確保最後一個字幕可以滾動到頂部 -->
         <div class="h-64"></div>
-      </div>
-    </div>
-
-    <!-- 底部狀態列 -->
-    <div class="p-2 border-t border-gray-600 bg-gray-900/50">
-      <div class="flex items-center justify-between text-xs text-gray-400">
-        <span>共 {{ subtitles.length }} 個字幕</span>
-        <span v-if="currentSubtitleIndex >= 0">
-          {{ currentSubtitleIndex + 1 }} / {{ subtitles.length }}
-        </span>
       </div>
     </div>
   </div>
@@ -104,7 +51,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Emits
 const emit = defineEmits<{
-  close: []
   seekTo: [time: number]
 }>()
 
@@ -134,11 +80,6 @@ const isCurrentSubtitle = (subtitle: SubtitleData): boolean => {
   return props.currentTime >= subtitle.startTime && props.currentTime <= subtitle.endTime
 }
 
-// 判斷是否為即將播放的字幕
-const isUpcomingSubtitle = (subtitle: SubtitleData): boolean => {
-  return subtitle.startTime > props.currentTime && subtitle.startTime <= props.currentTime + 10 // 10秒內的字幕
-}
-
 // 格式化時間
 const formatTime = (seconds: number): string => {
   const hours = Math.floor(seconds / 3600)
@@ -149,17 +90,6 @@ const formatTime = (seconds: number): string => {
     return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   } else {
     return `${minutes}:${secs.toString().padStart(2, '0')}`
-  }
-}
-
-// 格式化持續時間
-const formatDuration = (seconds: number): string => {
-  if (seconds < 60) {
-    return `${Math.round(seconds)}s`
-  } else {
-    const minutes = Math.floor(seconds / 60)
-    const remainingSeconds = Math.round(seconds % 60)
-    return `${minutes}m${remainingSeconds > 0 ? remainingSeconds + 's' : ''}`
   }
 }
 
@@ -181,8 +111,8 @@ const scrollToCurrentSubtitle = async () => {
     const elementRect = currentElement.getBoundingClientRect()
     const relativeTop = elementRect.top - containerRect.top + scrollContainer.value.scrollTop
 
-    // 滾動到讓當前字幕在頂部 20% 的位置
-    const targetScrollTop = relativeTop - containerRect.height * 0.2
+    // 滾動到讓當前字幕在頂部
+    const targetScrollTop = relativeTop
 
     scrollContainer.value.scrollTo({
       top: Math.max(0, targetScrollTop),
@@ -261,33 +191,4 @@ watch(
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-/* 當前字幕高亮效果 */
-.bg-blue-600\/50 {
-  position: relative;
-}
-
-.bg-blue-600\/50::before {
-  content: '';
-  position: absolute;
-  left: -2px;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: #3b82f6;
-  border-radius: 2px;
-}
-
-/* 響應式設計 */
-/* @media (max-width: 768px) {
-  .h-96 {
-    height: 20rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .h-96 {
-    height: 16rem;
-  }
-} */
 </style>
