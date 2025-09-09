@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export type UserPreferenceFunction = 'youtube' | 'local' | 'search' | 'ai-settings'
+export type UserPreferenceFunction = 'local' | 'ai-settings'
 
 export const useUserPreferencesStore = defineStore('userPreferences', () => {
   const lastSelectedFunction = ref<UserPreferenceFunction | null>(null)

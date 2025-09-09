@@ -1,8 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
 import LocalVideoView from '@/views/LocalVideoView.vue'
 import MenuView from '@/views/MenuView.vue'
-import SearchView from '@/views/SearchView.vue'
 import AISettingsView from '@/views/AISettingsView.vue'
 
 const router = createRouter({
@@ -21,12 +19,8 @@ const router = createRouter({
 
             // 如果有上次選擇的功能，直接跳轉
             switch (lastSelected) {
-              case 'youtube':
-                return { name: 'youtube' }
               case 'local':
                 return { name: 'local-video' }
-              case 'search':
-                return { name: 'search' }
               case 'ai-settings':
                 return { name: 'ai-settings' }
             }
@@ -40,11 +34,6 @@ const router = createRouter({
       },
     },
     {
-      path: '/youtube',
-      name: 'youtube',
-      component: HomeView,
-    },
-    {
       path: '/local-video',
       name: 'local-video',
       component: LocalVideoView,
@@ -53,11 +42,6 @@ const router = createRouter({
       path: '/menu',
       name: 'menu',
       component: MenuView,
-    },
-    {
-      path: '/search',
-      name: 'search',
-      component: SearchView,
     },
     {
       path: '/settings/ai',

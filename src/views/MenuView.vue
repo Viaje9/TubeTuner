@@ -22,46 +22,6 @@
 
       <!-- 功能選項列表 -->
       <div class="max-w-2xl mx-auto space-y-3">
-        <!-- YouTube 播放器 -->
-        <div
-          @click="selectFunction('youtube')"
-          class="group bg-gradient-to-r from-gray-800/30 to-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-xl p-4 cursor-pointer hover:bg-gradient-to-r hover:from-blue-800/20 hover:to-blue-900/20 hover:border-blue-500/30 transition-all duration-200 active:scale-[0.99] touch-manipulation"
-        >
-          <div class="flex items-center gap-4">
-            <div
-              class="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-lg font-semibold text-white mb-1">YouTube 播放器</h3>
-              <p class="text-sm text-gray-400 truncate">載入 YouTube 影片並控制播放速度</p>
-            </div>
-            <div class="flex-shrink-0">
-              <svg
-                class="w-5 h-5 text-gray-500 group-hover:text-blue-400 transition-colors duration-200"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-
         <!-- 本機影片播放器 -->
         <div
           @click="selectFunction('local')"
@@ -87,46 +47,6 @@
             <div class="flex-shrink-0">
               <svg
                 class="w-5 h-5 text-gray-500 group-hover:text-orange-400 transition-colors duration-200"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <!-- 搜尋影片 -->
-        <div
-          @click="selectFunction('search')"
-          class="group bg-gradient-to-r from-gray-800/30 to-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-xl p-4 cursor-pointer hover:bg-gradient-to-r hover:from-green-800/20 hover:to-green-900/20 hover:border-green-500/30 transition-all duration-200 active:scale-[0.99] touch-manipulation"
-        >
-          <div class="flex items-center gap-4">
-            <div
-              class="w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-lg font-semibold text-white mb-1">搜尋影片</h3>
-              <p class="text-sm text-gray-400 truncate">搜尋 YouTube 影片並快速載入播放</p>
-            </div>
-            <div class="flex-shrink-0">
-              <svg
-                class="w-5 h-5 text-gray-500 group-hover:text-green-400 transition-colors duration-200"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -349,14 +269,8 @@ const selectFunction = (func: UserPreferenceFunction) => {
 
   // 導航到相應頁面
   switch (func) {
-    case 'youtube':
-      router.push('/youtube')
-      break
     case 'local':
       router.push('/local-video')
-      break
-    case 'search':
-      router.push('/search')
       break
     case 'ai-settings':
       router.push('/settings/ai')

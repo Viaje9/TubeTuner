@@ -190,8 +190,8 @@
       </div>
     </div>
 
-    <!-- 浮動控制面板 -->
-    <FloatingControlPanel
+    <!-- 本機影片控制面板 -->
+    <LocalVideoControlPanel
       ref="controlPanelRef"
       v-if="hasVideoLoaded"
       :player="localPlayer"
@@ -199,10 +199,92 @@
       @seeked="handleSeeked"
       @play-state-changed="handlePlayStateChanged"
       @error="showError"
-      @video-loaded="handleVideoLoaded"
       @input-focused="handleInputFocused"
       @input-blurred="handleInputBlurred"
     />
+
+    <!-- 底部固定播放控制條 -->
+    <div
+      v-if="hasVideoLoaded"
+      class="fixed inset-x-0 bottom-0 z-40 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800 border-t border-gray-700/50"
+    >
+      <!-- 水平播放控制條 -->
+      <div class="flex items-center px-6 py-4">
+        <!-- 左側：快速後退 -->
+        <div class="flex-1 flex justify-start">
+          <button
+            @click="handleRewind"
+            :class="[
+              'flex items-center justify-center w-14 h-14 rounded-full transition-all duration-200 shadow-lg',
+              'bg-gradient-to-br from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white',
+              'hover:scale-110 active:scale-95',
+              rewindClicked ? 'animate-pulse scale-125 ring-2 ring-orange-300' : '',
+            ]"
+            title="後退 10 秒"
+          >
+            <div class="flex flex-col items-center">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z"
+                />
+              </svg>
+              <span class="text-xs font-bold leading-tight">-10</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- 中央：播放/暫停 -->
+        <div class="flex justify-center">
+          <button
+            @click="handleTogglePlayPause"
+            :disabled="!localPlayer.isReady.value"
+            class="flex items-center justify-center w-16 h-16 rounded-full transition-all duration-300 shadow-lg bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white hover:scale-110 active:scale-95 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed"
+            :title="localPlayer.isPlaying.value ? '暫停' : '播放'"
+          >
+            <!-- 播放圖示 -->
+            <svg
+              v-if="!localPlayer.isPlaying.value"
+              class="w-6 h-6 ml-0.5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"
+              />
+            </svg>
+            <!-- 暫停圖示 -->
+            <svg v-else class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M5.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75A.75.75 0 007.25 3h-1.5zM12.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75a.75.75 0 00-.75-.75h-1.5z"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <!-- 右側：快速前進 -->
+        <div class="flex-1 flex justify-end">
+          <button
+            @click="handleForward"
+            :class="[
+              'flex items-center justify-center w-14 h-14 rounded-full transition-all duration-200 shadow-lg',
+              'bg-gradient-to-br from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white',
+              'hover:scale-110 active:scale-95',
+              forwardClicked ? 'animate-pulse scale-125 ring-2 ring-green-300' : '',
+            ]"
+            title="前進 10 秒"
+          >
+            <div class="flex flex-col items-center">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"
+                />
+              </svg>
+              <span class="text-xs font-bold leading-tight">+10</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -212,7 +294,7 @@ import { useRouter } from 'vue-router'
 import { useLocalVideoPlayer } from '@/composables/useLocalVideoPlayer'
 import { useAIConfigStore } from '@/stores/aiConfig'
 import LocalVideoPlayer from '@/components/LocalVideoPlayer.vue'
-import FloatingControlPanel from '@/components/FloatingControlPanel.vue'
+import LocalVideoControlPanel from '@/components/LocalVideoControlPanel.vue'
 import SubtitleScrollPanel from '@/components/SubtitleScrollPanel.vue'
 import MessageBox from '@/components/MessageBox.vue'
 
@@ -237,6 +319,10 @@ const hasVideoLoaded = ref(false)
 const controlPanelRef = ref()
 const isInputFocused = ref(false)
 const showSubtitlePanel = ref(false)
+
+// 點擊反饋狀態
+const forwardClicked = ref(false)
+const rewindClicked = ref(false)
 
 const handlePlayerReady = () => {
   console.log('本機播放器已準備好')
@@ -266,6 +352,54 @@ const handleSubtitleSeekTo = (time: number) => {
 
 const handlePlayStateChanged = (isPlaying: boolean) => {
   console.log('播放狀態:', isPlaying ? '播放中' : '已暫停')
+}
+
+// 播放控制函數
+const handleTogglePlayPause = () => {
+  try {
+    localPlayer.togglePlayPause()
+    handlePlayStateChanged(localPlayer.isPlaying.value)
+  } catch (error) {
+    console.error('播放控制失敗:', error)
+    showError('播放控制失敗')
+  }
+}
+
+const handleRewind = () => {
+  try {
+    // 點擊反饋動畫
+    rewindClicked.value = true
+    setTimeout(() => {
+      rewindClicked.value = false
+    }, 300)
+
+    const currentTime = localPlayer.getCurrentTime()
+    const newTime = Math.max(0, currentTime - 10)
+    localPlayer.seekTo(newTime)
+    handleSeeked(newTime)
+  } catch (error) {
+    console.error('快退失敗:', error)
+    showError('快退失敗')
+  }
+}
+
+const handleForward = () => {
+  try {
+    // 點擊反饋動畫
+    forwardClicked.value = true
+    setTimeout(() => {
+      forwardClicked.value = false
+    }, 300)
+
+    const currentTime = localPlayer.getCurrentTime()
+    const duration = localPlayer.getDuration?.() || 0
+    const newTime = Math.min(duration, currentTime + 10)
+    localPlayer.seekTo(newTime)
+    handleSeeked(newTime)
+  } catch (error) {
+    console.error('快進失敗:', error)
+    showError('快進失敗')
+  }
 }
 
 const showError = (message: string) => {
