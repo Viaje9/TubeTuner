@@ -111,6 +111,48 @@
           </div>
         </div>
 
+        <!-- 我的收藏 -->
+        <div
+          @click="navigateToFavorites"
+          class="group bg-gradient-to-r from-gray-800/30 to-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-xl p-4 cursor-pointer hover:bg-gradient-to-r hover:from-yellow-800/20 hover:to-yellow-900/20 hover:border-yellow-500/30 transition-all duration-200 active:scale-[0.99] touch-manipulation"
+        >
+          <div class="flex items-center gap-4">
+            <div
+              class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-orange-600 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200"
+            >
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-lg font-semibold text-white mb-1">我的收藏</h3>
+              <p class="text-sm text-gray-400 truncate">查看收藏的字幕句子</p>
+            </div>
+            <div class="flex items-center gap-3 flex-shrink-0">
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-gray-500 font-medium">
+                  {{ favoritesStore.favorites.length }} 個
+                </span>
+              </div>
+              <svg
+                class="w-5 h-5 text-gray-500 group-hover:text-yellow-400 transition-colors duration-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
         <!-- 分隔線 -->
         <div class="border-t border-gray-700/30 my-2"></div>
 
@@ -247,6 +289,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAIConfigStore } from '@/stores/aiConfig'
 import { useUserPreferencesStore, type UserPreferenceFunction } from '@/stores/userPreferences'
+import { useFavoritesStore } from '@/stores/favorites'
 import { indexedDBService } from '@/services/indexedDB'
 import MessageBox from '@/components/MessageBox.vue'
 import packageJson from '../../package.json'
@@ -254,6 +297,7 @@ import packageJson from '../../package.json'
 const router = useRouter()
 const aiConfig = useAIConfigStore()
 const userPreferences = useUserPreferencesStore()
+const favoritesStore = useFavoritesStore()
 const errorMessage = ref('')
 const appVersion = ref(packageJson.version)
 
@@ -276,6 +320,11 @@ const selectFunction = (func: UserPreferenceFunction) => {
       router.push('/settings/ai')
       break
   }
+}
+
+// 導航到收藏頁面
+const navigateToFavorites = () => {
+  router.push('/favorites')
 }
 
 // 重新載入頁面函數

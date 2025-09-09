@@ -15,6 +15,7 @@ export interface FavoriteSubtitle {
 export const useFavoritesStore = defineStore('favorites', () => {
   // 狀態
   const favorites = ref<FavoriteSubtitle[]>([])
+  const selectedSentences = ref<FavoriteSubtitle[]>([]) // 選取的句子陣列，按點擊順序排列
 
   // 初始化時從 localStorage 載入
   const loadFromStorage = () => {
@@ -96,12 +97,42 @@ export const useFavoritesStore = defineStore('favorites', () => {
     saveToStorage()
   }
 
+  // 選取/取消選取句子
+  const toggleSelectSentence = (favorite: FavoriteSubtitle) => {
+    const index = selectedSentences.value.findIndex((item) => item.id === favorite.id)
+
+    if (index >= 0) {
+      // 如果已經選取，則移除
+      selectedSentences.value.splice(index, 1)
+    } else {
+      // 如果未選取，則加入到陣列末尾（保持點擊順序）
+      selectedSentences.value.push(favorite)
+    }
+  }
+
+  // 檢查句子是否已被選取
+  const isSelected = (favoriteId: string): boolean => {
+    return selectedSentences.value.some((item) => item.id === favoriteId)
+  }
+
+  // 獲取句子的選取順序（1-based）
+  const getSelectionOrder = (favoriteId: string): number => {
+    const index = selectedSentences.value.findIndex((item) => item.id === favoriteId)
+    return index >= 0 ? index + 1 : 0
+  }
+
+  // 清空選取的句子
+  const clearSelectedSentences = () => {
+    selectedSentences.value = []
+  }
+
   // 初始化
   loadFromStorage()
 
   return {
     favorites,
     favoriteIds,
+    selectedSentences,
     isFavorite,
     addFavorite,
     removeFavorite,
@@ -109,5 +140,9 @@ export const useFavoritesStore = defineStore('favorites', () => {
     getFavoritesByVideo,
     clearAllFavorites,
     loadFromStorage,
+    toggleSelectSentence,
+    isSelected,
+    getSelectionOrder,
+    clearSelectedSentences,
   }
 })

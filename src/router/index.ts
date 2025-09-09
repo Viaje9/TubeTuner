@@ -2,6 +2,8 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import LocalVideoView from '@/views/LocalVideoView.vue'
 import MenuView from '@/views/MenuView.vue'
 import AISettingsView from '@/views/AISettingsView.vue'
+import FavoritesView from '@/views/FavoritesView.vue'
+import AIChatView from '@/views/AIChatView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -47,6 +49,16 @@ const router = createRouter({
       path: '/settings/ai',
       name: 'ai-settings',
       component: AISettingsView,
+    },
+    {
+      path: '/favorites',
+      name: 'favorites',
+      component: FavoritesView,
+    },
+    {
+      path: '/ai-chat',
+      name: 'ai-chat',
+      component: AIChatView,
     },
   ],
 })

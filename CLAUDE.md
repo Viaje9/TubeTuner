@@ -60,13 +60,18 @@ src/
 ├── stores/                    # Pinia 狀態管理
 │   ├── aiConfig.ts            # AI 設定 store
 │   ├── chat.ts                # 聊天記錄 store
+│   ├── favorites.ts           # 字幕收藏功能 store
 │   └── counter.ts             # 範例 store（使用 composition API 風格）
 ├── types/                     # TypeScript 型別定義
 │   └── youtube.ts             # YouTube API 相關型別
 ├── utils/                     # 工具函數
 │   └── markdown.ts            # Markdown 處理工具
 ├── views/                     # 頁面元件
-│   └── HomeView.vue           # 主頁面
+│   ├── HomeView.vue           # 主頁面
+│   ├── LocalVideoView.vue     # 本地影片播放頁面
+│   ├── MenuView.vue           # 主選單頁面
+│   ├── AISettingsView.vue     # AI 設定頁面
+│   └── FavoritesView.vue      # 收藏字幕列表頁面
 └── router/                    # Vue Router 設定
     └── index.ts               # 路由設定
 
@@ -91,6 +96,11 @@ layouts/
 - 優先使用 `<script setup lang="ts">` 語法
 - 元件應使用 Composition API
 
+### UI 設計規範
+- **不使用 hover 樣式**：專案設計為避免使用 hover 效果，確保在觸控裝置上的一致體驗
+- 所有互動元件應保持靜態視覺狀態，不依賴滑鼠懸停效果
+- 按鈕和互動元素應始終可見和可操作
+
 ### 狀態管理
 - Pinia stores 使用 composition 風格（參考 `stores/counter.ts`）
 - 使用 `defineStore` 和 setup 函式定義 stores
@@ -98,6 +108,7 @@ layouts/
 - 重要 stores：
   - `aiConfig.ts` - AI API 設定（金鑰、模型、參數）
   - `chat.ts` - 聊天記錄和 AI 對話狀態
+  - `favorites.ts` - 字幕收藏功能，支援 localStorage 持久化儲存
 
 ### PWA 設定
 - 應用程式配置為 PWA（Progressive Web App）
@@ -118,6 +129,12 @@ layouts/
 - `chat.ts` store 處理聊天記錄和對話狀態
 - `AISettingsModal.vue` 提供 AI 設定介面
 - 支援與 YouTube 影片內容相關的 AI 對話
+
+### 字幕收藏功能
+- `SubtitleScrollPanel.vue` 元件提供字幕收藏按鈕（星號圖示）
+- `favorites.ts` store 管理收藏的字幕，支援 localStorage 持久化
+- `FavoritesView.vue` 顯示收藏列表，支援刪除和清空功能
+- 收藏資料包含句子內容、時間範圍、影片 ID 和收藏時間戳記
 
 ## 重要架構模式
 

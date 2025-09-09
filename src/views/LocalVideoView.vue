@@ -12,7 +12,7 @@
         <div class="absolute top-3 right-3 sm:top-4 sm:right-4">
           <button
             @click="goToMenu"
-            class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-3 py-2 sm:px-4 sm:py-3 rounded-lg hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] text-sm sm:text-base whitespace-nowrap"
+            class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-3 py-2 sm:px-4 sm:py-3 rounded-lg transition-all duration-200 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] text-sm sm:text-base whitespace-nowrap"
             title="功能選單"
           >
             <svg
@@ -33,7 +33,7 @@
         </div>
 
         <h1
-          class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2 break-words cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95"
+          class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2 break-words cursor-pointer transition-transform duration-200 active:scale-95"
           @click="reloadPage"
           title="點擊重新載入頁面"
         >
@@ -47,7 +47,7 @@
       <div v-else-if="!isInputFocused" class="flex items-center justify-between mb-4">
         <div class="flex flex-col">
           <h1
-            class="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent break-words cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95"
+            class="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent break-words cursor-pointer transition-transform duration-200 active:scale-95"
             @click="reloadPage"
             title="點擊重新載入頁面"
           >
@@ -65,7 +65,7 @@
         <div class="flex items-center gap-3">
           <button
             @click="toggleControlPanel"
-            class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-3 sm:px-4 sm:py-3 rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-75 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] min-w-[44px] whitespace-nowrap"
+            class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-3 sm:px-4 sm:py-3 rounded-lg transition-all duration-75 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] min-w-[44px] whitespace-nowrap"
             title="打開控制面板"
           >
             <svg
@@ -90,40 +90,20 @@
           </button>
 
           <button
-            v-if="localPlayer.hasSubtitles.value"
-            @click="toggleSubtitlePanel"
-            :class="[
-              'text-white px-3 py-3 sm:px-4 sm:py-3 rounded-lg transition-all duration-75 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] min-w-[44px] whitespace-nowrap',
-              showSubtitlePanel
-                ? 'bg-gradient-to-r from-green-600 to-teal-600 hover:shadow-lg hover:shadow-green-500/30'
-                : 'bg-gradient-to-r from-orange-600 to-red-600 hover:shadow-lg hover:shadow-orange-500/30',
-            ]"
-            :title="showSubtitlePanel ? '關閉字幕面板' : '打開字幕面板'"
+            @click="goToFavorites"
+            class="bg-gradient-to-r from-yellow-600 to-orange-600 text-white px-3 py-3 sm:px-4 sm:py-3 rounded-lg transition-all duration-75 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] min-w-[44px] whitespace-nowrap"
+            title="查看收藏的句子"
           >
-            <svg
-              class="w-5 h-5 sm:w-6 sm:h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M7 4v16l4-4h5.5c.83 0 1.5-.67 1.5-1.5v-9c0-.83-.67-1.5-1.5-1.5H7z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 9h6M9 12h4"
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
               />
             </svg>
           </button>
 
           <button
             @click="goToMenu"
-            class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-3 py-3 sm:px-4 sm:py-3 rounded-lg hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] min-w-[44px] whitespace-nowrap"
+            class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-3 py-3 sm:px-4 sm:py-3 rounded-lg transition-all duration-200 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] min-w-[44px] whitespace-nowrap"
             title="功能選單"
           >
             <svg
@@ -216,8 +196,8 @@
             @click="handleRewind"
             :class="[
               'flex items-center justify-center w-14 h-14 rounded-full transition-all duration-200 shadow-lg',
-              'bg-gradient-to-br from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white',
-              'hover:scale-110 active:scale-95',
+              'bg-gradient-to-br from-orange-500 to-red-600 text-white',
+              'active:scale-95',
               rewindClicked ? 'animate-pulse scale-125 ring-2 ring-orange-300' : '',
             ]"
             title="後退 10 秒"
@@ -238,7 +218,7 @@
           <button
             @click="handleTogglePlayPause"
             :disabled="!localPlayer.isReady.value"
-            class="flex items-center justify-center w-16 h-16 rounded-full transition-all duration-300 shadow-lg bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white hover:scale-110 active:scale-95 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed"
+            class="flex items-center justify-center w-16 h-16 rounded-full transition-all duration-300 shadow-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white active:scale-95 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed"
             :title="localPlayer.isPlaying.value ? '暫停' : '播放'"
           >
             <!-- 播放圖示 -->
@@ -267,8 +247,8 @@
             @click="handleForward"
             :class="[
               'flex items-center justify-center w-14 h-14 rounded-full transition-all duration-200 shadow-lg',
-              'bg-gradient-to-br from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white',
-              'hover:scale-110 active:scale-95',
+              'bg-gradient-to-br from-green-500 to-teal-600 text-white',
+              'active:scale-95',
               forwardClicked ? 'animate-pulse scale-125 ring-2 ring-green-300' : '',
             ]"
             title="前進 10 秒"
@@ -413,6 +393,10 @@ const goToMenu = () => {
   router.push('/menu')
 }
 
+const goToFavorites = () => {
+  router.push('/favorites')
+}
+
 // 重新載入頁面函數
 const reloadPage = () => {
   window.location.reload()
@@ -423,11 +407,6 @@ const toggleControlPanel = () => {
   if (controlPanelRef.value?.expand) {
     controlPanelRef.value.expand()
   }
-}
-
-// 字幕面板切換函數
-const toggleSubtitlePanel = () => {
-  showSubtitlePanel.value = !showSubtitlePanel.value
 }
 
 // 輸入框焦點事件處理
