@@ -90,6 +90,38 @@
           </button>
 
           <button
+            v-if="localPlayer.hasSubtitles.value"
+            @click="toggleSubtitlePanel"
+            :class="[
+              'text-white px-3 py-3 sm:px-4 sm:py-3 rounded-lg transition-all duration-75 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] min-w-[44px] whitespace-nowrap',
+              showSubtitlePanel
+                ? 'bg-gradient-to-r from-green-600 to-teal-600 hover:shadow-lg hover:shadow-green-500/30'
+                : 'bg-gradient-to-r from-orange-600 to-red-600 hover:shadow-lg hover:shadow-orange-500/30',
+            ]"
+            :title="showSubtitlePanel ? '關閉字幕面板' : '打開字幕面板'"
+          >
+            <svg
+              class="w-5 h-5 sm:w-6 sm:h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 4v16l4-4h5.5c.83 0 1.5-.67 1.5-1.5v-9c0-.83-.67-1.5-1.5-1.5H7z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 9h6M9 12h4"
+              />
+            </svg>
+          </button>
+
+          <button
             @click="goToMenu"
             class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-3 py-3 sm:px-4 sm:py-3 rounded-lg hover:shadow-lg hover:shadow-gray-500/30 transition-all duration-200 flex items-center gap-2 active:scale-95 touch-manipulation min-h-[44px] min-w-[44px] whitespace-nowrap"
             title="功能選單"
@@ -112,14 +144,47 @@
       </div>
 
       <div class="max-w-7xl mx-auto flex-1">
-        <!-- 本機影片播放器區域（全寬） -->
-        <div :class="hasVideoLoaded ? 'w-full sticky top-0' : 'max-w-4xl mx-auto'">
-          <LocalVideoPlayer
-            :player="localPlayer"
-            @player-ready="handlePlayerReady"
-            @video-loaded="handleVideoLoaded"
-            @error="showError"
-          />
+        <!-- 主要內容區域 -->
+        <div
+          :class="
+            hasVideoLoaded && showSubtitlePanel
+              ? 'grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6'
+              : ''
+          "
+        >
+          <!-- 本機影片播放器區域 -->
+          <div
+            :class="[
+              hasVideoLoaded && showSubtitlePanel ? 'lg:col-span-2' : '',
+              hasVideoLoaded
+                ? showSubtitlePanel
+                  ? ''
+                  : 'w-full sticky top-0'
+                : 'max-w-4xl mx-auto',
+            ]"
+          >
+            <LocalVideoPlayer
+              :player="localPlayer"
+              @player-ready="handlePlayerReady"
+              @video-loaded="handleVideoLoaded"
+              @error="showError"
+            />
+          </div>
+
+          <!-- 字幕面板區域 -->
+          <div
+            v-if="hasVideoLoaded && showSubtitlePanel && localPlayer.hasSubtitles.value"
+            class="lg:col-span-1"
+          >
+            <SubtitleScrollPanel
+              :subtitles="localPlayer.subtitles.value"
+              :current-time="localPlayer.currentTime.value"
+              :current-subtitle="localPlayer.currentSubtitle.value"
+              :is-playing="localPlayer.isPlaying.value"
+              @close="showSubtitlePanel = false"
+              @seek-to="handleSubtitleSeekTo"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -141,12 +206,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLocalVideoPlayer } from '@/composables/useLocalVideoPlayer'
 import { useAIConfigStore } from '@/stores/aiConfig'
 import LocalVideoPlayer from '@/components/LocalVideoPlayer.vue'
 import FloatingControlPanel from '@/components/FloatingControlPanel.vue'
+import SubtitleScrollPanel from '@/components/SubtitleScrollPanel.vue'
 import MessageBox from '@/components/MessageBox.vue'
 
 // 時間格式化工具函數
@@ -169,6 +235,7 @@ const errorMessage = ref('')
 const hasVideoLoaded = ref(false)
 const controlPanelRef = ref()
 const isInputFocused = ref(false)
+const showSubtitlePanel = ref(false)
 
 const handlePlayerReady = () => {
   console.log('本機播放器已準備好')
@@ -177,6 +244,11 @@ const handlePlayerReady = () => {
 const handleVideoLoaded = (file: File) => {
   hasVideoLoaded.value = true
   console.log('影片已載入:', file.name)
+
+  // 如果有字幕，自動開啟字幕面板
+  if (localPlayer.hasSubtitles.value) {
+    showSubtitlePanel.value = true
+  }
 }
 
 const handleSpeedChanged = (speed: number) => {
@@ -185,6 +257,10 @@ const handleSpeedChanged = (speed: number) => {
 
 const handleSeeked = (seconds: number) => {
   console.log('已跳轉:', seconds, '秒')
+}
+
+const handleSubtitleSeekTo = (time: number) => {
+  localPlayer.seekTo(time)
 }
 
 const handlePlayStateChanged = (isPlaying: boolean) => {
@@ -214,6 +290,11 @@ const toggleControlPanel = () => {
   }
 }
 
+// 字幕面板切換函數
+const toggleSubtitlePanel = () => {
+  showSubtitlePanel.value = !showSubtitlePanel.value
+}
+
 // 輸入框焦點事件處理
 const handleInputFocused = () => {
   isInputFocused.value = true
@@ -222,6 +303,16 @@ const handleInputFocused = () => {
 const handleInputBlurred = () => {
   isInputFocused.value = false
 }
+
+// 監聽字幕載入狀態，當字幕載入時自動開啟面板
+watch(
+  () => localPlayer.hasSubtitles.value,
+  (hasSubtitles) => {
+    if (hasSubtitles && hasVideoLoaded.value) {
+      showSubtitlePanel.value = true
+    }
+  },
+)
 
 onMounted(async () => {
   // 載入 AI 配置以支援聊天功能

@@ -143,19 +143,6 @@
           @change="handleSubtitleFileSelect"
         />
       </div>
-
-      <!-- 字幕顯示區域（支援選取和翻譯） -->
-      <div v-if="hasSubtitles" class="mt-4">
-        <SubtitleDisplay
-          :current-subtitle="currentSubtitle"
-          :position="'bottom'"
-          :font-size="18"
-          :text-color="'white'"
-          :background-color="'semi'"
-          :show-shadow="true"
-          :position-style="'relative'"
-        />
-      </div>
     </div>
   </div>
 </template>
@@ -163,7 +150,6 @@
 <script setup lang="ts">
 import { ref, watch, nextTick, onMounted } from 'vue'
 import VideoUploader from '@/components/VideoUploader.vue'
-import SubtitleDisplay from '@/components/SubtitleDisplay.vue'
 import { useLocalVideoPlayer } from '@/composables/useLocalVideoPlayer'
 
 const props = defineProps<{
@@ -196,7 +182,6 @@ const {
   videoFile,
   videoUrl,
   subtitles,
-  currentSubtitle,
   hasSubtitles,
   initPlayer,
   loadVideoFile,
