@@ -209,7 +209,7 @@
       class="fixed inset-x-0 bottom-0 z-40 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800 border-t border-gray-700/50"
     >
       <!-- 水平播放控制條 -->
-      <div class="flex items-center px-6 py-4">
+      <div class="flex items-center px-6 py-4 pb-10">
         <!-- 左側：快速後退 -->
         <div class="flex-1 flex justify-start">
           <button
