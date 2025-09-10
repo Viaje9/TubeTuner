@@ -1,7 +1,6 @@
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useAIConfigStore } from './aiConfig'
-import { useFavoritesStore } from './favorites'
 import type { ChatMessage as GeminiChatMessage } from '@/services/openrouter'
 
 export interface ChatMessage {
@@ -31,9 +30,6 @@ export const useChatStore = defineStore('chat', () => {
 
   // AI 配置 store
   const aiConfig = useAIConfigStore()
-
-  // 收藏 store
-  const favoritesStore = useFavoritesStore()
 
   // 計算屬性
   const canSendMessage = computed(() => {
@@ -70,40 +66,7 @@ export const useChatStore = defineStore('chat', () => {
 
   // 建立上下文相關的系統訊息
   const buildSystemMessage = (): string => {
-    let systemMessage = aiConfig.systemPrompt
-
-    if (youtubeContext.value) {
-      const timeString = formatTime(youtubeContext.value.currentTime)
-      const durationString = formatTime(youtubeContext.value.duration)
-
-      systemMessage += `\n\n當前觀看的影片資訊：
-- 影片標題：${youtubeContext.value.title}
-- 當前播放時間：${timeString}
-- 影片總長度：${durationString}
-- 播放速度：${youtubeContext.value.playbackRate}x`
-    }
-
-    // 加入選中的字幕句子作為對話上下文
-    if (favoritesStore.selectedSentences.length > 0) {
-      const selectedSentencesText = favoritesStore.selectedSentences
-        .map((sentence, index) => {
-          const timeString = formatTime(sentence.startTime)
-          const endTimeString = formatTime(sentence.endTime)
-          return `${index + 1}. [${timeString}-${endTimeString}] "${sentence.text}"`
-        })
-        .join('\n')
-
-      systemMessage += `\n\n使用者選取的字幕句子（按選擇順序排列）：
-${selectedSentencesText}
-
-請特別關注這些選取的句子內容，並在回答時參考這些具體的字幕片段。`
-    }
-
-    if (youtubeContext.value || favoritesStore.selectedSentences.length > 0) {
-      systemMessage += `\n\n請根據以上資訊來回答使用者的問題。`
-    }
-
-    return systemMessage
+    return aiConfig.systemPrompt
   }
 
   // 格式化時間
@@ -158,8 +121,6 @@ ${selectedSentencesText}
 
   // 發送訊息給 AI
   const sendMessage = async (userMessage: string): Promise<void> => {
-    console.log('Attempting to send message:', userMessage)
-
     if (!canSendMessage.value) {
       throw new Error('無法發送訊息：AI 未設定或正在處理中')
     }
@@ -197,8 +158,6 @@ ${selectedSentencesText}
         temperature: aiConfig.temperature,
         maxTokens: aiConfig.maxTokens,
       })
-
-      console.log(messagesToSend)
 
       if (response) {
         const assistantResponse = response
@@ -243,7 +202,6 @@ ${selectedSentencesText}
 
     error.value = ''
     isLoading.value = true
-    console.log('Preparing to send message stream:', userMessage)
 
     // 添加使用者訊息
     addMessage({
@@ -261,6 +219,7 @@ ${selectedSentencesText}
 
     try {
       const messagesToSend = prepareMessagesForAI()
+      console.log('Messages to send:', messagesToSend)
 
       await aiService.chatCompletionStream(
         {
@@ -276,6 +235,8 @@ ${selectedSentencesText}
           })
         },
         (errMsg) => {
+          console.log('Error during streaming:', errMsg)
+
           error.value = errMsg
           updateMessage(assistantMsg.id, {
             content: '抱歉，我遇到了一個錯誤，無法回答您的問題。',
@@ -291,6 +252,8 @@ ${selectedSentencesText}
         },
       )
     } catch (err) {
+      console.log('Exception during sendMessageStream:', err)
+
       const errorMessage = err instanceof Error ? err.message : '發生未知錯誤'
       error.value = errorMessage
       updateMessage(assistantMsg.id, {
@@ -358,18 +321,6 @@ ${selectedSentencesText}
 
     return JSON.stringify(exportData, null, 2)
   }
-
-  // 載入設定時初始化
-  watch(
-    () => aiConfig.isConfigured,
-    (isConfigured) => {
-      if (isConfigured) {
-        // AI 配置完成後可以執行的初始化邏輯
-        console.log('AI 聊天功能已就緒')
-      }
-    },
-    { immediate: true },
-  )
 
   return {
     // 狀態

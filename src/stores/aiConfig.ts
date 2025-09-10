@@ -16,7 +16,7 @@ export const useAIConfigStore = defineStore('aiConfig', () => {
   const apiKey = ref('')
   const selectedModel = ref('gemini-2.5-flash')
   const temperature = ref(0.7)
-  const maxTokens = ref(1000)
+  const maxTokens = ref(65536)
   const systemPrompt = ref(
     '你是一個專業的 YouTube 影片助手，可以幫助使用者理解和討論影片內容。請用繁體中文回答。',
   )

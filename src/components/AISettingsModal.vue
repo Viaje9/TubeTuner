@@ -181,13 +181,13 @@
                 @input="aiConfig.saveToStorage()"
                 type="range"
                 min="100"
-                max="4000"
+                max="65536"
                 step="100"
                 class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
               />
               <div class="flex justify-between text-xs text-gray-500">
                 <span>簡短 (100)</span>
-                <span>詳細 (4000)</span>
+                <span>詳細 (65536)</span>
               </div>
             </div>
 

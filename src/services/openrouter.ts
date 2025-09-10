@@ -98,7 +98,7 @@ export class GeminiService {
     return {
       contents,
       systemInstruction:
-        systemMessages.length > 0 ? { parts: [{ text: systemMessages.join('\n\n') }] } : undefined,
+        systemMessages.length > 0 ? [{ text: systemMessages.join('\n\n') }] : undefined,
     }
   }
 
@@ -114,8 +114,8 @@ export class GeminiService {
     const requestData = {
       model: options.model,
       contents,
-      ...(systemInstruction && { systemInstruction }),
       config: {
+        systemInstruction,
         ...(options.temperature !== undefined && { temperature: options.temperature }),
         ...(options.maxTokens !== undefined && { maxOutputTokens: options.maxTokens }),
       },
@@ -144,8 +144,8 @@ export class GeminiService {
       const requestData = {
         model: options.model,
         contents,
-        ...(systemInstruction && { systemInstruction }),
         config: {
+          systemInstruction,
           ...(options.temperature !== undefined && { temperature: options.temperature }),
           ...(options.maxTokens !== undefined && { maxOutputTokens: options.maxTokens }),
         },

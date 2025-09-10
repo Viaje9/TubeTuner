@@ -158,7 +158,7 @@ const sendMessage = async () => {
     const messageToSend = isFirstMessage.value ? startDiscussion(userMessage) : userMessage
 
     // 使用 chatStore 的串流方法
-    await chatStore.sendMessageStream(messageToSend)
+    await chatStore.sendMessage(messageToSend)
 
     // 發送完第一次訊息後設為 false
     if (isFirstMessage.value) {

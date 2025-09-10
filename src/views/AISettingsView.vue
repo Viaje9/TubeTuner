@@ -320,14 +320,14 @@
                     @input="aiConfig.saveToStorage()"
                     type="range"
                     min="100"
-                    max="4000"
+                    max="65536"
                     step="100"
                     class="w-full h-4 sm:h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer slider touch-manipulation"
                   />
                   <div class="flex justify-between text-xs sm:text-sm text-gray-500">
                     <span>簡短 (100)</span>
-                    <span>中等 (2000)</span>
-                    <span>詳細 (4000)</span>
+                    <span>中等 (33300)</span>
+                    <span>詳細 (65536)</span>
                   </div>
                   <p class="text-sm sm:text-base text-gray-500">
                     控制 AI 回應的最大長度，較高的值允許更詳細的回答
