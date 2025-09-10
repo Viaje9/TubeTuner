@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { OpenRouterService, type OpenRouterModel, POPULAR_MODELS } from '@/services/openrouter'
+import { GeminiService, type GeminiModel, GEMINI_MODELS } from '@/services/openrouter'
 import { LocalStorageService } from '@/services/localStorage'
 
 export interface AIConfig {
@@ -21,10 +21,10 @@ export const useAIConfigStore = defineStore('aiConfig', () => {
     '你是一個專業的 YouTube 影片助手，可以幫助使用者理解和討論影片內容。請用繁體中文回答。',
   )
   const isConfigured = ref(false)
-  const availableModels = ref<OpenRouterModel[]>(POPULAR_MODELS)
+  const availableModels = ref<GeminiModel[]>(GEMINI_MODELS)
 
-  // OpenRouter 服務實例
-  const openRouterService = ref<OpenRouterService | null>(null)
+  // Gemini 服務實例
+  const geminiService = ref<GeminiService | null>(null)
 
   // 計算屬性
   const isApiKeyValid = computed(() => apiKey.value.length > 0)
@@ -55,8 +55,8 @@ export const useAIConfigStore = defineStore('aiConfig', () => {
         apiKey.value = savedSettings.aiApiKey
         isConfigured.value = true
 
-        // 創建 Gemini 服務實例（沿用 OpenRouterService 名稱）
-        openRouterService.value = new OpenRouterService(savedSettings.aiApiKey)
+        // 創建 Gemini 服務實例
+        geminiService.value = new GeminiService(savedSettings.aiApiKey)
 
         // 載入可用模型
         loadAvailableModels()
@@ -106,54 +106,30 @@ export const useAIConfigStore = defineStore('aiConfig', () => {
       throw new Error('API Key 不能為空')
     }
 
-    // 創建新的服務實例進行驗證
-    const testService = new OpenRouterService(newApiKey.trim())
-
+    // 直接設定 API Key，不做預先驗證
     try {
-      const isValid = await testService.validateApiKey()
-      if (!isValid) {
-        throw new Error('API Key 無效，請檢查是否正確')
-      }
-
       apiKey.value = newApiKey.trim()
-      openRouterService.value = testService
+      geminiService.value = new GeminiService(newApiKey.trim())
       isConfigured.value = true
-
-      // 載入可用模型
-      await loadAvailableModels()
 
       // 儲存設定
       saveToStorage()
 
       return true
     } catch (error) {
-      console.error('API Key 驗證失敗:', error)
+      console.error('設定 API Key 失敗:', error)
       throw error
     }
   }
 
-  // 載入可用模型
+  // 使用固定的 Gemini 模型列表
   const loadAvailableModels = async () => {
-    if (!openRouterService.value) return
-
-    try {
-      const models = await openRouterService.value.getModels()
-      if (models.length > 0) {
-        availableModels.value = models
-        // 如果當前選擇的模型不在清單中，回退到第一個
-        if (!models.find((m) => m.id === selectedModel.value)) {
-          selectedModel.value = models[0].id
-          saveToStorage()
-        }
-      }
-    } catch (error) {
-      console.error('載入模型列表失敗:', error)
-      // 如果載入失敗，使用預設模型
-      availableModels.value = POPULAR_MODELS
-      if (!POPULAR_MODELS.find((m) => m.id === selectedModel.value)) {
-        selectedModel.value = POPULAR_MODELS[0].id
-        saveToStorage()
-      }
+    // 直接使用預設的 Gemini 模型列表
+    availableModels.value = GEMINI_MODELS
+    // 如果當前選擇的模型不在清單中，回退到第一個
+    if (!GEMINI_MODELS.find((m) => m.id === selectedModel.value)) {
+      selectedModel.value = GEMINI_MODELS[0].id
+      saveToStorage()
     }
   }
 
@@ -187,14 +163,14 @@ export const useAIConfigStore = defineStore('aiConfig', () => {
   // 重置設定
   const resetConfig = () => {
     apiKey.value = ''
-    selectedModel.value = 'gemini-2.5-flash'
+    selectedModel.value = 'gemini-2.0-flash-exp'
     temperature.value = 0.7
     maxTokens.value = 1000
     systemPrompt.value =
       '你是一個專業的 YouTube 影片助手，可以幫助使用者理解和討論影片內容。請用繁體中文回答。'
     isConfigured.value = false
-    openRouterService.value = null
-    availableModels.value = POPULAR_MODELS
+    geminiService.value = null
+    availableModels.value = GEMINI_MODELS
 
     // 清除 localStorage
     try {
@@ -208,15 +184,18 @@ export const useAIConfigStore = defineStore('aiConfig', () => {
     }
   }
 
-  // 獲取 OpenRouter 服務實例
+  // 獲取 Gemini 服務實例
   const getService = () => {
-    return openRouterService.value
+    return geminiService.value
   }
 
   // 檢查是否可以使用 AI 功能
   const canUseAI = computed(() => {
-    return isConfigured.value && isApiKeyValid.value && openRouterService.value !== null
+    return isConfigured.value && isApiKeyValid.value && geminiService.value !== null
   })
+
+  // 初始化時載入設定
+  loadFromStorage()
 
   return {
     // 狀態

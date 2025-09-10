@@ -17,13 +17,13 @@
     </div>
 
     <!-- 聊天區域 -->
-    <div class="flex-1 flex flex-col h-full">
+    <div class="flex-1 flex flex-col overflow-scroll h-full">
       <!-- 聊天記錄 -->
-      <div class="flex-1 p-6 overflow-y-auto">
+      <div ref="chatContainer" class="flex-1 p-6">
         <div
           v-for="(sentence, index) in selectedSentences"
           :key="sentence.id"
-          class="bg-gray-800 rounded-lg p-3 border border-gray-700 flex items-start gap-3"
+          class="bg-gray-800 rounded-lg p-3 border border-gray-700 flex items-start mb-2 gap-3"
         >
           <!-- 順序標示 -->
           <div
@@ -34,29 +34,8 @@
           <!-- 句子內容 -->
           <p class="text-sm text-gray-200 flex-1 leading-relaxed">{{ sentence.text }}</p>
         </div>
-        <div v-if="messages.length === 0" class="text-center py-16">
-          <div class="w-16 h-16 mx-auto mb-4 text-gray-600">
-            <svg fill="currentColor" viewBox="0 0 20 20" class="w-full h-full">
-              <path
-                fill-rule="evenodd"
-                d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </div>
-          <h3 class="text-xl font-medium text-gray-300 mb-2">開始與 AI 對話</h3>
-          <p class="text-gray-500 mb-4">AI 將基於您選取的句子進行討論</p>
-          <button
-            v-if="selectedSentences.length > 0"
-            @click="startDiscussion"
-            class="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium"
-          >
-            開始討論這些句子
-          </button>
-        </div>
-
         <!-- 訊息列表 -->
-        <div v-else class="space-y-4 max-w-4xl mx-auto">
+        <div class="space-y-4 max-w-4xl mx-auto">
           <div
             v-for="message in messages"
             :key="message.id"
@@ -123,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import { useFavoritesStore } from '@/stores/favorites'
 import { useChatStore } from '@/stores/chat'
 import { renderMarkdown } from '@/utils/markdown'
@@ -135,6 +114,8 @@ const chatStore = useChatStore()
 // 響應式變數
 const inputMessage = ref('')
 const isLoading = ref(false)
+const isFirstMessage = ref(true) // 追蹤是否為第一次提問
+const chatContainer = ref<HTMLElement | null>(null) // 聊天容器引用
 
 // 計算屬性
 const selectedSentences = computed(() => favoritesStore.selectedSentences)
@@ -145,14 +126,22 @@ const formatMessage = (content: string): string => {
   return renderMarkdown(content)
 }
 
+// 滾動到底部
+const scrollToBottom = async () => {
+  await nextTick()
+  if (chatContainer.value) {
+    chatContainer.value.scrollTop = chatContainer.value.scrollHeight
+  }
+}
+
 // 處理 Enter 鍵
 const handleEnterKey = (event: KeyboardEvent) => {
-  if (event.shiftKey) {
-    // Shift + Enter：換行
-    return
+  if (event.metaKey && event.key === 'Enter') {
+    // Command + Enter：發送訊息
+    event.preventDefault()
+    sendMessage()
   }
-  // Enter：發送訊息
-  sendMessage()
+  // 其他情況（包括單純的 Enter）：允許換行
 }
 
 // 發送訊息（使用串流）
@@ -165,8 +154,19 @@ const sendMessage = async () => {
   try {
     isLoading.value = true
 
+    // 第一次提問時加上 startDiscussion，之後只送使用者輸入
+    const messageToSend = isFirstMessage.value ? startDiscussion(userMessage) : userMessage
+
     // 使用 chatStore 的串流方法
-    await chatStore.sendMessageStream(userMessage)
+    await chatStore.sendMessageStream(messageToSend)
+
+    // 發送完第一次訊息後設為 false
+    if (isFirstMessage.value) {
+      isFirstMessage.value = false
+    }
+
+    // 發送訊息後滾動到底部
+    await scrollToBottom()
   } catch (error) {
     console.error('AI 回覆失敗:', error)
     // 錯誤已由 chatStore 處理，這裡不需要額外處理
@@ -176,21 +176,37 @@ const sendMessage = async () => {
 }
 
 // 開始討論選取的句子
-const startDiscussion = async () => {
-  if (selectedSentences.value.length === 0) return
+const startDiscussion = (userMessage: string) => {
+  if (selectedSentences.value.length === 0) return userMessage
 
   const sentences = selectedSentences.value
     .map((sentence, index) => `${index + 1}. "${sentence.text}"`)
     .join('\n')
 
-  const initialMessage = `請幫我分析以下這些句子：\n\n${sentences}\n\n這些句子有什麼共同特點？它們可能在討論什麼主題？請提供您的見解。`
-
-  inputMessage.value = initialMessage
-  await sendMessage()
+  return `使用者選擇了這幾個句子：\n\n${sentences}\n\n 使用者：${userMessage}`
 }
 
-// 頁面載入時清空聊天記錄
+// 監聽訊息變化，自動滾動到底部
+watch(
+  () => messages.value.length,
+  async () => {
+    await scrollToBottom()
+  },
+  { flush: 'post' },
+)
+
+// 監聽訊息內容變化（串流更新時），自動滾動到底部
+watch(
+  () => messages.value.map((m) => m.content).join(''),
+  async () => {
+    await scrollToBottom()
+  },
+  { flush: 'post' },
+)
+
+// 頁面載入時清空聊天記錄並重置第一次提問狀態
 onMounted(() => {
   chatStore.clearHistory()
+  isFirstMessage.value = true
 })
 </script>

@@ -287,15 +287,15 @@ const translateSelectedText = async () => {
         },
       ],
       temperature: aiConfig.temperature || 0.3,
-      max_tokens: aiConfig.maxTokens || 500,
+      maxTokens: aiConfig.maxTokens || 500,
     })
 
-    if (response.choices && response.choices.length > 0) {
-      translationResult.value = response.choices[0].message.content.trim()
+    if (response) {
+      translationResult.value = response.trim()
       // 記錄翻譯的原文
       lastTranslatedText.value = selectedText.value
     } else {
-      throw new Error('翻譯服務回應格式錯誤')
+      throw new Error('翻譯服務回應為空')
     }
   } catch (error) {
     console.error('翻譯失敗:', error)

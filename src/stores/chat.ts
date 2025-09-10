@@ -1,7 +1,8 @@
 import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { useAIConfigStore } from './aiConfig'
-import type { OpenRouterMessage } from '@/services/openrouter'
+import { useFavoritesStore } from './favorites'
+import type { ChatMessage as GeminiChatMessage } from '@/services/openrouter'
 
 export interface ChatMessage {
   id: string
@@ -30,6 +31,9 @@ export const useChatStore = defineStore('chat', () => {
 
   // AI 配置 store
   const aiConfig = useAIConfigStore()
+
+  // 收藏 store
+  const favoritesStore = useFavoritesStore()
 
   // 計算屬性
   const canSendMessage = computed(() => {
@@ -76,9 +80,27 @@ export const useChatStore = defineStore('chat', () => {
 - 影片標題：${youtubeContext.value.title}
 - 當前播放時間：${timeString}
 - 影片總長度：${durationString}
-- 播放速度：${youtubeContext.value.playbackRate}x
+- 播放速度：${youtubeContext.value.playbackRate}x`
+    }
 
-請根據這些資訊來回答使用者的問題。`
+    // 加入選中的字幕句子作為對話上下文
+    if (favoritesStore.selectedSentences.length > 0) {
+      const selectedSentencesText = favoritesStore.selectedSentences
+        .map((sentence, index) => {
+          const timeString = formatTime(sentence.startTime)
+          const endTimeString = formatTime(sentence.endTime)
+          return `${index + 1}. [${timeString}-${endTimeString}] "${sentence.text}"`
+        })
+        .join('\n')
+
+      systemMessage += `\n\n使用者選取的字幕句子（按選擇順序排列）：
+${selectedSentencesText}
+
+請特別關注這些選取的句子內容，並在回答時參考這些具體的字幕片段。`
+    }
+
+    if (youtubeContext.value || favoritesStore.selectedSentences.length > 0) {
+      systemMessage += `\n\n請根據以上資訊來回答使用者的問題。`
     }
 
     return systemMessage
@@ -118,14 +140,14 @@ export const useChatStore = defineStore('chat', () => {
   }
 
   // 準備發送給 AI 的訊息陣列
-  const prepareMessagesForAI = (): OpenRouterMessage[] => {
-    const systemMessage: OpenRouterMessage = {
+  const prepareMessagesForAI = (): GeminiChatMessage[] => {
+    const systemMessage: GeminiChatMessage = {
       role: 'system',
       content: buildSystemMessage(),
     }
 
-    const conversationMessages: OpenRouterMessage[] = messages.value
-      .filter((msg) => msg.role !== 'system' && !msg.error)
+    const conversationMessages: GeminiChatMessage[] = messages.value
+      .filter((msg) => msg.role !== 'system' && !msg.error && !msg.isLoading && msg.content.trim())
       .map((msg) => ({
         role: msg.role,
         content: msg.content,
@@ -136,6 +158,8 @@ export const useChatStore = defineStore('chat', () => {
 
   // 發送訊息給 AI
   const sendMessage = async (userMessage: string): Promise<void> => {
+    console.log('Attempting to send message:', userMessage)
+
     if (!canSendMessage.value) {
       throw new Error('無法發送訊息：AI 未設定或正在處理中')
     }
@@ -149,7 +173,7 @@ export const useChatStore = defineStore('chat', () => {
     isLoading.value = true
 
     // 添加使用者訊息
-    const userMsg = addMessage({
+    addMessage({
       role: 'user',
       content: userMessage,
       tokens: aiService.estimateTokens(userMessage),
@@ -163,6 +187,8 @@ export const useChatStore = defineStore('chat', () => {
     })
 
     try {
+      console.log('1231231')
+
       // 準備發送的訊息
       const messagesToSend = prepareMessagesForAI()
 
@@ -171,13 +197,14 @@ export const useChatStore = defineStore('chat', () => {
         model: aiConfig.selectedModel,
         messages: messagesToSend,
         temperature: aiConfig.temperature,
-        max_tokens: aiConfig.maxTokens,
+        maxTokens: aiConfig.maxTokens,
       })
 
-      if (response.choices && response.choices.length > 0) {
-        const assistantResponse = response.choices[0].message.content
-        const responseTokens =
-          response.usage?.completion_tokens || aiService.estimateTokens(assistantResponse)
+      console.log(messagesToSend)
+
+      if (response) {
+        const assistantResponse = response
+        const responseTokens = aiService.estimateTokens(assistantResponse)
 
         // 更新助手訊息
         updateMessage(assistantMsg.id, {
@@ -185,15 +212,8 @@ export const useChatStore = defineStore('chat', () => {
           isLoading: false,
           tokens: responseTokens,
         })
-
-        // 更新使用者訊息的 token 數
-        if (response.usage?.prompt_tokens) {
-          updateMessage(userMsg.id, {
-            tokens: response.usage.prompt_tokens,
-          })
-        }
       } else {
-        throw new Error('AI 回應格式錯誤')
+        throw new Error('AI 回應為空')
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '發生未知錯誤'
@@ -225,6 +245,7 @@ export const useChatStore = defineStore('chat', () => {
 
     error.value = ''
     isLoading.value = true
+    console.log('Preparing to send message stream:', userMessage)
 
     // 添加使用者訊息
     addMessage({
@@ -248,8 +269,7 @@ export const useChatStore = defineStore('chat', () => {
           model: aiConfig.selectedModel,
           messages: messagesToSend,
           temperature: aiConfig.temperature,
-          max_tokens: aiConfig.maxTokens,
-          stream: true,
+          maxTokens: aiConfig.maxTokens,
         },
         (delta) => {
           // 追加文字（簡單串接）
