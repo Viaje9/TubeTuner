@@ -227,7 +227,7 @@ export const useChatStore = defineStore('chat', () => {
     isLoading.value = true
 
     // 添加使用者訊息
-    const userMsg = addMessage({
+    addMessage({
       role: 'user',
       content: userMessage,
       tokens: aiService.estimateTokens(userMessage),

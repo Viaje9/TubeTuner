@@ -158,7 +158,7 @@
     <!-- Sticky AI 對話按鈕區域 -->
     <div
       v-if="selectedSentences.length > 0"
-      class="sticky bottom-0 mt-6 p-6 bg-gradient-to-t from-gray-900 via-gray-900/95 to-transparent"
+      class="sticky bottom-0 mt-6 p-6 pb-16 bg-gradient-to-t from-gray-900 via-gray-900/95 to-transparent"
     >
       <div class="max-w-md mx-auto flex items-center gap-3">
         <!-- 清空選取按鈕 -->
@@ -174,7 +174,7 @@
               d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"
             />
           </svg>
-          清空選取
+          <span class="text-base whitespace-nowrap py-1">清空選取</span>
         </button>
 
         <!-- AI 對話按鈕 -->
@@ -190,8 +190,8 @@
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
             />
           </svg>
-          <span class="text-lg">開始 AI 對話</span>
-          <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-sm">{{
+          <span class="text-base whitespace-nowrap">開始 AI 對話</span>
+          <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-base">{{
             selectedSentences.length
           }}</span>
         </button>

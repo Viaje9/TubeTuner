@@ -106,7 +106,11 @@ export class OpenRouterService {
 
       const data = await response.json()
       // API 回傳格式：{ models: [{ name: 'models/gemini-1.5-pro', ...}, ...] }
-      const models = (data.models || []) as Array<{ name: string; displayName?: string; description?: string }>
+      const models = (data.models || []) as Array<{
+        name: string
+        displayName?: string
+        description?: string
+      }>
       if (!Array.isArray(models) || models.length === 0) {
         return POPULAR_MODELS
       }
@@ -141,7 +145,7 @@ export class OpenRouterService {
       }
     }
 
-    const payload: any = {
+    const payload: Record<string, unknown> = {
       contents,
       generationConfig: {
         temperature: typeof request.temperature === 'number' ? request.temperature : 0.7,
@@ -173,7 +177,8 @@ export class OpenRouterService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        const message = errorData.error?.message || errorData.message || `HTTP error! status: ${response.status}`
+        const message =
+          errorData.error?.message || errorData.message || `HTTP error! status: ${response.status}`
         throw new Error(message)
       }
 
@@ -182,7 +187,7 @@ export class OpenRouterService {
       // { candidates: [{ content: { parts: [{ text }] }, finishReason }], usageMetadata: { promptTokenCount, candidatesTokenCount, totalTokenCount } }
       const candidate = (data.candidates && data.candidates[0]) || null
       const parts = candidate?.content?.parts || []
-      const text = parts.map((p: any) => p.text || '').join('')
+      const text = parts.map((p: { text?: string }) => p.text || '').join('')
       const finishReason = candidate?.finishReason || 'stop'
       const usage = data.usageMetadata || {}
 
@@ -218,8 +223,16 @@ export class OpenRouterService {
       const payload = this.buildGeminiPayload({ ...request, model: modelId })
 
       const contents = Array.isArray(payload.contents) ? [...payload.contents] : []
-      if (payload.systemInstruction?.parts?.length) {
-        const systemText = payload.systemInstruction.parts.map((p: any) => p.text || '').join('\n\n')
+      if (
+        payload.systemInstruction &&
+        typeof payload.systemInstruction === 'object' &&
+        'parts' in payload.systemInstruction &&
+        Array.isArray(payload.systemInstruction.parts) &&
+        payload.systemInstruction.parts.length
+      ) {
+        const systemText = payload.systemInstruction.parts
+          .map((p: { text?: string }) => p.text || '')
+          .join('\n\n')
         if (systemText.trim()) {
           contents.unshift({ role: 'user', parts: [{ text: systemText.trim() }] })
         }
@@ -228,10 +241,10 @@ export class OpenRouterService {
       const stream = await this.client.models.generateContentStream({
         model: modelId,
         contents,
-        config: payload.generationConfig,
-      } as any)
+        config: payload.generationConfig as Record<string, unknown>,
+      })
 
-      for await (const chunk of stream as any) {
+      for await (const chunk of stream as AsyncIterable<{ text?: string }>) {
         // 官方 SDK chunk 物件提供 chunk.text 方便讀取增量文本
         const delta: string = (chunk && (chunk.text as string)) || ''
         if (delta) onMessage(delta)

@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-900 text-white flex flex-col">
+  <div class="h-lvh bg-gray-900 text-white mt-[80px] mb-[120px]">
     <!-- 頁面標題 -->
-    <div class="p-6 border-b border-gray-800">
+    <div class="w-full p-6 border-b border-gray-800 fixed top-0 bg-gray-900 z-10">
       <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold text-white">AI 對話</h1>
         <div class="flex items-center gap-4">
@@ -14,35 +14,26 @@
           </button>
         </div>
       </div>
-
-      <!-- 選取的句子預覽 -->
-      <div v-if="selectedSentences.length > 0" class="mt-4">
-        <h3 class="text-lg font-medium mb-3 text-gray-300">
-          已選取的句子 ({{ selectedSentences.length }})
-        </h3>
-        <div class="space-y-2 max-h-40 overflow-y-auto">
-          <div
-            v-for="(sentence, index) in selectedSentences"
-            :key="sentence.id"
-            class="bg-gray-800 rounded-lg p-3 border border-gray-700 flex items-start gap-3"
-          >
-            <!-- 順序標示 -->
-            <div
-              class="w-6 h-6 bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-            >
-              {{ index + 1 }}
-            </div>
-            <!-- 句子內容 -->
-            <p class="text-sm text-gray-200 flex-1 leading-relaxed">{{ sentence.text }}</p>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- 聊天區域 -->
-    <div class="flex-1 flex flex-col">
+    <div class="flex-1 flex flex-col h-full">
       <!-- 聊天記錄 -->
       <div class="flex-1 p-6 overflow-y-auto">
+        <div
+          v-for="(sentence, index) in selectedSentences"
+          :key="sentence.id"
+          class="bg-gray-800 rounded-lg p-3 border border-gray-700 flex items-start gap-3"
+        >
+          <!-- 順序標示 -->
+          <div
+            class="w-6 h-6 bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+          >
+            {{ index + 1 }}
+          </div>
+          <!-- 句子內容 -->
+          <p class="text-sm text-gray-200 flex-1 leading-relaxed">{{ sentence.text }}</p>
+        </div>
         <div v-if="messages.length === 0" class="text-center py-16">
           <div class="w-16 h-16 mx-auto mb-4 text-gray-600">
             <svg fill="currentColor" viewBox="0 0 20 20" class="w-full h-full">
@@ -84,48 +75,47 @@
           </div>
         </div>
       </div>
-
-      <!-- 輸入區域 -->
-      <div class="p-6 border-t border-gray-800">
-        <div class="max-w-4xl mx-auto">
-          <div class="flex gap-4">
-            <textarea
-              v-model="inputMessage"
-              @keydown.enter.prevent="handleEnterKey"
-              placeholder="輸入您的訊息..."
-              class="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              rows="3"
-            ></textarea>
-            <button
-              @click="sendMessage"
-              :disabled="!inputMessage.trim() || isLoading"
-              class="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+    </div>
+    <!-- 輸入區域 -->
+    <div class="p-6 border-t border-gray-800 pb-[50px] fixed z-10 bottom-0 bg-gray-900">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex gap-4">
+          <textarea
+            v-model="inputMessage"
+            @keydown.enter.prevent="handleEnterKey"
+            placeholder="輸入您的訊息..."
+            class="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            rows="1"
+          ></textarea>
+          <button
+            @click="sendMessage"
+            :disabled="!inputMessage.trim() || isLoading"
+            class="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            <svg
+              v-if="isLoading"
+              class="animate-spin w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <svg
-                v-if="isLoading"
-                class="animate-spin w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-              <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                />
-              </svg>
-              {{ isLoading ? '發送中...' : '發送' }}
-            </button>
-          </div>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
+            <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+              />
+            </svg>
+            {{ isLoading ? '發送中...' : '發送' }}
+          </button>
         </div>
       </div>
     </div>
