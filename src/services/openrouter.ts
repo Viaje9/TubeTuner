@@ -12,12 +12,26 @@ export interface GeminiModel {
   description?: string
 }
 
+// Google GenAI 模型型別定義
+interface GenAIModel {
+  name: string
+  displayName?: string
+  description?: string
+  version?: string
+  supportedActions?: string[]
+}
+
 // 熱門 Gemini 模型
 export const GEMINI_MODELS: GeminiModel[] = [
   {
+    id: 'gemini-2.5-flash',
+    name: 'Gemini 2.5 Flash',
+    description: '最新且最快的多模態模型，平衡性能與效率',
+  },
+  {
     id: 'gemini-2.0-flash-exp',
     name: 'Gemini 2.0 Flash (實驗版)',
-    description: '最新實驗版本，極佳性能與速度',
+    description: '實驗版本，極佳性能與速度',
   },
   {
     id: 'gemini-1.5-flash',
@@ -36,6 +50,33 @@ export class GeminiService {
 
   constructor(apiKey: string) {
     this.client = new GoogleGenAI({ apiKey })
+  }
+
+  // 列出可用的模型
+  async listModels(): Promise<GeminiModel[]> {
+    try {
+      const modelsResponse = await this.client.models.list()
+      const modelsList: GenAIModel[] = []
+
+      // 處理分頁結果
+      for await (const model of modelsResponse) {
+        modelsList.push(model as GenAIModel)
+      }
+
+      // 過濾出支援 generateContent 的模型，並轉換為我們的格式
+      return modelsList
+        .filter((model: GenAIModel) => model.supportedActions?.includes('generateContent'))
+        .map((model: GenAIModel) => ({
+          id: model.name.replace('models/', ''), // 移除 'models/' 前綴
+          name: model.displayName || model.name.replace('models/', ''),
+          description: `${model.description || ''} (${model.version || 'latest'})`.trim(),
+        }))
+        .sort((a: GeminiModel, b: GeminiModel) => a.name.localeCompare(b.name)) // 按名稱排序
+    } catch (error) {
+      console.error('載入模型列表失敗:', error)
+      // 發生錯誤時返回預設模型列表
+      return GEMINI_MODELS
+    }
   }
 
   // 將聊天訊息轉換為 Gemini 格式

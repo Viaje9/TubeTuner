@@ -162,11 +162,70 @@
 
             <!-- 模型選擇 -->
             <div v-if="aiConfig.isConfigured" class="space-y-4">
-              <label class="text-base sm:text-lg font-semibold text-gray-200">選擇 AI 模型</label>
+              <div class="flex items-center justify-between">
+                <label class="text-base sm:text-lg font-semibold text-gray-200">選擇 AI 模型</label>
+                <button
+                  v-if="!aiConfig.isLoadingModels"
+                  @click="aiConfig.loadAvailableModels(true)"
+                  class="text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1 touch-manipulation min-h-[44px] px-2"
+                  title="重新載入模型列表（略過快取）"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                  重新載入
+                </button>
+              </div>
+
+              <!-- 載入狀態 -->
+              <div
+                v-if="aiConfig.isLoadingModels"
+                class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 flex items-center gap-3"
+              >
+                <svg
+                  class="w-5 h-5 text-blue-400 animate-spin"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+                <p class="text-blue-400 text-sm sm:text-base">載入可用模型中...</p>
+              </div>
+
+              <!-- 模型載入錯誤 -->
+              <div
+                v-if="aiConfig.modelsLoadError"
+                class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4"
+              >
+                <p class="text-yellow-400 text-sm sm:text-base flex items-center gap-2">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L4.316 15.5c-.77.833.192 2.5 1.732 2.5z"
+                    />
+                  </svg>
+                  {{ aiConfig.modelsLoadError }}
+                </p>
+              </div>
+
               <select
                 v-model="aiConfig.selectedModel"
                 @change="aiConfig.saveToStorage()"
-                class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-4 text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all touch-manipulation"
+                :disabled="aiConfig.isLoadingModels"
+                class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-4 text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <option
                   v-for="model in aiConfig.availableModels"
@@ -177,9 +236,15 @@
                   {{ model.name }}
                 </option>
               </select>
-              <p class="text-sm sm:text-base text-gray-500">
-                目前選擇：{{ aiConfig.currentModel?.name || '未知模型' }}
-              </p>
+              <div class="text-sm sm:text-base text-gray-500 space-y-1">
+                <p>目前選擇：{{ aiConfig.currentModel?.name || '未知模型' }}</p>
+                <p
+                  v-if="aiConfig.currentModel?.description"
+                  class="text-xs sm:text-sm text-gray-600"
+                >
+                  {{ aiConfig.currentModel.description }}
+                </p>
+              </div>
             </div>
 
             <!-- 進階設定區域 -->

@@ -187,8 +187,6 @@ ${selectedSentencesText}
     })
 
     try {
-      console.log('1231231')
-
       // 準備發送的訊息
       const messagesToSend = prepareMessagesForAI()
 
