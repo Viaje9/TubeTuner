@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgFor } from '@angular/common';
 import { AppStateService } from '../../state/app-state.service';
+import { GenAIService } from '../../services/genai.service';
 
 @Component({
   selector: 'app-ai-chat',
@@ -11,6 +12,7 @@ import { AppStateService } from '../../state/app-state.service';
 })
 export class AiChatComponent {
   readonly state = inject(AppStateService);
+  readonly genai = inject(GenAIService);
   input = '';
 
   send() {
@@ -18,6 +20,17 @@ export class AiChatComponent {
     if (!text) return;
     this.state.addMessage({ role: 'user', content: text });
     this.input = '';
-    // 後續接 OpenRouter 回覆
+    // 送到 GenAI
+    const cfg = this.state.aiConfig();
+    const messages = this.state.messages().map(m => ({ role: m.role, content: m.content }));
+    this.genai
+      .chatCompletion({ model: cfg.model, messages, temperature: cfg.temperature })
+      .then(reply => {
+        if (reply) this.state.addMessage({ role: 'assistant', content: reply });
+      })
+      .catch(err => {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.state.addMessage({ role: 'system', content: `錯誤：${msg}` });
+      });
   }
 }
