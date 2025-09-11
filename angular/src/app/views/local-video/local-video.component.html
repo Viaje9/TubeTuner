@@ -1,12 +1,12 @@
-<div class="p-4 space-y-4">
+<div class="space-y-4">
   <div class="grid gap-2 md:grid-cols-2">
     <div>
-      <div class="text-sm">選擇影片</div>
-      <input type="file" accept="video/*" (change)="onFile($event)" class="block" />
+      <div class="text-sm text-gray-300">選擇影片</div>
+      <input type="file" accept="video/*" (change)="onFile($event)" class="block text-sm" />
     </div>
     <div>
-      <div class="text-sm">選擇字幕（SRT 或 YouTube JSON）</div>
-      <input type="file" accept=".srt,.json" (change)="onSubtitleFile($event)" class="block" />
+      <div class="text-sm text-gray-300">選擇字幕（SRT 或 YouTube JSON）</div>
+      <input type="file" accept=".srt,.json" (change)="onSubtitleFile($event)" class="block text-sm" />
     </div>
   </div>
 
@@ -27,12 +27,12 @@
   </div>
 
   <div class="flex items-center gap-2">
-    <span class="text-sm">速度</span>
-    <button class="px-2 py-1 rounded bg-slate-800 text-white" (click)="setRate(0.75)">0.75x</button>
-    <button class="px-2 py-1 rounded bg-slate-800 text-white" (click)="setRate(1)">1x</button>
-    <button class="px-2 py-1 rounded bg-slate-800 text-white" (click)="setRate(1.25)">1.25x</button>
-    <button class="px-2 py-1 rounded bg-slate-800 text-white" (click)="setRate(1.5)">1.5x</button>
-    <button class="px-2 py-1 rounded bg-slate-800 text-white" (click)="setRate(2)">2x</button>
+    <span class="text-sm text-gray-300">速度</span>
+    <button class="px-3 py-1.5 rounded-xl bg-gray-700 text-white" (click)="setRate(0.75)">0.75x</button>
+    <button class="px-3 py-1.5 rounded-xl bg-gray-700 text-white" (click)="setRate(1)">1x</button>
+    <button class="px-3 py-1.5 rounded-xl bg-gray-700 text-white" (click)="setRate(1.25)">1.25x</button>
+    <button class="px-3 py-1.5 rounded-xl bg-gray-700 text-white" (click)="setRate(1.5)">1.5x</button>
+    <button class="px-3 py-1.5 rounded-xl bg-gray-700 text-white" (click)="setRate(2)">2x</button>
   </div>
 
   <app-subtitle-scroll

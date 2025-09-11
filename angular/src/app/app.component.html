@@ -1,14 +1,8 @@
-<header class="p-4 border-b">
-  <h1 class="text-lg font-semibold">TubeTuner NG</h1>
-  <p class="text-xs text-gray-500">Angular 版（遷移進行中）</p>
-  <nav class="mt-2 text-sm text-blue-600 flex gap-3 underline">
-    <a routerLink="/menu">主選單</a>
-    <a routerLink="/local-video">本地影片</a>
-    <a routerLink="/ai-chat">AI 對話</a>
-    <a routerLink="/favorites">收藏</a>
-    <a routerLink="/ai-settings">AI 設定</a>
-  </nav>
-</header>
-
-<router-outlet></router-outlet>
-
+<div class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-[100dvh]">
+  <div class="container mx-auto px-4 py-6 sm:py-8">
+    <router-outlet></router-outlet>
+  </div>
+  <footer class="pb-6 text-center text-gray-500 text-xs">
+    <span>TubeTuner - YouTube 影片速度控制器</span>
+  </footer>
+</div>
