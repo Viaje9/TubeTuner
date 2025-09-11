@@ -1,4 +1,32 @@
 <div class="space-y-4">
+  <!-- 標題區域 -->
+  <div *ngIf="!hasVideoLoaded; else loadedHeader" class="text-center mb-2 relative">
+    <div class="absolute top-0 right-0">
+      <a routerLink="/menu"
+         class="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-4 py-2 rounded-lg text-sm">選單</a>
+    </div>
+    <h1 class="text-3xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">
+      TubeTuner
+    </h1>
+    <p class="text-lg text-gray-300">本機影片播放器</p>
+    <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"></div>
+  </div>
+  <ng-template #loadedHeader>
+    <div class="flex items-center justify-between">
+      <div class="flex flex-col">
+        <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">TubeTuner</h2>
+        <div class="text-sm text-gray-300 mt-1" *ngIf="hasVideoLoaded">播放時間: {{ formatTime(currentTime()) }}</div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-3 rounded-lg" (click)="toggleSubtitlePanel()" [title]="showSubtitlePanel() ? '隱藏字幕面板' : '顯示字幕面板'">
+          字幕面板
+        </button>
+        <a routerLink="/favorites" class="bg-gradient-to-r from-yellow-600 to-orange-600 text-white px-4 py-3 rounded-lg">收藏</a>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- 上傳區域 -->
   <div class="grid gap-2 md:grid-cols-2">
     <div>
       <div class="text-sm text-gray-300">選擇影片</div>
@@ -10,36 +38,43 @@
     </div>
   </div>
 
-  <div class="relative">
-    <video #video *ngIf="src() as url"
-           class="w-full max-h-[60vh] bg-black"
-           [src]="url" controls
-           (timeupdate)="onTimeUpdate()"
-           (play)="onPlay()"
-           (pause)="onPause()"></video>
+  <!-- 內容區：影片 + 字幕面板 -->
+  <div [class]="'grid gap-4 ' + (hasVideoLoaded && hasSubtitles && showSubtitlePanel() ? 'lg:grid-cols-3' : '')">
+    <div [class]="hasVideoLoaded && hasSubtitles && showSubtitlePanel() ? 'lg:col-span-2' : ''">
+      <div class="relative">
+        <video #video *ngIf="src() as url"
+               class="w-full max-h-[60vh] bg-black"
+               [src]="url" controls
+               (timeupdate)="onTimeUpdate()"
+               (play)="onPlay()"
+               (pause)="onPause()"></video>
 
-    <app-subtitle-display
-      [currentSubtitle]="currentSubtitle()"
-      [fontSize]="20"
-      position="bottom"
-      positionStyle="absolute"
-    />
+        <app-subtitle-display
+          [currentSubtitle]="currentSubtitle()"
+          [fontSize]="20"
+          position="bottom"
+          positionStyle="absolute"
+        />
+      </div>
+
+      <div class="flex items-center gap-2 mt-3">
+        <span class="text-sm text-gray-300">速度</span>
+        <button class="px-4 py-2 rounded-xl bg-gray-700 text-white" (click)="setRate(0.75)">0.75x</button>
+        <button class="px-4 py-2 rounded-xl bg-gray-700 text-white" (click)="setRate(1)">1x</button>
+        <button class="px-4 py-2 rounded-xl bg-gray-700 text-white" (click)="setRate(1.25)">1.25x</button>
+        <button class="px-4 py-2 rounded-xl bg-gray-700 text-white" (click)="setRate(1.5)">1.5x</button>
+        <button class="px-4 py-2 rounded-xl bg-gray-700 text-white" (click)="setRate(2)">2x</button>
+      </div>
+    </div>
+
+    <div *ngIf="hasVideoLoaded && hasSubtitles && showSubtitlePanel()" class="lg:col-span-1">
+      <app-subtitle-scroll
+        [subtitles]="subtitles()"
+        [currentTime]="currentTime()"
+        [isPlaying]="isPlaying()"
+        [videoId]="videoId()"
+        (seekTo)="seekTo($event)"
+      />
+    </div>
   </div>
-
-  <div class="flex items-center gap-2">
-    <span class="text-sm text-gray-300">速度</span>
-    <button class="px-3 py-1.5 rounded-xl bg-gray-700 text-white" (click)="setRate(0.75)">0.75x</button>
-    <button class="px-3 py-1.5 rounded-xl bg-gray-700 text-white" (click)="setRate(1)">1x</button>
-    <button class="px-3 py-1.5 rounded-xl bg-gray-700 text-white" (click)="setRate(1.25)">1.25x</button>
-    <button class="px-3 py-1.5 rounded-xl bg-gray-700 text-white" (click)="setRate(1.5)">1.5x</button>
-    <button class="px-3 py-1.5 rounded-xl bg-gray-700 text-white" (click)="setRate(2)">2x</button>
-  </div>
-
-  <app-subtitle-scroll
-    [subtitles]="subtitles()"
-    [currentTime]="currentTime()"
-    [isPlaying]="isPlaying()"
-    [videoId]="videoId()"
-    (seekTo)="seekTo($event)"
-  />
 </div>

@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { SubtitleDisplayComponent } from '../../components/subtitle-display/subtitle-display.component';
 import { SubtitleScrollComponent } from '../../components/subtitle-scroll/subtitle-scroll.component';
 import { parseSRT, getCurrentSubtitle, type SubtitleData } from '../../utils/srt-parser';
@@ -8,7 +9,7 @@ import { parseJSONSubtitles } from '../../utils/json-subtitle-parser';
 @Component({
   selector: 'app-local-video',
   standalone: true,
-  imports: [CommonModule, SubtitleDisplayComponent, SubtitleScrollComponent],
+  imports: [CommonModule, RouterLink, SubtitleDisplayComponent, SubtitleScrollComponent],
   templateUrl: './local-video.component.html',
 })
 export class LocalVideoComponent {
@@ -21,6 +22,9 @@ export class LocalVideoComponent {
   isPlaying = signal(false);
   videoId = signal<string>('');
   currentSubtitle = computed(() => getCurrentSubtitle(this.subtitles(), this.currentTime()));
+  showSubtitlePanel = signal(true);
+  get hasVideoLoaded() { return !!this.src(); }
+  get hasSubtitles() { return this.subtitles().length > 0; }
 
   onFile(e: Event) {
     const input = e.target as HTMLInputElement;
@@ -69,5 +73,18 @@ export class LocalVideoComponent {
   seekTo(time: number) {
     const v = this.videoRef?.nativeElement;
     if (v) v.currentTime = time;
+  }
+
+  toggleSubtitlePanel() {
+    this.showSubtitlePanel.set(!this.showSubtitlePanel());
+  }
+
+  formatTime(sec: number) {
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = Math.floor(sec % 60);
+    return h > 0
+      ? `${h}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`
+      : `${m}:${s.toString().padStart(2,'0')}`;
   }
 }
