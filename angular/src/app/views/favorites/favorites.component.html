@@ -1,0 +1,14 @@
+<div class="p-4">
+  <div class="flex items-center justify-between mb-2">
+    <h2 class="text-lg font-semibold">收藏字幕</h2>
+    <button class="px-2 py-1 rounded bg-rose-600 text-white" (click)="clear()">清空</button>
+  </div>
+  <ul class="space-y-2">
+    <li *ngFor="let it of fav.items(); let i = index" class="border rounded p-2">
+      <div class="text-sm text-gray-700">{{ it.sentence }}</div>
+      <div class="text-xs text-gray-500">{{ it.start }}s - {{ it.end }}s · {{ it.createdAt | date:'yyyy/MM/dd HH:mm' }}</div>
+      <button class="mt-1 px-2 py-0.5 rounded bg-slate-700 text-white" (click)="remove(i)">移除</button>
+    </li>
+  </ul>
+</div>
+

@@ -1,0 +1,14 @@
+<div class="p-4 space-y-3">
+  <h2 class="text-lg font-semibold">AI 設定</h2>
+  <label class="block text-sm">API Key</label>
+  <input class="w-full px-2 py-1 border rounded" [(ngModel)]="apiKey" type="password" />
+
+  <label class="block text-sm">模型</label>
+  <input class="w-full px-2 py-1 border rounded" [(ngModel)]="model" />
+
+  <label class="block text-sm">溫度</label>
+  <input class="w-full px-2 py-1 border rounded" [(ngModel)]="temperature" type="number" step="0.1" min="0" max="2" />
+
+  <button class="px-3 py-1 rounded bg-blue-600 text-white" (click)="save()">儲存</button>
+</div>
+
