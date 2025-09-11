@@ -193,6 +193,8 @@ export class LocalVideoComponent {
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0] || null;
     this.selectedSubtitleFile.set(file);
+    // 自動解析上傳
+    if (file) this.uploadSubtitle();
   }
 
   async uploadSubtitle() {
