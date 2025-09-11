@@ -1,14 +1,17 @@
-import { Component, ViewChild, ElementRef, signal, computed } from '@angular/core';
+import { Component, ViewChild, ElementRef, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SubtitleScrollComponent } from '../../components/subtitle-scroll/subtitle-scroll.component';
 import { parseSRT, getCurrentSubtitle, type SubtitleData } from '../../utils/srt-parser';
 import { parseJSONSubtitles } from '../../utils/json-subtitle-parser';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PlayerSettingsDialogComponent } from '../../components/play-settings-dialog/play-settings-dialog.component';
+import { PlayerPreferencesService } from '../../state/player-preferences.service';
 
 @Component({
   selector: 'app-local-video',
   standalone: true,
-  imports: [CommonModule, RouterLink, SubtitleScrollComponent],
+  imports: [CommonModule, RouterLink, SubtitleScrollComponent, MatDialogModule],
   templateUrl: './local-video.component.html',
 })
 export class LocalVideoComponent {
@@ -25,6 +28,7 @@ export class LocalVideoComponent {
   videoId = signal<string>('');
   currentSubtitle = computed(() => getCurrentSubtitle(this.subtitles(), this.currentTime()));
   showSubtitlePanel = signal(true);
+  constructor(private dialog: MatDialog, public prefs: PlayerPreferencesService) {}
   get hasVideoLoaded() { return !!this.src(); }
   get hasSubtitles() { return this.subtitles().length > 0; }
   // 上傳/拖放狀態
@@ -58,7 +62,11 @@ export class LocalVideoComponent {
 
   onPlay() { this.isPlaying.set(true); }
   onPause() { this.isPlaying.set(false); }
-  onLoadedMetadata() { this.isReady.set(true); }
+  onLoadedMetadata() {
+    this.isReady.set(true);
+    const v = this.videoRef?.nativeElement;
+    if (v) v.playbackRate = this.prefs.playbackRate();
+  }
 
   async onSubtitleFile(e: Event) {
     const input = e.target as HTMLInputElement;
@@ -90,6 +98,31 @@ export class LocalVideoComponent {
     this.showSubtitlePanel.set(!this.showSubtitlePanel());
   }
 
+  openSettings() {
+    const ref = this.dialog.open(PlayerSettingsDialogComponent, {
+      panelClass: 'tt-material-dialog',
+      width: '560px',
+      maxWidth: '92vw',
+    });
+    ref.afterClosed().subscribe((result) => {
+      if (result?.playbackRate) {
+        const v = this.videoRef?.nativeElement;
+        if (v) v.playbackRate = result.playbackRate;
+        this.rate.set(result.playbackRate);
+      }
+    });
+  }
+
+  // live-apply preference changes while dialog is open
+  liveRateEffect = effect(() => {
+    const rate = this.prefs.playbackRate();
+    const v = this.videoRef?.nativeElement;
+    if (v) {
+      v.playbackRate = rate;
+      this.rate.set(rate);
+    }
+  });
+
   formatTime(sec: number) {
     const h = Math.floor(sec / 3600);
     const m = Math.floor((sec % 3600) / 60);
@@ -106,7 +139,8 @@ export class LocalVideoComponent {
   handleRewind() {
     const v = this.videoRef?.nativeElement;
     if (!v) return;
-    v.currentTime = Math.max(0, v.currentTime - 10);
+    const step = this.prefs.seekStep();
+    v.currentTime = Math.max(0, v.currentTime - step);
     this.rewindClicked.set(true);
     setTimeout(() => this.rewindClicked.set(false), 250);
   }
@@ -114,7 +148,8 @@ export class LocalVideoComponent {
   handleForward() {
     const v = this.videoRef?.nativeElement;
     if (!v) return;
-    v.currentTime = Math.min(v.duration || v.currentTime + 10, v.currentTime + 10);
+    const step = this.prefs.seekStep();
+    v.currentTime = Math.min(v.duration || v.currentTime + step, v.currentTime + step);
     this.forwardClicked.set(true);
     setTimeout(() => this.forwardClicked.set(false), 250);
   }

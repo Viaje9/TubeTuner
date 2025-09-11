@@ -2,3 +2,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Material dialog dark theme for TubeTuner */
+.tt-material-dialog .mat-mdc-dialog-container .mdc-dialog__surface {
+  background: #1f2937; /* gray-800 */
+  color: #e5e7eb;      /* gray-200 */
+  border-radius: 12px;
+}
+.tt-material-dialog .mat-mdc-dialog-content,
+.tt-material-dialog .mat-mdc-dialog-title {
+  color: #e5e7eb;
+}
+.tt-material-dialog .mat-mdc-form-field,
+.tt-material-dialog .mat-mdc-form-field .mat-mdc-input-element {
+  color: #e5e7eb;
+}
+.tt-material-dialog .mat-mdc-form-field-subscript-wrapper,
+.tt-material-dialog .mat-mdc-form-field-hint-wrapper {
+  color: #9ca3af; /* gray-400 */
+}
+.tt-material-dialog .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: #374151; /* gray-700 */
+}
+.tt-material-dialog .tt-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 9999px;
+  background: #374151; /* gray-700 */
+  outline: none;
+}
+.tt-material-dialog .tt-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg,#8b5cf6,#3b82f6);
+  border: 2px solid #93c5fd; /* blue-300 */
+  cursor: pointer;
+}
+.tt-material-dialog .tt-range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg,#8b5cf6,#3b82f6);
+  border: 2px solid #93c5fd;
+  cursor: pointer;
+}
+.tt-material-dialog .mat-mdc-dialog-actions .mat-mdc-button-base {
+  color: #e5e7eb;
+}
