@@ -1,4 +1,17 @@
-import { Component, EventEmitter, Input, Output, signal, ViewChild, ElementRef, ViewChildren, QueryList, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  signal,
+  ViewChild,
+  ElementRef,
+  ViewChildren,
+  QueryList,
+  OnChanges,
+  SimpleChanges,
+  AfterViewInit,
+} from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import type { SubtitleData } from '../../utils/srt-parser';
 import { FavoritesService } from '../../state/favorites.service';
@@ -48,21 +61,39 @@ export class SubtitleScrollComponent implements OnChanges, AfterViewInit {
   isFavorite(s: SubtitleData) {
     if (!this.videoId) return false;
     // 簡化判斷：以句子+時間作 key
-    return this.fav.items().some(
-      x => x.videoId === this.videoId && x.sentence === s.text && x.start === s.startTime && x.end === s.endTime,
-    );
+    return this.fav
+      .items()
+      .some(
+        x =>
+          x.videoId === this.videoId &&
+          x.sentence === s.text &&
+          x.start === s.startTime &&
+          x.end === s.endTime,
+      );
   }
 
   toggleFavorite(s: SubtitleData) {
     if (!this.videoId) return;
     if (this.isFavorite(s)) {
       // 直接依 index 移除最近的一筆相同條目
-      const idx = this.fav.items().findIndex(
-        x => x.videoId === this.videoId && x.sentence === s.text && x.start === s.startTime && x.end === s.endTime,
-      );
+      const idx = this.fav
+        .items()
+        .findIndex(
+          x =>
+            x.videoId === this.videoId &&
+            x.sentence === s.text &&
+            x.start === s.startTime &&
+            x.end === s.endTime,
+        );
       if (idx >= 0) this.fav.removeByIndex(idx);
     } else {
-      this.fav.add({ id: `${this.videoId}:${s.index}`, sentence: s.text, start: s.startTime, end: s.endTime, videoId: this.videoId });
+      this.fav.add({
+        id: `${this.videoId}:${s.index}`,
+        sentence: s.text,
+        start: s.startTime,
+        end: s.endTime,
+        videoId: this.videoId,
+      });
     }
   }
 
@@ -70,8 +101,8 @@ export class SubtitleScrollComponent implements OnChanges, AfterViewInit {
     if (changes['currentTime'] || changes['subtitles']) {
       const idx = this.currentIndex;
       if (idx !== this.lastIndex && idx >= 0) {
-        // 播放中或非使用者滾動時，將當前字幕滾動到容器頂部
-        if (!this.isUserScrolling()) {
+        // 與 Vue 行為一致：在播放中，非使用者滾動時，將當前字幕置於容器頂部
+        if (this.isPlaying && !this.isUserScrolling()) {
           this.scrollToIndex(idx);
         }
         this.lastIndex = idx;
@@ -91,7 +122,11 @@ export class SubtitleScrollComponent implements OnChanges, AfterViewInit {
     const c = this.container?.nativeElement;
     const el = this.itemRefs?.get(index)?.nativeElement;
     if (!c || !el) return;
-    const top = el.offsetTop; // 相對於可滾動容器內部
-    c.scrollTo({ top, behavior: instant ? 'auto' : 'smooth' });
+    // 比照 Vue：用容器/項目的 rect 計算相對位置，避免 offsetTop 誤差
+    const containerRect = c.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const relativeTop = elRect.top - containerRect.top + c.scrollTop;
+    if (!instant && Math.abs(c.scrollTop - relativeTop) < 2) return;
+    c.scrollTo({ top: relativeTop, behavior: instant ? 'auto' : 'smooth' });
   }
 }
