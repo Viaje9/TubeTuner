@@ -2,40 +2,94 @@
   <!-- 標題區域 -->
   <div *ngIf="!hasVideoLoaded; else loadedHeader" class="text-center mb-2 relative">
     <div class="absolute top-0 right-0 flex items-center gap-2">
-      <a routerLink="/menu"
-         class="bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-lg inline-flex items-center justify-center"
-         title="選單">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <a
+        routerLink="/menu"
+        class="bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-lg inline-flex items-center justify-center"
+        title="選單"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
       </a>
-      <button class="bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-lg inline-flex items-center justify-center"
-              (click)="openSettings()" title="播放設定">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <button
+        class="bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-lg inline-flex items-center justify-center"
+        (click)="openSettings()"
+        title="播放設定"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+        </svg>
       </button>
     </div>
-    <h1 class="text-3xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">
+    <h1
+      class="text-3xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2"
+    >
       TubeTuner
     </h1>
     <p class="text-lg text-gray-300">本機影片播放器</p>
-    <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"></div>
+    <div
+      class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"
+    ></div>
   </div>
   <ng-template #loadedHeader>
     <div class="flex items-center justify-between">
       <div class="flex flex-col">
-        <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">TubeTuner</h2>
-        <div class="text-sm text-gray-300 mt-1" *ngIf="hasVideoLoaded">播放時間: {{ formatTime(currentTime()) }}</div>
+        <h2
+          class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+        >
+          TubeTuner
+        </h2>
+        <div class="text-sm text-gray-300 mt-1" *ngIf="hasVideoLoaded">
+          播放時間: {{ formatTime(currentTime()) }}
+        </div>
       </div>
       <div class="flex items-center justify-end gap-2">
-        <button class="bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-lg inline-flex items-center justify-center"
-                (click)="toggleSubtitlePanel()"
-                [title]="showSubtitlePanel() ? '隱藏字幕面板' : '顯示字幕面板'">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8M4 18h16"/></svg>
-        </button>
-        <a routerLink="/favorites" class="bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-lg inline-flex items-center justify-center" title="收藏">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        <a
+          routerLink="/favorites"
+          class="bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-lg inline-flex items-center justify-center"
+          title="收藏"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+            />
+          </svg>
         </a>
-        <button class="bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-lg inline-flex items-center justify-center"
-                (click)="openSettings()" title="AI 設定">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <button
+          class="bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-lg inline-flex items-center justify-center"
+          (click)="openSettings()"
+          title="AI 設定"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
         </button>
       </div>
     </div>
@@ -44,47 +98,97 @@
   <!-- 上傳區域 -->
   <div class="space-y-6">
     <!-- 隱藏的字幕檔案輸入（提供給左上角按鈕使用） -->
-    <input #subtitleFileInput type="file" accept=".srt,.json" class="hidden" (change)="onSubtitleSelected($event)" />
+    <input
+      #subtitleFileInput
+      type="file"
+      accept=".srt,.json"
+      class="hidden"
+      (change)="onSubtitleSelected($event)"
+    />
     <!-- 影片拖放區域（未載入影片時顯示） -->
     <div class="space-y-4" *ngIf="!hasVideoLoaded">
       <h2 class="text-lg font-semibold text-white">上傳本機影片</h2>
-      <div (drop)="handleDrop($event)"
-           (dragover)="handleDragOver($event)"
-           (dragenter)="handleDragEnter($event)"
-           (dragleave)="handleDragLeave($event)"
-           (click)="triggerFileInput()"
-           [class]="'border-2 border-dashed rounded-2xl p-8 transition-all duration-200 cursor-pointer ' + (isDragging() ? 'border-blue-500 bg-blue-500/10' : 'border-gray-600 bg-gray-700/30 hover:border-gray-500 hover:bg-gray-700/50')">
+      <div
+        (drop)="handleDrop($event)"
+        (dragover)="handleDragOver($event)"
+        (dragenter)="handleDragEnter($event)"
+        (dragleave)="handleDragLeave($event)"
+        (click)="triggerFileInput()"
+        [class]="
+          'border-2 border-dashed rounded-2xl p-8 transition-all duration-200 cursor-pointer ' +
+          (isDragging()
+            ? 'border-blue-500 bg-blue-500/10'
+            : 'border-gray-600 bg-gray-700/30 hover:border-gray-500 hover:bg-gray-700/50')
+        "
+      >
         <div class="text-center">
-          <svg [class]="'w-12 h-12 mx-auto mb-4 ' + (isDragging() ? 'text-blue-500' : 'text-gray-400')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+          <svg
+            [class]="'w-12 h-12 mx-auto mb-4 ' + (isDragging() ? 'text-blue-500' : 'text-gray-400')"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+            />
           </svg>
-          <h3 class="text-lg font-medium text-white mb-2">{{ isDragging() ? '放下檔案來上傳' : '拖放或點擊上傳影片檔案' }}</h3>
+          <h3 class="text-lg font-medium text-white mb-2">
+            {{ isDragging() ? '放下檔案來上傳' : '拖放或點擊上傳影片檔案' }}
+          </h3>
           <p class="text-gray-400 text-sm">支援格式：MP4, WebM, OGG</p>
         </div>
       </div>
-      <input #videoFileInput type="file" accept="video/*" class="hidden" (change)="onFile($event)" />
+      <input
+        #videoFileInput
+        type="file"
+        accept="video/*"
+        class="hidden"
+        (change)="onFile($event)"
+      />
     </div>
 
     <!-- 原字幕上傳區塊移除，改用影片左上角的小按鈕觸發 -->
   </div>
 
   <!-- 內容區：影片 + 字幕面板 -->
-  <div [class]="'grid gap-4 ' + (hasVideoLoaded && hasSubtitles && showSubtitlePanel() ? 'lg:grid-cols-3' : '')">
+  <div
+    [class]="
+      'grid gap-4 ' +
+      (hasVideoLoaded && hasSubtitles && showSubtitlePanel() ? 'lg:grid-cols-3' : '')
+    "
+  >
     <div [class]="hasVideoLoaded && hasSubtitles && showSubtitlePanel() ? 'lg:col-span-2' : ''">
       <div class="relative">
         <!-- 左上角字幕上傳按鈕（有影片時顯示） -->
-        <button *ngIf="hasVideoLoaded" (click)="triggerSubtitleInput()"
-                class="absolute top-2 left-2 z-20 bg-gray-800/80 hover:bg-gray-700 text-white border border-gray-600 rounded-md px-2 py-1 text-xs flex items-center gap-1">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <button
+          *ngIf="hasVideoLoaded"
+          (click)="triggerSubtitleInput()"
+          class="absolute top-2 left-2 z-20 bg-gray-800/80 hover:bg-gray-700 text-white border border-gray-600 rounded-md px-2 py-1 text-xs flex items-center gap-1"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
           上傳字幕
         </button>
-        <video #video *ngIf="src() as url"
-               class="w-full max-h-[60vh] bg-black"
-               [src]="url" controls
-               (loadedmetadata)="onLoadedMetadata()"
-               (timeupdate)="onTimeUpdate()"
-               (play)="onPlay()"
-               (pause)="onPause()"></video>
+        <video
+          #video
+          *ngIf="src() as url"
+          class="w-full max-h-[60vh] bg-black"
+          [src]="url"
+          playsinline
+          (loadedmetadata)="onLoadedMetadata()"
+          (timeupdate)="onTimeUpdate()"
+          (play)="onPlay()"
+          (pause)="onPause()"
+        ></video>
 
         <!-- 字幕浮層元件已移除，僅保留側欄清單顯示 -->
       </div>
@@ -104,15 +208,27 @@
   </div>
 
   <!-- 底部固定播放控制條 -->
-  <div *ngIf="hasVideoLoaded" class="fixed inset-x-0 bottom-0 z-40 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800 border-t border-gray-700/50">
+  <div
+    *ngIf="hasVideoLoaded"
+    class="fixed inset-x-0 bottom-0 z-40 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-800 border-t border-gray-700/50"
+  >
     <div class="flex items-center px-6 py-4 pb-10">
       <!-- 左側：快速後退 -->
       <div class="flex-1 flex justify-start">
-        <button (click)="handleRewind()"
-                [class]="'flex items-center justify-center w-14 h-14 rounded-full transition-all duration-200 shadow-lg bg-gradient-to-br from-orange-500 to-red-600 text-white active:scale-95 ' + (rewindClicked() ? 'animate-pulse scale-125 ring-2 ring-orange-300' : '')"
-                [title]="'後退 ' + prefs.seekStep() + ' 秒'">
+        <button
+          (click)="handleRewind()"
+          [class]="
+            'flex items-center justify-center w-14 h-14 rounded-full transition-all duration-200 shadow-lg bg-gradient-to-br from-orange-500 to-red-600 text-white active:scale-95 ' +
+            (rewindClicked() ? 'animate-pulse scale-125 ring-2 ring-orange-300' : '')
+          "
+          [title]="'後退 ' + prefs.seekStep() + ' 秒'"
+        >
           <div class="flex flex-col items-center">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z"/></svg>
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z"
+              />
+            </svg>
             <span class="text-xs font-bold leading-tight">-{{ prefs.seekStep() }}</span>
           </div>
         </button>
@@ -120,22 +236,41 @@
 
       <!-- 中央：播放/暫停 -->
       <div class="flex justify-center">
-        <button (click)="handleTogglePlayPause()"
-                [disabled]="!isReady()"
-                class="flex items-center justify-center w-16 h-16 rounded-full transition-all duration-300 shadow-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white active:scale-95 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed"
-                [title]="isPlaying() ? '暫停' : '播放'">
-          <svg *ngIf="!isPlaying()" class="w-6 h-6 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
-          <svg *ngIf="isPlaying()" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75A.75.75 0 007.25 3h-1.5zM12.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75a.75.75 0 00-.75-.75h-1.5z"/></svg>
+        <button
+          (click)="handleTogglePlayPause()"
+          [disabled]="!isReady()"
+          class="flex items-center justify-center w-16 h-16 rounded-full transition-all duration-300 shadow-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white active:scale-95 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed"
+          [title]="isPlaying() ? '暫停' : '播放'"
+        >
+          <svg *ngIf="!isPlaying()" class="w-6 h-6 ml-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"
+            />
+          </svg>
+          <svg *ngIf="isPlaying()" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              d="M5.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75A.75.75 0 007.25 3h-1.5zM12.75 3a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V3.75a.75.75 0 00-.75-.75h-1.5z"
+            />
+          </svg>
         </button>
       </div>
 
       <!-- 右側：快速前進 -->
       <div class="flex-1 flex justify-end">
-        <button (click)="handleForward()"
-                [class]="'flex items-center justify-center w-14 h-14 rounded-full transition-all duration-200 shadow-lg bg-gradient-to-br from-green-500 to-teal-600 text-white active:scale-95 ' + (forwardClicked() ? 'animate-pulse scale-125 ring-2 ring-green-300' : '')"
-                [title]="'前進 ' + prefs.seekStep() + ' 秒'">
+        <button
+          (click)="handleForward()"
+          [class]="
+            'flex items-center justify-center w-14 h-14 rounded-full transition-all duration-200 shadow-lg bg-gradient-to-br from-green-500 to-teal-600 text-white active:scale-95 ' +
+            (forwardClicked() ? 'animate-pulse scale-125 ring-2 ring-green-300' : '')
+          "
+          [title]="'前進 ' + prefs.seekStep() + ' 秒'"
+        >
           <div class="flex flex-col items-center">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"/></svg>
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"
+              />
+            </svg>
             <span class="text-xs font-bold leading-tight">+{{ prefs.seekStep() }}</span>
           </div>
         </button>
