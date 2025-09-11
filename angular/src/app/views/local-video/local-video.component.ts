@@ -1,17 +1,20 @@
 import { Component, ViewChild, ElementRef, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { SubtitleScrollComponent } from '../../components/subtitle-scroll/subtitle-scroll.component';
 import { parseSRT, getCurrentSubtitle, type SubtitleData } from '../../utils/srt-parser';
 import { parseJSONSubtitles } from '../../utils/json-subtitle-parser';
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { PlayerSettingsDialogComponent } from '../../components/play-settings-dialog/play-settings-dialog.component';
 import { PlayerPreferencesService } from '../../state/player-preferences.service';
+import { FavoritesService } from '../../state/favorites.service';
+import { AppStateService } from '../../state/app-state.service';
+import { AiChatComponent } from '../ai-chat/ai-chat.component';
 
 @Component({
   selector: 'app-local-video',
   standalone: true,
-  imports: [CommonModule, RouterLink, SubtitleScrollComponent, MatBottomSheetModule],
+  imports: [CommonModule, RouterLink, SubtitleScrollComponent, MatBottomSheetModule, AiChatComponent],
   templateUrl: './local-video.component.html',
 })
 export class LocalVideoComponent {
@@ -28,7 +31,15 @@ export class LocalVideoComponent {
   videoId = signal<string>('');
   currentSubtitle = computed(() => getCurrentSubtitle(this.subtitles(), this.currentTime()));
   showSubtitlePanel = signal(true);
-  constructor(private bottomSheet: MatBottomSheet, public prefs: PlayerPreferencesService) {}
+  // 視圖切換：同頁切換影片/AI 對話
+  showChat = signal(false);
+  constructor(
+    private bottomSheet: MatBottomSheet,
+    public prefs: PlayerPreferencesService,
+    private router: Router,
+    private fav: FavoritesService,
+    private app: AppStateService,
+  ) {}
   get hasVideoLoaded() { return !!this.src(); }
   get hasSubtitles() { return this.subtitles().length > 0; }
   // 上傳/拖放狀態
@@ -278,4 +289,33 @@ export class LocalVideoComponent {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
   }
+
+  // 以當前收藏作為上下文，開啟 AI 對話
+  openChatWithFavorites() {
+    const items = this.fav.items();
+    // 即使無收藏，也切換到 AI 對話
+    // 轉為 system 訊息（條列時間與句子）
+    const fmt = (n: number) => {
+      const m = Math.floor(n / 60);
+      const s = Math.floor(n % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    };
+    const lines = (items.length > 0 ? items : [])
+      .map((it, i) => `${i + 1}. [${fmt(it.start)}–${fmt(it.end)}] ${it.sentence}`)
+      .join('\n');
+    if (lines) {
+      const system = {
+        role: 'system' as const,
+        content:
+          '以下為使用者於播放器中收藏的字幕語句，作為影片語境的參考內容：\n' +
+          lines +
+          '\n請基於這些內容協助回答後續問題，並用繁體中文回覆。',
+      };
+      this.app.setPendingContext([system]);
+    }
+    this.showChat.set(true);
+  }
+
+  openChat() { this.showChat.set(true); }
+  closeChat() { this.showChat.set(false); }
 }

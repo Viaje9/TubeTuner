@@ -199,6 +199,17 @@ export class AppStateService {
     this._messages.set([]);
   }
 
+  // 對話待處理上下文：由其他畫面（例如本機影片）帶入一次性上下文
+  private readonly _pendingContext = signal<Pick<ChatMessage, 'role' | 'content'>[] | null>(null);
+  setPendingContext(messages: Pick<ChatMessage, 'role' | 'content'>[]) {
+    this._pendingContext.set(messages);
+  }
+  consumePendingContext(): Pick<ChatMessage, 'role' | 'content'>[] {
+    const v = this._pendingContext();
+    this._pendingContext.set(null);
+    return v ?? [];
+  }
+
   constructor() {
     this.loadFromStorage();
   }

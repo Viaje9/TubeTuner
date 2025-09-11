@@ -15,6 +15,16 @@ export class AiChatComponent {
   readonly genai = inject(GenAIService);
   input = '';
 
+  constructor() {
+    // 進入畫面時若有待處理上下文，注入為 system 訊息
+    const pending = this.state.consumePendingContext();
+    if (pending.length > 0) {
+      for (const m of pending) {
+        this.state.addMessage({ role: m.role, content: m.content });
+      }
+    }
+  }
+
   send() {
     const text = this.input.trim();
     if (!text) return;
