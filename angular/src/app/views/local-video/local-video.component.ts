@@ -1,7 +1,6 @@
 import { Component, ViewChild, ElementRef, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { SubtitleDisplayComponent } from '../../components/subtitle-display/subtitle-display.component';
 import { SubtitleScrollComponent } from '../../components/subtitle-scroll/subtitle-scroll.component';
 import { parseSRT, getCurrentSubtitle, type SubtitleData } from '../../utils/srt-parser';
 import { parseJSONSubtitles } from '../../utils/json-subtitle-parser';
@@ -9,7 +8,7 @@ import { parseJSONSubtitles } from '../../utils/json-subtitle-parser';
 @Component({
   selector: 'app-local-video',
   standalone: true,
-  imports: [CommonModule, RouterLink, SubtitleDisplayComponent, SubtitleScrollComponent],
+  imports: [CommonModule, RouterLink, SubtitleScrollComponent],
   templateUrl: './local-video.component.html',
 })
 export class LocalVideoComponent {
