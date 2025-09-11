@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, ViewChild, ElementRef, ViewChildren, QueryList, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import type { SubtitleData } from '../../utils/srt-parser';
 import { FavoritesService } from '../../state/favorites.service';
@@ -9,7 +9,7 @@ import { FavoritesService } from '../../state/favorites.service';
   imports: [NgFor, NgIf],
   templateUrl: './subtitle-scroll.component.html',
 })
-export class SubtitleScrollComponent {
+export class SubtitleScrollComponent implements OnChanges, AfterViewInit {
   @Input() subtitles: SubtitleData[] = [];
   @Input() currentTime = 0;
   @Input() isPlaying = false;
@@ -18,6 +18,10 @@ export class SubtitleScrollComponent {
 
   private isUserScrolling = signal(false);
   private _timer: any;
+  private lastIndex = -1;
+
+  @ViewChild('container') container?: ElementRef<HTMLElement>;
+  @ViewChildren('itemRef') itemRefs?: QueryList<ElementRef<HTMLElement>>;
 
   constructor(public fav: FavoritesService) {}
 
@@ -61,5 +65,33 @@ export class SubtitleScrollComponent {
       this.fav.add({ id: `${this.videoId}:${s.index}`, sentence: s.text, start: s.startTime, end: s.endTime, videoId: this.videoId });
     }
   }
-}
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['currentTime'] || changes['subtitles']) {
+      const idx = this.currentIndex;
+      if (idx !== this.lastIndex && idx >= 0) {
+        // 播放中或非使用者滾動時，將當前字幕滾動到容器頂部
+        if (!this.isUserScrolling()) {
+          this.scrollToIndex(idx);
+        }
+        this.lastIndex = idx;
+      }
+    }
+  }
+
+  ngAfterViewInit(): void {
+    // 初次渲染後嘗試對齊
+    queueMicrotask(() => {
+      const idx = this.currentIndex;
+      if (idx >= 0) this.scrollToIndex(idx, true);
+    });
+  }
+
+  private scrollToIndex(index: number, instant = false) {
+    const c = this.container?.nativeElement;
+    const el = this.itemRefs?.get(index)?.nativeElement;
+    if (!c || !el) return;
+    const top = el.offsetTop; // 相對於可滾動容器內部
+    c.scrollTo({ top, behavior: instant ? 'auto' : 'smooth' });
+  }
+}

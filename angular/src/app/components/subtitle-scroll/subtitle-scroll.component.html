@@ -1,7 +1,7 @@
 <div *ngIf="subtitles.length > 0" class="w-full max-h-[370px] flex flex-col">
   <div #container class="flex-1 overflow-y-auto overscroll-contain scroll-smooth" (scroll)="onScroll(container)">
     <div class="p-2 space-y-2">
-      <div *ngFor="let s of subtitles; let i = index"
+      <div *ngFor="let s of subtitles; let i = index" #itemRef
            [class]="'p-3 rounded transition-all duration-200 text-xl leading-relaxed flex items-center justify-between group ' + (isCurrent(s) ? 'bg-blue-500/20 text-blue-100' : 'text-gray-400 hover:bg-gray-700/20')">
         <div class="break-words flex-1 cursor-pointer mr-2" (click)="onSeek(s)">
           {{ s.text }}
@@ -22,4 +22,3 @@
     </div>
   </div>
 </div>
-
