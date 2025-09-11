@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgFor } from '@angular/common';
-import { AppStateService } from '../../app/state/app-state.service';
+import { AppStateService } from '../../state/app-state.service';
 
 @Component({
   selector: 'app-ai-chat',
@@ -21,4 +21,3 @@ export class AiChatComponent {
     // 後續接 OpenRouter 回覆
   }
 }
-

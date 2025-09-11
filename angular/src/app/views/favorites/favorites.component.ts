@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FavoritesService } from '../../app/state/favorites.service';
+import { FavoritesService } from '../../state/favorites.service';
 import { NgFor, DatePipe } from '@angular/common';
 
 @Component({
@@ -13,4 +13,3 @@ export class FavoritesComponent {
   clear() { this.fav.clear(); }
   remove(i: number) { this.fav.removeByIndex(i); }
 }
-

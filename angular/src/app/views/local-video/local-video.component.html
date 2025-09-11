@@ -1,8 +1,30 @@
 <div class="p-4 space-y-4">
-  <div class="text-sm">選擇影片</div>
-  <input type="file" accept="video/*" (change)="onFile($event)" class="block" />
+  <div class="grid gap-2 md:grid-cols-2">
+    <div>
+      <div class="text-sm">選擇影片</div>
+      <input type="file" accept="video/*" (change)="onFile($event)" class="block" />
+    </div>
+    <div>
+      <div class="text-sm">選擇字幕（SRT 或 YouTube JSON）</div>
+      <input type="file" accept=".srt,.json" (change)="onSubtitleFile($event)" class="block" />
+    </div>
+  </div>
 
-  <video #video *ngIf="src() as url" class="w-full max-h-[60vh] bg-black" [src]="url" controls></video>
+  <div class="relative">
+    <video #video *ngIf="src() as url"
+           class="w-full max-h-[60vh] bg-black"
+           [src]="url" controls
+           (timeupdate)="onTimeUpdate()"
+           (play)="onPlay()"
+           (pause)="onPause()"></video>
+
+    <app-subtitle-display
+      [currentSubtitle]="currentSubtitle()"
+      [fontSize]="20"
+      position="bottom"
+      positionStyle="absolute"
+    />
+  </div>
 
   <div class="flex items-center gap-2">
     <span class="text-sm">速度</span>
@@ -12,5 +34,12 @@
     <button class="px-2 py-1 rounded bg-slate-800 text-white" (click)="setRate(1.5)">1.5x</button>
     <button class="px-2 py-1 rounded bg-slate-800 text-white" (click)="setRate(2)">2x</button>
   </div>
-</div>
 
+  <app-subtitle-scroll
+    [subtitles]="subtitles()"
+    [currentTime]="currentTime()"
+    [isPlaying]="isPlaying()"
+    [videoId]="videoId()"
+    (seekTo)="seekTo($event)"
+  />
+</div>

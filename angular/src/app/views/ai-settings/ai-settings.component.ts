@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AppStateService } from '../../app/state/app-state.service';
+import { AppStateService } from '../../state/app-state.service';
 
 @Component({
   selector: 'app-ai-settings',
@@ -18,4 +18,3 @@ export class AiSettingsComponent {
     this.state.setAiConfig({ model: this.model, apiKey: this.apiKey, temperature: this.temperature });
   }
 }
-
