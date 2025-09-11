@@ -2,7 +2,11 @@
   <!-- 標題區域 -->
   <div class="flex items-center justify-between">
     <div class="flex flex-col">
-      <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">TubeTuner</h1>
+      <h1
+        class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+      >
+        TubeTuner
+      </h1>
       <p class="text-sm text-gray-300">AI 助手設定</p>
     </div>
   </div>
@@ -10,41 +14,181 @@
   <div class="max-w-2xl">
     <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700">
       <div class="p-5 space-y-6">
-        <!-- API Key -->
-        <div class="space-y-2">
-          <div class="flex items-center justify-between">
+        <!-- API Key 設定 -->
+        <div class="space-y-3">
+          <div class="flex items-start sm:items-center justify-between gap-2">
             <label class="text-base font-semibold text-gray-200">Gemini API Key</label>
-            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="text-sm text-blue-400 underline">取得 API Key</a>
+            <a
+              href="https://aistudio.google.com/app/apikey"
+              target="_blank"
+              rel="noopener"
+              class="text-sm text-blue-400 underline"
+              >取得 API Key</a
+            >
           </div>
-          <input [(ngModel)]="apiKey" type="password" placeholder="請輸入您的 Gemini API Key..."
-                 class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+          <div class="relative">
+            <input
+              [type]="showApiKey ? 'text' : 'password'"
+              [(ngModel)]="localApiKey"
+              (input)="clearError()"
+              placeholder="請輸入您的 Gemini API Key..."
+              class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <button
+              type="button"
+              (click)="showApiKey = !showApiKey"
+              title="顯示/隱藏"
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-300 min-w-[40px] min-h-[40px]"
+            >
+              <span *ngIf="showApiKey">隱</span>
+              <span *ngIf="!showApiKey">顯</span>
+            </button>
+          </div>
           <p class="text-xs text-gray-500">API Key 僅保存在您的瀏覽器中</p>
+
+          <p *ngIf="error" class="text-sm text-red-400">{{ error }}</p>
+          <p *ngIf="!error" class="text-sm text-green-400 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            AI 助手已成功設定！
+          </p>
         </div>
 
-        <!-- 模型 -->
-        <div class="space-y-2">
-          <label class="text-base font-semibold text-gray-200">模型</label>
-          <input [(ngModel)]="model" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-          <p class="text-xs text-gray-500">例如：gpt-4o-mini、gemini-2.5-flash 等</p>
-        </div>
-
-        <!-- 溫度 -->
-        <div class="space-y-2">
+        <!-- 模型選擇 -->
+        <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <label class="text-base font-semibold text-gray-200">創造性 (Temperature)</label>
-            <span class="text-sm text-gray-400 bg-gray-700 px-3 py-1 rounded">{{ temperature }}</span>
+            <label class="text-base font-semibold text-gray-200">選擇 AI 模型</label>
+            <button
+              class="text-sm text-blue-400 px-2 py-1"
+              (click)="reloadModels()"
+              [disabled]="state.isLoadingModels()"
+            >
+              重新載入
+            </button>
           </div>
-          <input [(ngModel)]="temperature" type="range" min="0" max="2" step="0.1" class="w-full" />
-          <div class="flex justify-between text-xs text-gray-500">
-            <span>保守 (0)</span>
-            <span>平衡 (1)</span>
-            <span>創意 (2)</span>
+
+          <div
+            *ngIf="state.isLoadingModels()"
+            class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 text-sm text-blue-300"
+          >
+            載入可用模型中...
+          </div>
+          <div
+            *ngIf="state.modelsLoadError()"
+            class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 text-sm text-yellow-300"
+          >
+            {{ state.modelsLoadError() }}
+          </div>
+
+          <select
+            [ngModel]="state.aiConfig().model"
+            (ngModelChange)="state.setModel($event)"
+            [disabled]="state.isLoadingModels()"
+            class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option *ngFor="let m of state.availableModels()" [value]="m.id" class="bg-gray-700">
+              {{ m.name }}
+            </option>
+          </select>
+          <div class="text-sm text-gray-500 space-y-1">
+            <p>目前選擇：{{ state.aiConfig().model }}</p>
           </div>
         </div>
 
-        <div class="flex gap-3 pt-2">
-          <button class="px-4 py-2 bg-blue-600 text-white rounded-lg" (click)="save()">儲存</button>
+        <!-- 進階設定 -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-semibold text-gray-200">進階設定</h3>
+            <button class="text-blue-400 px-2 py-1" (click)="showAdvanced = !showAdvanced">
+              {{ showAdvanced ? '隱藏' : '顯示' }}進階設定
+            </button>
+          </div>
+
+          <div *ngIf="showAdvanced" class="space-y-6 pt-2 border-t border-gray-700">
+            <!-- 溫度 -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-300">創造性 (Temperature)</label>
+                <span class="text-sm text-gray-400 bg-gray-700 px-3 py-1 rounded">{{
+                  state.aiConfig().temperature
+                }}</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="2"
+                step="0.1"
+                [ngModel]="state.aiConfig().temperature"
+                (ngModelChange)="state.setTemperature($event)"
+                class="w-full"
+              />
+              <div class="flex justify-between text-xs text-gray-500">
+                <span>保守 (0)</span>
+                <span>平衡 (1)</span>
+                <span>創意 (2)</span>
+              </div>
+            </div>
+
+            <!-- 最大 Tokens -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-300">最大回應長度</label>
+                <span class="text-sm text-gray-400 bg-gray-700 px-3 py-1 rounded"
+                  >{{ state.aiConfig().maxTokens }} tokens</span
+                >
+              </div>
+              <input
+                type="range"
+                min="100"
+                max="65536"
+                step="100"
+                [ngModel]="state.aiConfig().maxTokens"
+                (ngModelChange)="state.setMaxTokens($event)"
+                class="w-full"
+              />
+              <div class="flex justify-between text-xs text-gray-500">
+                <span>簡短 (100)</span>
+                <span>中等 (33300)</span>
+                <span>詳細 (65536)</span>
+              </div>
+            </div>
+
+            <!-- 系統提示 -->
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-300">系統提示</label>
+              <textarea
+                rows="4"
+                [ngModel]="state.aiConfig().systemPrompt"
+                (ngModelChange)="state.setSystemPrompt($event)"
+                class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                placeholder="設定 AI 助手的行為和回應風格..."
+              ></textarea>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- 底部按鈕 -->
+      <div class="flex flex-col sm:flex-row gap-3 p-5 border-t border-gray-700 bg-gray-800/30">
+        <button
+          (click)="resetSettings()"
+          class="flex-1 bg-red-600/20 text-red-400 px-4 py-3 rounded-lg"
+        >
+          重置設定
+        </button>
+        <button
+          (click)="saveSettings()"
+          [disabled]="isSaving || !localApiKey?.trim()"
+          class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg"
+        >
+          儲存
+        </button>
       </div>
     </div>
   </div>

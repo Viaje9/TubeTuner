@@ -22,9 +22,17 @@ export class AiChatComponent {
     this.input = '';
     // 送到 GenAI
     const cfg = this.state.aiConfig();
-    const messages = this.state.messages().map(m => ({ role: m.role, content: m.content }));
+    const systemPrompt = cfg.systemPrompt?.trim();
+    const baseMessages = this.state
+      .messages()
+      .map(m => ({ role: m.role, content: m.content }));
+    const messages = (
+      systemPrompt
+        ? [{ role: 'system' as const, content: systemPrompt }, ...baseMessages]
+        : baseMessages
+    );
     this.genai
-      .chatCompletion({ model: cfg.model, messages, temperature: cfg.temperature })
+      .chatCompletion({ model: cfg.model, messages, temperature: cfg.temperature, maxTokens: cfg.maxTokens })
       .then(reply => {
         if (reply) this.state.addMessage({ role: 'assistant', content: reply });
       })
