@@ -22,6 +22,7 @@ export class LocalVideoComponent {
   subtitles = signal<SubtitleData[]>([]);
   currentTime = signal(0);
   isPlaying = signal(false);
+  isReady = signal(false);
   videoId = signal<string>('');
   currentSubtitle = computed(() => getCurrentSubtitle(this.subtitles(), this.currentTime()));
   showSubtitlePanel = signal(true);
@@ -58,6 +59,7 @@ export class LocalVideoComponent {
 
   onPlay() { this.isPlaying.set(true); }
   onPause() { this.isPlaying.set(false); }
+  onLoadedMetadata() { this.isReady.set(true); }
 
   async onSubtitleFile(e: Event) {
     const input = e.target as HTMLInputElement;
@@ -96,6 +98,32 @@ export class LocalVideoComponent {
     return h > 0
       ? `${h}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`
       : `${m}:${s.toString().padStart(2,'0')}`;
+  }
+
+  // 底部播放控制條
+  rewindClicked = signal(false);
+  forwardClicked = signal(false);
+
+  handleRewind() {
+    const v = this.videoRef?.nativeElement;
+    if (!v) return;
+    v.currentTime = Math.max(0, v.currentTime - 10);
+    this.rewindClicked.set(true);
+    setTimeout(() => this.rewindClicked.set(false), 250);
+  }
+
+  handleForward() {
+    const v = this.videoRef?.nativeElement;
+    if (!v) return;
+    v.currentTime = Math.min(v.duration || v.currentTime + 10, v.currentTime + 10);
+    this.forwardClicked.set(true);
+    setTimeout(() => this.forwardClicked.set(false), 250);
+  }
+
+  handleTogglePlayPause() {
+    const v = this.videoRef?.nativeElement;
+    if (!v) return;
+    if (v.paused) v.play(); else v.pause();
   }
 
   // 拖放與檔案選擇（影片）
