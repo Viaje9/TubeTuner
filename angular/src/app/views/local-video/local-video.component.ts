@@ -4,14 +4,14 @@ import { RouterLink } from '@angular/router';
 import { SubtitleScrollComponent } from '../../components/subtitle-scroll/subtitle-scroll.component';
 import { parseSRT, getCurrentSubtitle, type SubtitleData } from '../../utils/srt-parser';
 import { parseJSONSubtitles } from '../../utils/json-subtitle-parser';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { PlayerSettingsDialogComponent } from '../../components/play-settings-dialog/play-settings-dialog.component';
 import { PlayerPreferencesService } from '../../state/player-preferences.service';
 
 @Component({
   selector: 'app-local-video',
   standalone: true,
-  imports: [CommonModule, RouterLink, SubtitleScrollComponent, MatDialogModule],
+  imports: [CommonModule, RouterLink, SubtitleScrollComponent, MatBottomSheetModule],
   templateUrl: './local-video.component.html',
 })
 export class LocalVideoComponent {
@@ -28,7 +28,7 @@ export class LocalVideoComponent {
   videoId = signal<string>('');
   currentSubtitle = computed(() => getCurrentSubtitle(this.subtitles(), this.currentTime()));
   showSubtitlePanel = signal(true);
-  constructor(private dialog: MatDialog, public prefs: PlayerPreferencesService) {}
+  constructor(private bottomSheet: MatBottomSheet, public prefs: PlayerPreferencesService) {}
   get hasVideoLoaded() { return !!this.src(); }
   get hasSubtitles() { return this.subtitles().length > 0; }
   // 上傳/拖放狀態
@@ -99,12 +99,10 @@ export class LocalVideoComponent {
   }
 
   openSettings() {
-    const ref = this.dialog.open(PlayerSettingsDialogComponent, {
-      panelClass: 'tt-material-dialog',
-      width: '560px',
-      maxWidth: '92vw',
+    const ref = this.bottomSheet.open(PlayerSettingsDialogComponent, {
+      panelClass: 'tt-bottom-sheet',
     });
-    ref.afterClosed().subscribe((result) => {
+    ref.afterDismissed().subscribe((result) => {
       if (result?.playbackRate) {
         const v = this.videoRef?.nativeElement;
         if (v) v.playbackRate = result.playbackRate;

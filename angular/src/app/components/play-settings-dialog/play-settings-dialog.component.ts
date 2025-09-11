@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { PlayerPreferencesService } from '../../state/player-preferences.service';
 
 @Component({
@@ -11,7 +12,8 @@ import { PlayerPreferencesService } from '../../state/player-preferences.service
   templateUrl: './play-settings-dialog.component.html',
 })
 export class PlayerSettingsDialogComponent {
-  readonly dialogRef = inject<MatDialogRef<PlayerSettingsDialogComponent>>(MatDialogRef);
+  readonly dialogRef = inject<MatDialogRef<PlayerSettingsDialogComponent>>(MatDialogRef, { optional: true });
+  readonly sheetRef = inject<MatBottomSheetRef<PlayerSettingsDialogComponent>>(MatBottomSheetRef, { optional: true });
   readonly prefs = inject(PlayerPreferencesService);
 
   playbackRate = this.prefs.playbackRate();
@@ -60,10 +62,11 @@ export class PlayerSettingsDialogComponent {
     if (Number.isNaN(step)) step = 10; // default
     step = this.clampSeekStep(step);
     this.prefs.update({ seekStep: step });
-    this.dialogRef.close({ playbackRate: this.playbackRate, seekStep: step });
+    const data = { playbackRate: this.playbackRate, seekStep: step };
+    if (this.sheetRef) this.sheetRef.dismiss(data); else this.dialogRef?.close(data);
   }
 
   close() {
-    this.dialogRef.close(null);
+    if (this.sheetRef) this.sheetRef.dismiss(null); else this.dialogRef?.close(null);
   }
 }
