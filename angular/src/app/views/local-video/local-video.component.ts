@@ -9,12 +9,39 @@ import { PlayerSettingsDialogComponent } from '../../components/play-settings-di
 import { PlayerPreferencesService } from '../../state/player-preferences.service';
 import { FavoritesService } from '../../state/favorites.service';
 import { AppStateService } from '../../state/app-state.service';
-import { AiChatComponent } from '../ai-chat/ai-chat.component';
+import { AiChatComponent } from '../../components/ai-chat/ai-chat.component';
+import { MenuIconComponent } from '../../components/icons/menu-icon.component';
+import { SettingsIconComponent } from '../../components/icons/settings-icon.component';
+import { StarSolidIconComponent } from '../../components/icons/star-solid-icon.component';
+import { ChatBubbleIconComponent } from '../../components/icons/chat-bubble-icon.component';
+import { CloudUploadIconComponent } from '../../components/icons/cloud-upload-icon.component';
+import { DocumentIconComponent } from '../../components/icons/document-icon.component';
+import { RewindIconComponent } from '../../components/icons/rewind-icon.component';
+import { PlayIconComponent } from '../../components/icons/play-icon.component';
+import { PauseIconComponent } from '../../components/icons/pause-icon.component';
+import { ForwardIconComponent } from '../../components/icons/forward-icon.component';
 
 @Component({
   selector: 'app-local-video',
   standalone: true,
-  imports: [CommonModule, RouterLink, SubtitleScrollComponent, MatBottomSheetModule, AiChatComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    SubtitleScrollComponent,
+    MatBottomSheetModule,
+    AiChatComponent,
+    // icons
+    MenuIconComponent,
+    SettingsIconComponent,
+    StarSolidIconComponent,
+    ChatBubbleIconComponent,
+    CloudUploadIconComponent,
+    DocumentIconComponent,
+    RewindIconComponent,
+    PlayIconComponent,
+    PauseIconComponent,
+    ForwardIconComponent,
+  ],
   templateUrl: './local-video.component.html',
 })
 export class LocalVideoComponent {
@@ -40,8 +67,12 @@ export class LocalVideoComponent {
     private fav: FavoritesService,
     private app: AppStateService,
   ) {}
-  get hasVideoLoaded() { return !!this.src(); }
-  get hasSubtitles() { return this.subtitles().length > 0; }
+  get hasVideoLoaded() {
+    return !!this.src();
+  }
+  get hasSubtitles() {
+    return this.subtitles().length > 0;
+  }
   // 上傳/拖放狀態
   isDragging = signal(false);
   private dragCounter = 0;
@@ -71,8 +102,12 @@ export class LocalVideoComponent {
     if (v) this.currentTime.set(v.currentTime);
   }
 
-  onPlay() { this.isPlaying.set(true); }
-  onPause() { this.isPlaying.set(false); }
+  onPlay() {
+    this.isPlaying.set(true);
+  }
+  onPause() {
+    this.isPlaying.set(false);
+  }
   onLoadedMetadata() {
     this.isReady.set(true);
     const v = this.videoRef?.nativeElement;
@@ -92,7 +127,11 @@ export class LocalVideoComponent {
         parsed = parseJSONSubtitles(text);
       } else {
         // 嘗試 JSON -> SRT
-        try { parsed = parseJSONSubtitles(text); } catch { parsed = parseSRT(text); }
+        try {
+          parsed = parseJSONSubtitles(text);
+        } catch {
+          parsed = parseSRT(text);
+        }
       }
       this.subtitles.set(parsed);
     } catch (err) {
@@ -113,7 +152,7 @@ export class LocalVideoComponent {
     const ref = this.bottomSheet.open(PlayerSettingsDialogComponent, {
       panelClass: 'tt-bottom-sheet',
     });
-    ref.afterDismissed().subscribe((result) => {
+    ref.afterDismissed().subscribe(result => {
       if (result?.playbackRate) {
         const v = this.videoRef?.nativeElement;
         if (v) v.playbackRate = result.playbackRate;
@@ -137,8 +176,8 @@ export class LocalVideoComponent {
     const m = Math.floor((sec % 3600) / 60);
     const s = Math.floor(sec % 60);
     return h > 0
-      ? `${h}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`
-      : `${m}:${s.toString().padStart(2,'0')}`;
+      ? `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+      : `${m}:${s.toString().padStart(2, '0')}`;
   }
 
   // 底部播放控制條
@@ -166,7 +205,8 @@ export class LocalVideoComponent {
   handleTogglePlayPause() {
     const v = this.videoRef?.nativeElement;
     if (!v) return;
-    if (v.paused) v.play(); else v.pause();
+    if (v.paused) v.play();
+    else v.pause();
   }
 
   // 拖放與檔案選擇（影片）
@@ -291,17 +331,11 @@ export class LocalVideoComponent {
   }
 
   // 以當前收藏作為上下文，開啟 AI 對話
-  openChatWithFavorites() {
+  openChatWithSelected() {
     const items = this.fav.items();
     // 即使無收藏，也切換到 AI 對話
-    // 轉為 system 訊息（條列時間與句子）
-    const fmt = (n: number) => {
-      const m = Math.floor(n / 60);
-      const s = Math.floor(n % 60).toString().padStart(2, '0');
-      return `${m}:${s}`;
-    };
     const lines = (items.length > 0 ? items : [])
-      .map((it, i) => `${i + 1}. [${fmt(it.start)}–${fmt(it.end)}] ${it.sentence}`)
+      .map((it, i) => `${i + 1}. ${it.sentence}`)
       .join('\n');
     if (lines) {
       const system = {
@@ -316,6 +350,10 @@ export class LocalVideoComponent {
     this.showChat.set(true);
   }
 
-  openChat() { this.showChat.set(true); }
-  closeChat() { this.showChat.set(false); }
+  openChat() {
+    this.showChat.set(true);
+  }
+  closeChat() {
+    this.showChat.set(false);
+  }
 }
