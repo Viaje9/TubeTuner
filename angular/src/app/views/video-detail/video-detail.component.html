@@ -1,0 +1,36 @@
+<div class="container mx-auto px-4 py-6 space-y-4" *ngIf="meta() as m">
+  <a routerLink="/video-list" class="text-sm text-blue-300">← 返回清單</a>
+
+  <div class="space-y-2">
+    <label class="block text-sm text-gray-300">名稱（最多 20 字）</label>
+  <input
+      type="text"
+      [value]="name()"
+      (input)="name.set($any($event.target).value)"
+      class="w-full bg-gray-800 text-white rounded px-3 py-2 border border-gray-700"
+    />
+    <div class="text-red-400 text-sm" *ngIf="nameError()">{{ nameError() }}</div>
+    <button (click)="saveName()" class="bg-blue-600 text-white rounded px-3 py-2">儲存名稱</button>
+  </div>
+
+  <div class="space-y-2">
+    <div class="text-gray-300">字幕</div>
+    <div *ngIf="subtitle(); else noSub" class="text-sm text-gray-400">
+      已上傳：{{ subtitle()!.name }} ({{ (subtitle()!.size/1024) | number:'1.0-0' }} KB)
+    </div>
+    <ng-template #noSub>
+      <div class="text-sm text-gray-500">尚未上傳字幕</div>
+    </ng-template>
+    <div class="flex gap-2">
+      <label class="bg-gray-600 text-white rounded px-3 py-2 cursor-pointer">
+        上傳/覆蓋字幕
+        <input type="file" class="hidden" accept=".srt,.json" (change)="onSubtitleSelected($event)" />
+      </label>
+      <button (click)="removeSubtitle()" class="bg-red-600 text-white rounded px-3 py-2">移除字幕</button>
+    </div>
+  </div>
+
+  <div class="pt-6 border-t border-gray-700">
+    <button (click)="removeVideo()" class="bg-red-700 text-white rounded px-3 py-2">刪除影片</button>
+  </div>
+</div>

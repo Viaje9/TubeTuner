@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SubtitleScrollComponent } from '../../components/subtitle-scroll/subtitle-scroll.component';
 import { parseSRT, getCurrentSubtitle, type SubtitleData } from '../../utils/srt-parser';
 import { parseJSONSubtitles } from '../../utils/json-subtitle-parser';
@@ -20,6 +20,9 @@ import { RewindIconComponent } from '../../components/icons/rewind-icon.componen
 import { PlayIconComponent } from '../../components/icons/play-icon.component';
 import { PauseIconComponent } from '../../components/icons/pause-icon.component';
 import { ForwardIconComponent } from '../../components/icons/forward-icon.component';
+import { VideoLibraryService } from '../../services/video-library.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import type { ResolvedVideoData } from '../../resolvers/video.resolver';
 
 @Component({
   selector: 'app-local-video',
@@ -65,7 +68,27 @@ export class LocalVideoComponent {
     public prefs: PlayerPreferencesService,
     private fav: FavoritesService,
     private app: AppStateService,
-  ) {}
+    private lib: VideoLibraryService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private snack: MatSnackBar,
+  ) {
+    const data = this.route.snapshot.data['video'] as ResolvedVideoData | null;
+    if (data) {
+      this.src.set(data.videoUrl);
+      this.videoId.set(data.meta.id);
+      if (data.subtitle) {
+        try {
+          const txt = data.subtitle.text;
+          const kind = data.subtitle.meta.kind;
+          this.subtitles.set(kind === 'json' ? parseJSONSubtitles(txt) : parseSRT(txt));
+        } catch (e) {
+          console.warn('解析字幕失敗', e);
+        }
+      }
+      this.rate.set(this.prefs.playbackRate());
+    }
+  }
   get hasVideoLoaded() {
     return !!this.src();
   }
@@ -95,7 +118,11 @@ export class LocalVideoComponent {
 
   onTimeUpdate() {
     const v = this.videoRef?.nativeElement;
-    if (v) this.currentTime.set(v.currentTime);
+    if (v) {
+      this.currentTime.set(v.currentTime);
+      const id = this.videoId();
+      if (id) this.lib.savePosition(id, v.currentTime);
+    }
   }
 
   onPlay() {
@@ -107,7 +134,16 @@ export class LocalVideoComponent {
   onLoadedMetadata() {
     this.isReady.set(true);
     const v = this.videoRef?.nativeElement;
-    if (v) v.playbackRate = this.prefs.playbackRate();
+    if (v) {
+      v.playbackRate = this.prefs.playbackRate();
+      const data = this.route.snapshot.data['video'] as ResolvedVideoData | null;
+      if (data && data.meta.lastPosition > 0 && v.duration) {
+        try {
+          const pos = Math.min(data.meta.lastPosition, v.duration - 0.5);
+          if (pos > 0) v.currentTime = pos;
+        } catch {}
+      }
+    }
   }
 
   async onSubtitleFile(e: Event) {
@@ -210,29 +246,17 @@ export class LocalVideoComponent {
     this.videoFileInput?.nativeElement?.click();
   }
 
-  handleVideoFile(file: File) {
-    if (!file.type.startsWith('video/')) {
-      console.warn('不支援的檔案類型，請選擇影片檔案');
-      return;
+  async handleVideoFile(file: File) {
+    try {
+      const metas = await this.lib.addVideos([file]);
+      const created = metas[0];
+      if (!created) throw new Error('新增失敗');
+      this.router.navigate(['/local-video'], { queryParams: { id: created.id } });
+    } catch (e: any) {
+      this.snack.open(e?.message || '無法新增影片', undefined, { duration: 3000 });
+    } finally {
+      if (this.videoFileInput) this.videoFileInput.nativeElement.value = '';
     }
-    const maxSize = 2 * 1024 * 1024 * 1024; // 2GB
-    if (file.size > maxSize) {
-      console.warn('檔案太大，請選擇小於 2GB 的影片檔案');
-      return;
-    }
-    const testVideo = document.createElement('video');
-    const canPlay = testVideo.canPlayType(file.type);
-    if (canPlay === '') {
-      console.warn(`不支援的影片格式: ${file.type}。建議使用 MP4 (H.264) 格式`);
-      return;
-    }
-    const url = URL.createObjectURL(file);
-    this.src.set(url);
-    this.videoId.set(file.name || 'local-video');
-    this.videoFileName.set(file.name);
-    this.videoFileSize.set(file.size);
-    this.videoFileType.set(file.type);
-    if (this.videoFileInput) this.videoFileInput.nativeElement.value = '';
   }
 
   // 字幕選擇/上傳
@@ -259,11 +283,11 @@ export class LocalVideoComponent {
       }
       const maxSize = 10 * 1024 * 1024; // 10MB
       if (file.size > maxSize) throw new Error('字幕檔案太大，請選擇小於 10MB 的檔案');
+      const id = this.videoId();
+      if (!id) throw new Error('請先選擇或載入影片');
+      await this.lib.setSubtitle(id, file);
       const text = await file.text();
-      let parsed: SubtitleData[] = [];
-      if (lower.endsWith('.srt')) parsed = parseSRT(text);
-      else parsed = parseJSONSubtitles(text);
-      this.subtitles.set(parsed);
+      this.subtitles.set(lower.endsWith('.json') ? parseJSONSubtitles(text) : parseSRT(text));
       this.selectedSubtitleFile.set(null);
       if (this.subtitleFileInput) this.subtitleFileInput.nativeElement.value = '';
     } catch (err) {
