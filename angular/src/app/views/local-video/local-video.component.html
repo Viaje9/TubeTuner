@@ -4,13 +4,13 @@
     <div class="absolute top-0 right-0 flex items-center gap-2">
       <a
         routerLink="/menu"
-        class="bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-lg inline-flex items-center justify-center"
+        class="bg-gray-800/70 text-white p-2 rounded-lg inline-flex items-center justify-center"
         title="選單"
       >
         <app-menu-icon [cls]="'w-5 h-5'"></app-menu-icon>
       </a>
       <button
-        class="bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-lg inline-flex items-center justify-center"
+        class="bg-gray-800/70 text-white p-2 rounded-lg inline-flex items-center justify-center"
         (click)="openSettings()"
         title="播放設定"
       >
@@ -40,24 +40,24 @@
         </div>
       </div>
       <div class="flex items-center justify-end gap-2">
+        <a
+          routerLink="/menu"
+          class="bg-gray-700/70 text-white p-2 rounded-lg inline-flex items-center justify-center"
+          title="選單"
+        >
+          <app-menu-icon [cls]="'w-5 h-5'"></app-menu-icon>
+        </a>
         <button
           (click)="openChatWithSelected()"
-          class="bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-lg inline-flex items-center justify-center"
+          class="bg-gray-700/80 text-white p-2 rounded-lg inline-flex items-center justify-center"
           title="AI 對話（帶入收藏）"
         >
           <app-star-solid-icon [cls]="'w-5 h-5'"></app-star-solid-icon>
         </button>
         <button
-          class="bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-lg inline-flex items-center justify-center"
-          (click)="openChat()"
-          title="開啟 AI 對話"
-        >
-          <app-chat-bubble-icon [cls]="'w-5 h-5'"></app-chat-bubble-icon>
-        </button>
-        <button
-          class="bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-lg inline-flex items-center justify-center"
+          class="bg-gray-700/70 text-white p-2 rounded-lg inline-flex items-center justify-center"
           (click)="openSettings()"
-          title="AI 設定"
+          title="播放設定"
         >
           <app-settings-icon [cls]="'w-5 h-5'"></app-settings-icon>
         </button>

@@ -37,7 +37,6 @@ import type { ResolvedVideoData } from '../../resolvers/video.resolver';
     MenuIconComponent,
     SettingsIconComponent,
     StarSolidIconComponent,
-    ChatBubbleIconComponent,
     CloudUploadIconComponent,
     DocumentIconComponent,
     RewindIconComponent,
