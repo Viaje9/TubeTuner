@@ -137,7 +137,8 @@ export class LocalVideoComponent {
     if (v) {
       v.playbackRate = this.prefs.playbackRate();
       const data = this.route.snapshot.data['video'] as ResolvedVideoData | null;
-      if (data && data.meta.lastPosition > 0 && v.duration) {
+      // 僅在路由解析的影片與當前影片一致時，才套用上次播放位置
+      if (data && data.meta.id === this.videoId() && data.meta.lastPosition > 0 && v.duration) {
         try {
           const pos = Math.min(data.meta.lastPosition, v.duration - 0.5);
           if (pos > 0) v.currentTime = pos;
@@ -251,7 +252,13 @@ export class LocalVideoComponent {
       const metas = await this.lib.addVideos([file]);
       const created = metas[0];
       if (!created) throw new Error('新增失敗');
-      this.router.navigate(['/local-video'], { queryParams: { id: created.id } });
+      // 不導頁，直接在同頁載入新影片
+      const blob = await this.lib.getVideoBlob(created.blobKey);
+      const url = URL.createObjectURL(blob);
+      this.src.set(url);
+      this.videoId.set(created.id);
+      this.subtitles.set([]);
+      this.isReady.set(false);
     } catch (e: any) {
       this._snackBar.open(e?.message || '無法新增影片', undefined, {
         duration: 3000,
