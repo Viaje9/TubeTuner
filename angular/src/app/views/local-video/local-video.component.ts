@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SubtitleScrollComponent } from '../../components/subtitle-scroll/subtitle-scroll.component';
 import { parseSRT, getCurrentSubtitle, type SubtitleData } from '../../utils/srt-parser';
-import { parseJSONSubtitles } from '../../utils/json-subtitle-parser';
+import { parseJSONSubtitles, toEventsJSON } from '../../utils/json-subtitle-parser';
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { PlayerSettingsDialogComponent } from '../../components/play-settings-dialog/play-settings-dialog.component';
 import { PlayerPreferencesService } from '../../state/player-preferences.service';
@@ -59,7 +59,6 @@ export class LocalVideoComponent {
   isReady = signal(false);
   videoId = signal<string>('');
   currentSubtitle = computed(() => getCurrentSubtitle(this.subtitles(), this.currentTime()));
-  showSubtitlePanel = signal(true);
   // 視圖切換：同頁切換影片/AI 對話
   showChat = signal(false);
 
@@ -81,6 +80,8 @@ export class LocalVideoComponent {
         try {
           const txt = data.subtitle.text;
           const kind = data.subtitle.meta.kind;
+          console.log(parseJSONSubtitles(txt));
+
           this.subtitles.set(kind === 'json' ? parseJSONSubtitles(txt) : parseSRT(txt));
         } catch (e) {
           console.warn('解析字幕失敗', e);
@@ -175,10 +176,6 @@ export class LocalVideoComponent {
   seekTo(time: number) {
     const v = this.videoRef?.nativeElement;
     if (v) v.currentTime = time;
-  }
-
-  toggleSubtitlePanel() {
-    this.showSubtitlePanel.set(!this.showSubtitlePanel());
   }
 
   openSettings() {
@@ -296,9 +293,32 @@ export class LocalVideoComponent {
       if (file.size > maxSize) throw new Error('字幕檔案太大，請選擇小於 10MB 的檔案');
       const id = this.videoId();
       if (!id) throw new Error('請先選擇或載入影片');
-      await this.lib.setSubtitle(id, file);
-      const text = await file.text();
-      this.subtitles.set(lower.endsWith('.json') ? parseJSONSubtitles(text) : parseSRT(text));
+      let fileToSave = file;
+      let textToParse: string | null = null;
+
+      if (lower.endsWith('.json')) {
+        const raw = await file.text();
+        // 若為 content 格式，轉為 events 格式後再儲存
+        try {
+          const { json, converted } = toEventsJSON(raw);
+          textToParse = json;
+          if (converted) {
+            fileToSave = new File([json], file.name, { type: 'application/json' });
+          }
+        } catch {
+          // 若轉換失敗，仍嘗試以既有 events 解析；失敗會拋錯
+          textToParse = raw;
+        }
+      }
+
+      await this.lib.setSubtitle(id, fileToSave);
+
+      if (lower.endsWith('.json')) {
+        this.subtitles.set(parseJSONSubtitles(textToParse || (await fileToSave.text())));
+      } else {
+        const text = await fileToSave.text();
+        this.subtitles.set(parseSRT(text));
+      }
       this.selectedSubtitleFile.set(null);
       if (this.subtitleFileInput) this.subtitleFileInput.nativeElement.value = '';
     } catch (err) {

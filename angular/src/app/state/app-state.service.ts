@@ -1,5 +1,6 @@
 import { Injectable, computed, signal } from '@angular/core';
 import type { GeminiModel } from '../services/genai.service';
+import { getUUID } from '../utils/crypto-random-uuid';
 
 // 最小 Signals/Service 狀態骨架，用於後續遷移 Pinia 狀態
 /**
@@ -258,7 +259,7 @@ export class AppStateService {
    * @param msg 訊息內容（不含 id 與 createdAt）
    */
   addMessage(msg: Omit<ChatMessage, 'id' | 'createdAt'> & { id?: string }) {
-    const id = msg.id ?? crypto.randomUUID();
+    const id = msg.id ?? getUUID();
     const createdAt = Date.now();
     this._messages.update(list => [...list, { ...msg, id, createdAt }]);
   }

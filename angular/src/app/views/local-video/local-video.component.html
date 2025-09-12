@@ -106,17 +106,12 @@
   </div>
 
   <!-- 內容區：影片 + 字幕面板 -->
-  <div
-    [class]="
-      'grid gap-4 ' +
-      (hasVideoLoaded && hasSubtitles && showSubtitlePanel() ? 'lg:grid-cols-3' : '')
-    "
-  >
-    <div [class]="hasVideoLoaded && hasSubtitles && showSubtitlePanel() ? 'lg:col-span-2' : ''">
+  <div [class]="'grid gap-4 ' + (hasVideoLoaded && hasSubtitles ? 'lg:grid-cols-3' : '')">
+    <div [class]="hasVideoLoaded && hasSubtitles ? 'lg:col-span-2' : ''">
       <div class="relative">
         <!-- 左上角字幕上傳按鈕（有影片時顯示） -->
         <button
-          *ngIf="hasVideoLoaded"
+          *ngIf="hasVideoLoaded && !hasSubtitles"
           (click)="triggerSubtitleInput()"
           class="absolute top-2 left-2 z-20 bg-gray-800/80 hover:bg-gray-700 text-white border border-gray-600 rounded-md px-2 py-1 text-xs flex items-center gap-1"
         >
@@ -141,7 +136,7 @@
       <!-- 調速移至設定對話框 -->
     </div>
 
-    <div *ngIf="hasVideoLoaded && hasSubtitles && showSubtitlePanel()" class="lg:col-span-1">
+    <div *ngIf="hasVideoLoaded && hasSubtitles" class="lg:col-span-1">
       <app-subtitle-scroll
         [subtitles]="subtitles()"
         [currentTime]="currentTime()"
