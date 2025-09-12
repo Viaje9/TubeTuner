@@ -1,4 +1,4 @@
-<div class="space-y-4" [class.hidden]="showChat()">
+<div class="space-y-4 py-6" [class.hidden]="showChat()">
   <!-- 標題區域 -->
   <div *ngIf="!hasVideoLoaded; else loadedHeader" class="text-center mb-2 relative">
     <div class="absolute top-0 right-0 flex items-center gap-2">
@@ -28,7 +28,7 @@
     ></div>
   </div>
   <ng-template #loadedHeader>
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between px-4">
       <div class="flex flex-col">
         <h2
           class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
@@ -66,7 +66,7 @@
   </ng-template>
 
   <!-- 上傳區域 -->
-  <div class="space-y-6">
+  <div class="space-y-6 px-4">
     <!-- 隱藏的字幕檔案輸入（提供給左上角按鈕使用） -->
     <input
       #subtitleFileInput
@@ -217,7 +217,7 @@
 </div>
 
 <!-- AI 對話視圖（同頁顯示） -->
-<div *ngIf="showChat()" class="min-h-[100dvh] flex flex-col">
+<div [class.hidden]="!showChat()" class="min-h-[100dvh] flex flex-col">
   <div class="flex-1 overflow-hidden">
     <app-ai-chat [onBack]="closeChat.bind(this)" />
   </div>

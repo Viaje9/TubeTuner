@@ -2,6 +2,10 @@ import { Injectable, computed, signal } from '@angular/core';
 import type { GeminiModel } from '../services/genai.service';
 
 // 最小 Signals/Service 狀態骨架，用於後續遷移 Pinia 狀態
+/**
+ * AI 設定狀態。
+ * - 維護 API 金鑰、模型、溫度、Token 上限與系統提示文。
+ */
 export interface AiConfigState {
   apiKey: string;
   model: string;
@@ -10,6 +14,12 @@ export interface AiConfigState {
   systemPrompt: string;
 }
 
+/**
+ * 聊天訊息結構。
+ * - `role`: 訊息角色（使用者 / 助手 / 系統）。
+ * - `content`: 訊息內容（純文字）。
+ * - `createdAt`: 建立時間（時間戳記毫秒）。
+ */
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
@@ -30,6 +40,10 @@ export class AppStateService {
   private static readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24h
 
   // AI 設定（含簡易持久化）
+  /**
+   * 目前的 AI 設定 Signal。
+   * - 透過 `aiConfig` 對外暴露唯讀 computed。
+   */
   private readonly _aiConfig = signal<AiConfigState>({
     apiKey: '',
     model: 'gemini-2.5-flash',
@@ -39,7 +53,14 @@ export class AppStateService {
       '你是一個專業的 YouTube 影片助手，可以幫助使用者理解和討論影片內容。請用繁體中文回答。',
   });
 
+  /**
+   * 取得目前 AI 設定（唯讀）。
+   */
   readonly aiConfig = computed(() => this._aiConfig());
+  /**
+   * 更新部分 AI 設定（不會立即持久化）。
+   * @param partial 要套用的設定片段
+   */
   setAiConfig(partial: Partial<AiConfigState>) {
     this._aiConfig.update(current => ({ ...current, ...partial }));
   }
@@ -48,11 +69,17 @@ export class AppStateService {
   private readonly _availableModels = signal<GeminiModel[]>([]);
   private readonly _isLoadingModels = signal(false);
   private readonly _modelsLoadError = signal('');
+  /** 可用模型清單（唯讀）。 */
   readonly availableModels = computed(() => this._availableModels());
+  /** 模型載入中狀態（唯讀）。 */
   readonly isLoadingModels = computed(() => this._isLoadingModels());
+  /** 模型載入錯誤訊息（唯讀）。 */
   readonly modelsLoadError = computed(() => this._modelsLoadError());
 
   // 儲存 / 載入設定
+  /**
+   * 將目前 AI 設定持久化到 LocalStorage。
+   */
   saveToStorage() {
     try {
       const s = this._aiConfig();
@@ -66,6 +93,9 @@ export class AppStateService {
     }
   }
 
+  /**
+   * 從 LocalStorage 載入 AI 設定與模型快取（若存在）。
+   */
   loadFromStorage() {
     try {
       const apiKey = localStorage.getItem(AppStateService.KEY_API) ?? '';
@@ -89,6 +119,10 @@ export class AppStateService {
     }
   }
 
+  /**
+   * 從快取載入模型列表。
+   * @returns 模型清單；若無可用或過期則回傳 null
+   */
   private loadModelsFromCache(): GeminiModel[] | null {
     try {
       const cached = localStorage.getItem(AppStateService.MODELS_CACHE_KEY);
@@ -100,6 +134,10 @@ export class AppStateService {
     return null;
   }
 
+  /**
+   * 將模型列表寫入快取並設定到期時間。
+   * @param models 待快取的模型清單
+   */
   private saveModelsToCache(models: GeminiModel[]) {
     try {
       localStorage.setItem(AppStateService.MODELS_CACHE_KEY, JSON.stringify(models));
@@ -111,6 +149,12 @@ export class AppStateService {
   }
 
   // 提供由外部傳入 fetcher 的載入流程（避免服務相依循環）
+  /**
+   * 載入可用模型清單。
+   * - 若非強制刷新，優先使用本地快取。
+   * @param fetcher 提供實際抓取模型清單的非同步函式
+   * @param forceRefresh 是否忽略快取強制刷新
+   */
   async loadAvailableModels(fetcher: () => Promise<GeminiModel[]>, forceRefresh = false) {
     if (!forceRefresh) {
       const cached = this.loadModelsFromCache();
@@ -141,6 +185,10 @@ export class AppStateService {
     }
   }
 
+  /**
+   * 設定目前使用的模型並持久化。
+   * @param modelId 模型 ID
+   */
   setModel(modelId: string) {
     console.log('設定模型', modelId);
 
@@ -148,23 +196,38 @@ export class AppStateService {
     this.saveToStorage();
   }
 
+  /**
+   * 設定溫度參數並持久化（限制於 0–2 之間）。
+   * @param t 溫度
+   */
   setTemperature(t: number) {
     const v = Math.max(0, Math.min(2, Number(t)));
     this.setAiConfig({ temperature: v });
     this.saveToStorage();
   }
 
+  /**
+   * 設定最大 Token 上限並持久化（限制於 1–65536 之間）。
+   * @param n Token 上限
+   */
   setMaxTokens(n: number) {
     const v = Math.max(1, Math.min(65536, Number(n)));
     this.setAiConfig({ maxTokens: v });
     this.saveToStorage();
   }
 
+  /**
+   * 設定系統提示文並持久化。
+   * @param s 系統提示內容
+   */
   setSystemPrompt(s: string) {
     this.setAiConfig({ systemPrompt: s });
     this.saveToStorage();
   }
 
+  /**
+   * 重設所有 AI 設定並清除相關 LocalStorage 快取。
+   */
   resetConfig() {
     this._aiConfig.set({
       apiKey: '',
@@ -187,29 +250,48 @@ export class AppStateService {
 
   // 簡易聊天訊息狀態
   private readonly _messages = signal<ChatMessage[]>([]);
+  /** 聊天訊息串（唯讀）。 */
   readonly messages = computed(() => this._messages());
 
+  /**
+   * 新增一則聊天訊息（若未提供 id 會自動產生）。
+   * @param msg 訊息內容（不含 id 與 createdAt）
+   */
   addMessage(msg: Omit<ChatMessage, 'id' | 'createdAt'> & { id?: string }) {
     const id = msg.id ?? crypto.randomUUID();
     const createdAt = Date.now();
     this._messages.update(list => [...list, { ...msg, id, createdAt }]);
   }
 
+  /**
+   * 清空所有聊天訊息。
+   */
   clearMessages() {
     this._messages.set([]);
   }
 
   // 對話待處理上下文：由其他畫面（例如本機影片）帶入一次性上下文
   private readonly _pendingContext = signal<Pick<ChatMessage, 'role' | 'content'>[] | null>(null);
+  /**
+   * 設定一次性待注入上下文（通常由其他畫面傳入）。
+   * @param messages 將以原樣注入訊息串（常為 system 訊息）
+   */
   setPendingContext(messages: Pick<ChatMessage, 'role' | 'content'>[]) {
     this._pendingContext.set(messages);
   }
+  /**
+   * 取出並清空一次性上下文。
+   * @returns 取出的待注入訊息陣列（若無則回傳空陣列）
+   */
   consumePendingContext(): Pick<ChatMessage, 'role' | 'content'>[] {
     const v = this._pendingContext();
     this._pendingContext.set(null);
     return v ?? [];
   }
 
+  /**
+   * 建構後自動載入本地設定。
+   */
   constructor() {
     this.loadFromStorage();
   }

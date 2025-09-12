@@ -337,15 +337,19 @@ export class LocalVideoComponent {
     const lines = (items.length > 0 ? items : [])
       .map((it, i) => `${i + 1}. ${it.sentence}`)
       .join('\n');
+    // 僅第一次帶入收藏字幕作為 system 上下文
     if (lines) {
-      const system = {
-        role: 'system' as const,
-        content:
-          '以下為使用者於播放器中收藏的字幕語句，作為影片語境的參考內容：\n' +
-          lines +
-          '\n請基於這些內容協助回答後續問題，並用繁體中文回覆。',
-      };
-      this.app.setPendingContext([system]);
+      const marker = '以下為使用者於播放器中收藏的字幕語句，作為影片語境的參考內容：';
+      const alreadyHasContext = this.app
+        .messages()
+        .some(m => m.role === 'system' && m.content.includes(marker));
+      if (!alreadyHasContext) {
+        const system = {
+          role: 'system' as const,
+          content: `${marker}\n${lines}\n請基於這些內容協助回答後續問題，並用繁體中文回覆。`,
+        };
+        this.app.setPendingContext([system]);
+      }
     }
     this.showChat.set(true);
   }
