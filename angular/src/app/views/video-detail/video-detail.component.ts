@@ -2,7 +2,11 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { VideoLibraryService, type VideoMeta, type SubtitleMeta } from '../../services/video-library.service';
+import {
+  VideoLibraryService,
+  type VideoMeta,
+  type SubtitleMeta,
+} from '../../services/video-library.service';
 import { DialogService } from '../../services/dialog.service';
 
 @Component({
@@ -37,7 +41,11 @@ export class VideoDetailComponent {
     }
     const meta = await this.lib.get(this.id);
     if (!meta) {
-      this.snack.open('找不到影片', undefined, { duration: 3000 });
+      this.snack.open('找不到影片', undefined, {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
       this.router.navigateByUrl('/video-list');
       return;
     }
@@ -53,10 +61,18 @@ export class VideoDetailComponent {
     if (n.length > 20) return (this.nameError.set('名稱不可超過 20 字'), undefined);
     try {
       await this.lib.rename(this.id, n);
-      this.snack.open('已儲存', undefined, { duration: 2000 });
+      this.snack.open('已儲存', undefined, {
+        duration: 2000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
       await this.load();
     } catch (e: any) {
-      this.snack.open(e?.message || '儲存失敗', undefined, { duration: 3000 });
+      this.snack.open(e?.message || '儲存失敗', undefined, {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
     }
   }
 
@@ -70,20 +86,36 @@ export class VideoDetailComponent {
   async setSubtitle(file: File) {
     try {
       await this.lib.setSubtitle(this.id, file);
-      this.snack.open('字幕已更新', undefined, { duration: 2000 });
+      this.snack.open('字幕已更新', undefined, {
+        duration: 2000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
       this.subtitle.set(await this.lib.getSubtitle(this.id));
     } catch (e: any) {
-      this.snack.open(e?.message || '字幕更新失敗', undefined, { duration: 3000 });
+      this.snack.open(e?.message || '字幕更新失敗', undefined, {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
     }
   }
 
   async removeSubtitle() {
     try {
       await this.lib.removeSubtitle(this.id);
-      this.snack.open('字幕已移除', undefined, { duration: 2000 });
+      this.snack.open('字幕已移除', undefined, {
+        duration: 2000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
       this.subtitle.set(undefined);
     } catch (e: any) {
-      this.snack.open(e?.message || '移除失敗', undefined, { duration: 3000 });
+      this.snack.open(e?.message || '移除失敗', undefined, {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
     }
   }
 
@@ -97,10 +129,18 @@ export class VideoDetailComponent {
     if (!ok) return;
     try {
       await this.lib.remove(this.id);
-      this.snack.open('已刪除', undefined, { duration: 3000 });
+      this.snack.open('已刪除', undefined, {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
       this.router.navigateByUrl('/video-list');
     } catch (e: any) {
-      this.snack.open(e?.message || '刪除失敗', undefined, { duration: 3000 });
+      this.snack.open(e?.message || '刪除失敗', undefined, {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
     }
   }
 }

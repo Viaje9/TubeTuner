@@ -1,7 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn, Router, RouterStateSnapshot } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { VideoLibraryService, type VideoMeta, type SubtitleMeta } from '../services/video-library.service';
+import {
+  VideoLibraryService,
+  type VideoMeta,
+  type SubtitleMeta,
+} from '../services/video-library.service';
 
 export interface ResolvedVideoData {
   meta: VideoMeta;
@@ -17,7 +21,10 @@ export class VideoResolverImpl {
     private snack: MatSnackBar,
   ) {}
 
-  async resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Promise<ResolvedVideoData | null> {
+  async resolve(
+    route: ActivatedRouteSnapshot,
+    _state: RouterStateSnapshot,
+  ): Promise<ResolvedVideoData | null> {
     const id = route.queryParamMap.get('id') || route.paramMap.get('id') || '';
 
     // 若帶有 id，優先以指定影片載入；失敗則改為回退到「最近播放」影片
@@ -49,8 +56,10 @@ export class VideoResolverImpl {
     if (!all || all.length === 0) {
       return null;
     }
-    const pick = [...all]
-      .sort((a, b) => (b.lastPlayedAt || 0) - (a.lastPlayedAt || 0) || (b.createdAt || 0) - (a.createdAt || 0))[0];
+    const pick = [...all].sort(
+      (a, b) =>
+        (b.lastPlayedAt || 0) - (a.lastPlayedAt || 0) || (b.createdAt || 0) - (a.createdAt || 0),
+    )[0];
     try {
       const blob = await this.lib.getVideoBlob(pick.blobKey);
       const videoUrl = URL.createObjectURL(blob);
@@ -69,7 +78,11 @@ export class VideoResolverImpl {
   }
 
   private missing(): null {
-    this.snack.open('找不到影片資料', undefined, { duration: 3000 });
+    this.snack.open('找不到影片資料', undefined, {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
     this.router.navigateByUrl('/video-list');
     return null;
   }

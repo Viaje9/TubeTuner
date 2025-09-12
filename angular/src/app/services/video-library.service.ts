@@ -117,9 +117,7 @@ export class VideoLibraryService {
 
     // check duplicates against DB
     const existing = await this.list();
-    const existingKeys = new Set(
-      existing.map(v => `${v.name}|${v.size}|${v.lastModified ?? ''}`),
-    );
+    const existingKeys = new Set(existing.map(v => `${v.name}|${v.size}|${v.lastModified ?? ''}`));
     for (const { file, dupeKey } of normalized) {
       if (existingKeys.has(dupeKey)) {
         throw new Error(`偵測到重複檔案：${file.name}`);
@@ -134,8 +132,8 @@ export class VideoLibraryService {
 
     const now = Date.now();
     for (const { file } of normalized) {
-      const id = crypto.randomUUID();
-      const blobKey = crypto.randomUUID();
+      const id = this.getUUID();
+      const blobKey = this.getUUID();
       const meta: VideoMeta = {
         id,
         name: (file.name || 'video').slice(0, 200),
@@ -256,7 +254,7 @@ export class VideoLibraryService {
     if (entry.timer != null) return Promise.resolve();
     return new Promise<void>(resolve => {
       // throttle to every ~2s
-      entry.timer = (setTimeout(async () => {
+      entry.timer = setTimeout(async () => {
         entry.timer = null;
         try {
           const tx = await this.tx(['videos'], 'readwrite');
@@ -279,7 +277,7 @@ export class VideoLibraryService {
         } finally {
           resolve();
         }
-      }, 2000) as unknown) as number;
+      }, 2000) as unknown as number;
     });
   }
 
@@ -332,7 +330,7 @@ export class VideoLibraryService {
       blobStore.delete(existing.blobKey);
     }
     // insert
-    const blobKey = crypto.randomUUID();
+    const blobKey = this.getUUID();
     const meta: SubtitleMeta = {
       videoId,
       blobKey,
@@ -401,5 +399,17 @@ export class VideoLibraryService {
       tx.onabort = () => reject(tx.error);
     });
   }
-}
 
+  getUUID(): string {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID();
+    }
+
+    // fallback：隨機生成符合 RFC4122 v4 格式的 UUID
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = (crypto?.getRandomValues?.(new Uint8Array(1))[0] ?? Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+}

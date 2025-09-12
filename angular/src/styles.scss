@@ -1,7 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+// Customize the entire app. Change :root to your selector if you want to scope the styles.
+:root {
+  @include mat.snack-bar-overrides(
+    (
+      container-color: rgb(147 51 234 / 0.94),
+      supporting-text-color: #f9fafb,
+    )
+  );
+}
 
 /* Material dialog dark theme for TubeTuner */
 .tt-material-dialog .mat-mdc-dialog-container .mdc-dialog__surface {

@@ -44,9 +44,17 @@ export class VideoListComponent {
     try {
       await this.lib.addVideos(files);
       await this.refresh();
-      this.snack.open('新增成功', undefined, { duration: 3000 });
+      this.snack.open('新增成功', undefined, {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
     } catch (err: any) {
-      this.snack.open(err?.message || '新增失敗', undefined, { duration: 3000 });
+      this.snack.open(err?.message || '新增失敗', undefined, {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
     }
   }
 
@@ -58,4 +66,3 @@ export class VideoListComponent {
     this.router.navigate(['/video', item.id]);
   }
 }
-

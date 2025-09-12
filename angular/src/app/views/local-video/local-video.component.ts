@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, signal, computed, effect } from '@angular/core';
+import { Component, ViewChild, ElementRef, signal, computed, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SubtitleScrollComponent } from '../../components/subtitle-scroll/subtitle-scroll.component';
@@ -62,6 +62,8 @@ export class LocalVideoComponent {
   showSubtitlePanel = signal(true);
   // 視圖切換：同頁切換影片/AI 對話
   showChat = signal(false);
+
+  private _snackBar = inject(MatSnackBar);
   constructor(
     private bottomSheet: MatBottomSheet,
     public prefs: PlayerPreferencesService,
@@ -70,7 +72,6 @@ export class LocalVideoComponent {
     private lib: VideoLibraryService,
     private route: ActivatedRoute,
     private router: Router,
-    private snack: MatSnackBar,
   ) {
     const data = this.route.snapshot.data['video'] as ResolvedVideoData | null;
     if (data) {
@@ -252,7 +253,11 @@ export class LocalVideoComponent {
       if (!created) throw new Error('新增失敗');
       this.router.navigate(['/local-video'], { queryParams: { id: created.id } });
     } catch (e: any) {
-      this.snack.open(e?.message || '無法新增影片', undefined, { duration: 3000 });
+      this._snackBar.open(e?.message || '無法新增影片', undefined, {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
     } finally {
       if (this.videoFileInput) this.videoFileInput.nativeElement.value = '';
     }
