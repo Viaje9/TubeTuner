@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgFor } from '@angular/common';
 import { AppStateService } from '../../state/app-state.service';
@@ -13,6 +13,7 @@ import { GenAIService } from '../../services/genai.service';
 export class AiChatComponent {
   readonly state = inject(AppStateService);
   readonly genai = inject(GenAIService);
+  @Input({ required: true }) onBack!: () => void;
   input = '';
 
   constructor() {
@@ -33,16 +34,17 @@ export class AiChatComponent {
     // 送到 GenAI
     const cfg = this.state.aiConfig();
     const systemPrompt = cfg.systemPrompt?.trim();
-    const baseMessages = this.state
-      .messages()
-      .map(m => ({ role: m.role, content: m.content }));
-    const messages = (
-      systemPrompt
-        ? [{ role: 'system' as const, content: systemPrompt }, ...baseMessages]
-        : baseMessages
-    );
+    const baseMessages = this.state.messages().map(m => ({ role: m.role, content: m.content }));
+    const messages = systemPrompt
+      ? [{ role: 'system' as const, content: systemPrompt }, ...baseMessages]
+      : baseMessages;
     this.genai
-      .chatCompletion({ model: cfg.model, messages, temperature: cfg.temperature, maxTokens: cfg.maxTokens })
+      .chatCompletion({
+        model: cfg.model,
+        messages,
+        temperature: cfg.temperature,
+        maxTokens: cfg.maxTokens,
+      })
       .then(reply => {
         if (reply) this.state.addMessage({ role: 'assistant', content: reply });
       })

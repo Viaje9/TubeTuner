@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIf, NgFor } from '@angular/common';
 import { AppStateService } from '../../state/app-state.service';
@@ -21,7 +21,9 @@ export class AiSettingsComponent {
   isSaving = false;
   error = '';
 
-  clearError() { this.error = ''; }
+  clearError() {
+    this.error = '';
+  }
 
   async saveSettings() {
     const key = (this.localApiKey ?? '').trim();
