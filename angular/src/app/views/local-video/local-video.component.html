@@ -79,25 +79,17 @@
     <div class="space-y-4" *ngIf="!hasVideoLoaded">
       <h2 class="text-lg font-semibold text-white">上傳本機影片</h2>
       <div
-        (drop)="handleDrop($event)"
-        (dragover)="handleDragOver($event)"
-        (dragenter)="handleDragEnter($event)"
-        (dragleave)="handleDragLeave($event)"
         (click)="triggerFileInput()"
         [class]="
           'border-2 border-dashed rounded-2xl p-8 transition-all duration-200 cursor-pointer ' +
-          (isDragging()
-            ? 'border-blue-500 bg-blue-500/10'
-            : 'border-gray-600 bg-gray-700/30 hover:border-gray-500 hover:bg-gray-700/50')
+          'border-gray-600 bg-gray-700/30 hover:border-gray-500 hover:bg-gray-700/50'
         "
       >
         <div class="text-center">
           <app-cloud-upload-icon
-            [cls]="'w-12 h-12 mx-auto mb-4 ' + (isDragging() ? 'text-blue-500' : 'text-gray-400')"
+            [cls]="'w-12 h-12 mx-auto mb-4 ' + 'text-gray-400'"
           ></app-cloud-upload-icon>
-          <h3 class="text-lg font-medium text-white mb-2">
-            {{ isDragging() ? '放下檔案來上傳' : '拖放或點擊上傳影片檔案' }}
-          </h3>
+          <h3 class="text-lg font-medium text-white mb-2">點擊上傳影片檔案</h3>
           <p class="text-gray-400 text-sm">支援格式：MP4, WebM, OGG</p>
         </div>
       </div>

@@ -63,7 +63,6 @@ export class LocalVideoComponent {
   constructor(
     private bottomSheet: MatBottomSheet,
     public prefs: PlayerPreferencesService,
-    private router: Router,
     private fav: FavoritesService,
     private app: AppStateService,
   ) {}
@@ -73,9 +72,6 @@ export class LocalVideoComponent {
   get hasSubtitles() {
     return this.subtitles().length > 0;
   }
-  // 上傳/拖放狀態
-  isDragging = signal(false);
-  private dragCounter = 0;
   // 已選字幕檔案（等待上傳）
   selectedSubtitleFile = signal<File | null>(null);
   isUploadingSubtitle = signal(false);
@@ -212,34 +208,6 @@ export class LocalVideoComponent {
   // 拖放與檔案選擇（影片）
   triggerFileInput() {
     this.videoFileInput?.nativeElement?.click();
-  }
-
-  handleDragEnter(e: DragEvent) {
-    e.preventDefault();
-    this.dragCounter++;
-    this.isDragging.set(true);
-  }
-  handleDragLeave(e: DragEvent) {
-    e.preventDefault();
-    this.dragCounter--;
-    if (this.dragCounter === 0) this.isDragging.set(false);
-  }
-  handleDragOver(e: DragEvent) {
-    e.preventDefault();
-  }
-  handleDrop(e: DragEvent) {
-    e.preventDefault();
-    this.dragCounter = 0;
-    this.isDragging.set(false);
-    const files = e.dataTransfer?.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      if (file.type.startsWith('video/')) {
-        this.handleVideoFile(file);
-      } else {
-        console.warn('請上傳影片檔案（MP4、WebM 或 OGG 格式）');
-      }
-    }
   }
 
   handleVideoFile(file: File) {
