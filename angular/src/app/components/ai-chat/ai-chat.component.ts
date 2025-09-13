@@ -28,6 +28,12 @@ export class AiChatComponent {
     }
   }
 
+  // 清空目前對話訊息
+  clear() {
+    if (this.isThinking) return;
+    this.state.clearMessages();
+  }
+
   send() {
     const text = this.input.trim();
     if (!text) return;

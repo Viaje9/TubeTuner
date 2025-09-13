@@ -359,18 +359,20 @@ export class LocalVideoComponent {
     // 即使無收藏，也切換到 AI 對話
     const lines = (items.length > 0 ? items : [])
       .map((it, i) => `${i + 1}. ${it.sentence}`)
-      .join('\n');
+      .join('<br>');
     // 僅第一次帶入收藏字幕作為 system 上下文
     if (lines) {
-      const marker = '以下為使用者於播放器中收藏的字幕語句，作為影片語境的參考內容：';
+      const marker = '以下為使用者所選取的句子：';
       const alreadyHasContext = this.app
         .messages()
         .some(m => m.role === 'system' && m.content.includes(marker));
       if (!alreadyHasContext) {
         const system = {
           role: 'system' as const,
-          content: `${marker}\n${lines}\n請基於這些內容協助回答後續問題，並用繁體中文回覆。`,
+          content: `${marker}<br><br>${lines}<br><br>請基於這些內容協助回答後續問題。`,
         };
+        console.log('注入系統上下文', system);
+
         this.app.setPendingContext([system]);
       }
     }

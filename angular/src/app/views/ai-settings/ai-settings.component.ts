@@ -3,11 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { NgIf, NgFor } from '@angular/common';
 import { AppStateService } from '../../state/app-state.service';
 import { GenAIService } from '../../services/genai.service';
+import { MenuIconComponent } from '../../components/icons/menu-icon.component';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-ai-settings',
   standalone: true,
-  imports: [FormsModule, NgIf, NgFor],
+  imports: [FormsModule, NgIf, NgFor, MenuIconComponent, RouterLink],
   templateUrl: './ai-settings.component.html',
 })
 export class AiSettingsComponent {

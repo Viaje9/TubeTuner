@@ -9,6 +9,13 @@
       </h1>
       <p class="text-sm text-gray-300">AI 助手設定</p>
     </div>
+    <a
+      routerLink="/menu"
+      class="bg-gray-700/70 text-white p-2 rounded-lg inline-flex items-center justify-center"
+      title="選單"
+    >
+      <app-menu-icon [cls]="'w-5 h-5'"></app-menu-icon>
+    </a>
   </div>
 
   <div class="max-w-2xl">
@@ -184,7 +191,7 @@
         </button>
         <button
           (click)="saveSettings()"
-          [disabled]="isSaving || !localApiKey?.trim()"
+          [disabled]="isSaving || !localApiKey.trim()"
           class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg"
         >
           儲存
