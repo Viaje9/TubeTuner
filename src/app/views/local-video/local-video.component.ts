@@ -362,13 +362,12 @@ export class LocalVideoComponent {
       const marker = '以下為使用者所選取的句子：';
       const alreadyHasContext = this.app
         .messages()
-        .some(m => m.role === 'system' && m.content.includes(marker));
+        .some(m => m.role === 'assistant' && m.content.includes(marker));
       if (!alreadyHasContext) {
         const system = {
-          role: 'system' as const,
+          role: 'assistant' as const,
           content: `${marker}<br><br>${lines}<br><br>請基於這些內容協助回答後續問題。`,
         };
-        console.log('注入系統上下文', system);
 
         this.app.setPendingContext([system]);
       }
