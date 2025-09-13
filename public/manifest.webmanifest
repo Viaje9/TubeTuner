@@ -1,0 +1,17 @@
+{
+  "name": "TubeTuner NG",
+  "short_name": "TubeTuner",
+  "theme_color": "#111827",
+  "background_color": "#111827",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "description": "Advanced YouTube speed controller with AI chat (Angular)",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 24x24 32x32 48x48 64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
