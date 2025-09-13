@@ -204,8 +204,6 @@
 </div>
 
 <!-- AI 對話視圖（同頁顯示） -->
-<div *ngIf="showChat()" class="min-h-[100dvh] flex flex-col">
-  <div class="flex-1 overflow-hidden">
-    <app-ai-chat [onBack]="closeChat.bind(this)" />
-  </div>
+<div *ngIf="showChat()" class="overflow-y-hidden">
+  <app-ai-chat [onBack]="closeChat.bind(this)" />
 </div>

@@ -1,6 +1,6 @@
-<div class="bg-gray-900 text-white">
+<div class="bg-gray-900 text-white overflow-hidden fixed top-0 left-0 w-full h-full z-50">
   <!-- 標題 -->
-  <div class="w-full border-b border-gray-300 py-6 px-3 bg-gray-900 z-10">
+  <div class="w-full border-b border-gray-300 py-3 px-3 bg-gray-900 z-10">
     <div class="flex items-center justify-between px-4 pb-2">
       <h1 class="text-2xl font-bold">AI 對話</h1>
       <div class="flex items-center gap-2">
@@ -22,7 +22,7 @@
   </div>
 
   <!-- 訊息區 -->
-  <div class="flex-1 overflow-y-auto messages-container px-1">
+  <div #messagesEl class="flex-1 overflow-y-auto messages-container px-1">
     <div class="space-y-4 max-w-4xl mx-auto pt-6">
       <div
         *ngFor="let m of state.messages()"
@@ -37,7 +37,7 @@
       @if (isThinking) {
         <div class="flex justify-start">
           <div
-            class="max-w-[80%] rounded-lg p-4 text-sm bg-gray-800 text-gray-100 border border-gray-700"
+            class="max-w-[80%] rounded-3xl p-4 text-sm bg-gray-800 text-gray-100 border border-gray-700 messages ml-1"
           >
             {{ thinkingDots }}
           </div>
@@ -48,21 +48,24 @@
 
   <!-- 輸入區 -->
   <div class="pt-1 px-2 w-full bg-gray-900">
-    <div class="max-w-4xl mx-auto flex gap-2 pb-2">
+    <div class="max-w-4xl mx-auto flex gap-2 pb-2 items-end">
       <textarea
+        #inputEl
         [(ngModel)]="input"
+        (input)="adjustTextareaHeight()"
+        (focus)="focusInput()"
+        (blur)="blurInput()"
         rows="1"
         placeholder="輸入您的訊息..."
-        class="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-3xl text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        class="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-3xl text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent overflow-hidden min-h-[44px] max-h-[200px]"
       ></textarea>
       <button
-        class="px-4 py-3 bg-blue-600 text-white rounded-2xl disabled:opacity-60"
+        class="px-4 py-2 bg-blue-600 text-white h-12 rounded-3xl disabled:opacity-60 flex-shrink-0"
         (click)="send()"
         [disabled]="isThinking"
       >
         發送
       </button>
     </div>
-    <div class="h-[30px]"></div>
   </div>
 </div>

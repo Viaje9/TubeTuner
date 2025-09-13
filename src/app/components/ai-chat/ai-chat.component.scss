@@ -1,9 +1,10 @@
 .messages-container {
-  height: calc(100lvh - 180px);
+  height: calc(100dvh - 150px);
+  @apply pb-20;
 }
 
 .messages {
-  @apply px-3 py-1;
+  @apply px-3 py-1 text-lg;
   line-height: 1.6;
 }
 

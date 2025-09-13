@@ -4,6 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
+html,
+body {
+  overscroll-behavior: none;
+}
+
 // Customize the entire app. Change :root to your selector if you want to scope the styles.
 :root {
   @include mat.snack-bar-overrides(
