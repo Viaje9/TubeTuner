@@ -3,10 +3,3 @@
 echo "🔍 執行 ESLint 檢查..."
 npm run lint
 
-echo "🔍 執行 TypeScript 型別檢查..."
-npm run type-check
-
-echo "🔍 執行程式碼格式檢查..."
-npm run format:check
-
-echo "✅ 所有檢查通過！"

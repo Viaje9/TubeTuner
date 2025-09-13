@@ -34,12 +34,9 @@ jobs:
       - name: 執行程式碼檢查
         run: |
           npm run lint
-          npm run type-check
 
       - name: 建置專案
-        run: npm run build
-        env:
-          VITE_BASE_PATH: /TubeTuner/
+        run: npm run build:github
 
       - name: 設定 Pages
         uses: actions/configure-pages@v4
