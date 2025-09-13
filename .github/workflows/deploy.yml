@@ -44,7 +44,7 @@ jobs:
       - name: 上傳到 Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./dist/angular/browser
 
   deploy:
     environment:
