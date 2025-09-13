@@ -157,6 +157,8 @@ export class AppStateService {
    * @param forceRefresh 是否忽略快取強制刷新
    */
   async loadAvailableModels(fetcher: () => Promise<GeminiModel[]>, forceRefresh = false) {
+    console.log('loadAvailableModels', forceRefresh);
+
     if (!forceRefresh) {
       const cached = this.loadModelsFromCache();
       if (cached && cached.length > 0) {
@@ -191,8 +193,6 @@ export class AppStateService {
    * @param modelId 模型 ID
    */
   setModel(modelId: string) {
-    console.log('設定模型', modelId);
-
     this.setAiConfig({ model: modelId });
     this.saveToStorage();
   }

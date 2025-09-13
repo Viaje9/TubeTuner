@@ -1,10 +1,11 @@
-import { Component, inject, Input } from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgIf, NgFor } from '@angular/common';
-import { AppStateService } from '../../state/app-state.service';
-import { GenAIService } from '../../services/genai.service';
-import { MenuIconComponent } from '../../components/icons/menu-icon.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterLink } from '@angular/router';
+import { MenuIconComponent } from '../../components/icons/menu-icon.component';
+import { GenAIService } from '../../services/genai.service';
+import { AppStateService } from '../../state/app-state.service';
 
 @Component({
   selector: 'app-ai-settings',
@@ -15,6 +16,7 @@ import { RouterLink } from '@angular/router';
 export class AiSettingsComponent {
   readonly state = inject(AppStateService);
   readonly genai = inject(GenAIService);
+  private _snackBar = inject(MatSnackBar);
 
   // 本地 UI 狀態
   localApiKey = this.state.aiConfig().apiKey;
@@ -35,10 +37,10 @@ export class AiSettingsComponent {
     try {
       this.state.setAiConfig({ apiKey: key });
       this.state.saveToStorage();
-      await this.state.loadAvailableModels(() => this.genai.listModels());
     } catch (e) {
       this.error = e instanceof Error ? e.message : String(e);
     } finally {
+      this._snackBar.open('設定已儲存', undefined, { duration: 2000, verticalPosition: 'top' });
       this.isSaving = false;
     }
   }

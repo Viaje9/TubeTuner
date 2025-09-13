@@ -8,8 +8,14 @@
       class="flex-1 bg-gray-800 text-white rounded px-3 py-2 border border-gray-700"
     />
     <label class="bg-blue-600 text-white rounded px-3 py-2 cursor-pointer">
-      新增影片
-      <input type="file" class="hidden" accept="video/*" multiple (change)="onFilesSelected($event)" />
+      New
+      <input
+        type="file"
+        class="hidden"
+        accept="video/*"
+        multiple
+        (change)="onFilesSelected($event)"
+      />
     </label>
     <a routerLink="/menu" class="bg-gray-700 text-white rounded px-3 py-2">返回選單</a>
   </div>
@@ -18,7 +24,7 @@
     <div *ngFor="let v of list" class="p-3 flex items-center gap-3">
       <div class="flex-1 min-w-0">
         <div class="text-white font-medium truncate">{{ v.name }}</div>
-        <div class="text-gray-400 text-sm">{{ (v.size/1024/1024) | number:'1.0-2' }} MB</div>
+        <div class="text-gray-400 text-sm">{{ v.size / 1024 / 1024 | number: '1.0-2' }} MB</div>
       </div>
       <button (click)="play(v)" class="bg-green-600 text-white rounded px-3 py-1">播放</button>
       <button (click)="detail(v)" class="bg-gray-600 text-white rounded px-3 py-1">詳細</button>

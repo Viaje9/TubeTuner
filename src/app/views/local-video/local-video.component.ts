@@ -1,28 +1,27 @@
-import { Component, ViewChild, ElementRef, signal, computed, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { SubtitleScrollComponent } from '../../components/subtitle-scroll/subtitle-scroll.component';
-import { parseSRT, getCurrentSubtitle, type SubtitleData } from '../../utils/srt-parser';
-import { parseJSONSubtitles, toEventsJSON } from '../../utils/json-subtitle-parser';
+import { Component, computed, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
-import { PlayerSettingsDialogComponent } from '../../components/play-settings-dialog/play-settings-dialog.component';
-import { PlayerPreferencesService } from '../../state/player-preferences.service';
-import { FavoritesService } from '../../state/favorites.service';
-import { AppStateService } from '../../state/app-state.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AiChatComponent } from '../../components/ai-chat/ai-chat.component';
-import { MenuIconComponent } from '../../components/icons/menu-icon.component';
-import { SettingsIconComponent } from '../../components/icons/settings-icon.component';
-import { StarSolidIconComponent } from '../../components/icons/star-solid-icon.component';
-import { ChatBubbleIconComponent } from '../../components/icons/chat-bubble-icon.component';
 import { CloudUploadIconComponent } from '../../components/icons/cloud-upload-icon.component';
 import { DocumentIconComponent } from '../../components/icons/document-icon.component';
-import { RewindIconComponent } from '../../components/icons/rewind-icon.component';
-import { PlayIconComponent } from '../../components/icons/play-icon.component';
-import { PauseIconComponent } from '../../components/icons/pause-icon.component';
 import { ForwardIconComponent } from '../../components/icons/forward-icon.component';
-import { VideoLibraryService } from '../../services/video-library.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MenuIconComponent } from '../../components/icons/menu-icon.component';
+import { PauseIconComponent } from '../../components/icons/pause-icon.component';
+import { PlayIconComponent } from '../../components/icons/play-icon.component';
+import { RewindIconComponent } from '../../components/icons/rewind-icon.component';
+import { SettingsIconComponent } from '../../components/icons/settings-icon.component';
+import { StarSolidIconComponent } from '../../components/icons/star-solid-icon.component';
+import { PlayerSettingsDialogComponent } from '../../components/play-settings-dialog/play-settings-dialog.component';
+import { SubtitleScrollComponent } from '../../components/subtitle-scroll/subtitle-scroll.component';
 import type { ResolvedVideoData } from '../../resolvers/video.resolver';
+import { VideoLibraryService } from '../../services/video-library.service';
+import { AppStateService } from '../../state/app-state.service';
+import { FavoritesService } from '../../state/favorites.service';
+import { PlayerPreferencesService } from '../../state/player-preferences.service';
+import { parseJSONSubtitles, toEventsJSON } from '../../utils/json-subtitle-parser';
+import { getCurrentSubtitle, parseSRT, type SubtitleData } from '../../utils/srt-parser';
 
 @Component({
   selector: 'app-local-video',
@@ -70,7 +69,6 @@ export class LocalVideoComponent {
     private app: AppStateService,
     private lib: VideoLibraryService,
     private route: ActivatedRoute,
-    private router: Router,
   ) {
     const data = this.route.snapshot.data['video'] as ResolvedVideoData | null;
     if (data) {
@@ -80,7 +78,6 @@ export class LocalVideoComponent {
         try {
           const txt = data.subtitle.text;
           const kind = data.subtitle.meta.kind;
-          console.log(parseJSONSubtitles(txt));
 
           this.subtitles.set(kind === 'json' ? parseJSONSubtitles(txt) : parseSRT(txt));
         } catch (e) {
