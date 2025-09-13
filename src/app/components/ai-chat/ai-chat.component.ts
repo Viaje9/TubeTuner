@@ -73,6 +73,7 @@ export class AiChatComponent implements OnDestroy {
       .finally(() => {
         this.isThinking = false;
         this.stopThinkingAnimation();
+        console.log(this.state.messages());
       });
   }
 

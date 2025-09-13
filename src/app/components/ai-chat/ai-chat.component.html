@@ -1,4 +1,4 @@
-<div class="h-lvh bg-gray-900 text-white mt-[80px] mb-[120px]">
+<div class="h-lvh bg-gray-900 text-white">
   <!-- 標題 -->
   <div class="w-full border-b border-gray-300 py-6 px-3 fixed top-0 bg-gray-900 z-10">
     <div class="flex items-center justify-between px-4 pb-2">
@@ -23,7 +23,7 @@
 
   <!-- 訊息區 -->
   <div class="flex-1 overflow-y-auto h-full px-1">
-    <div class="space-y-4 max-w-4xl mx-auto pt-6">
+    <div class="space-y-4 max-w-4xl mx-auto pt-6 mt-[80px] mb-[120px]">
       <div
         *ngFor="let m of state.messages()"
         [class]="'flex ' + (m.role === 'user' ? 'justify-end' : 'justify-start')"
@@ -47,21 +47,22 @@
   </div>
 
   <!-- 輸入區 -->
-  <div class="p-6 w-full border-t border-gray-800 pb-[50px] fixed z-10 bottom-0 bg-gray-900">
-    <div class="max-w-4xl mx-auto flex gap-2">
+  <div class="pt-1 px-2 w-full fixed z-10 bottom-0 bg-gray-900">
+    <div class="max-w-4xl mx-auto flex gap-2 pb-2">
       <textarea
         [(ngModel)]="input"
         rows="1"
         placeholder="輸入您的訊息..."
-        class="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        class="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-3xl text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       ></textarea>
       <button
-        class="px-4 py-3 bg-blue-600 text-white rounded-lg disabled:opacity-60"
+        class="px-4 py-3 bg-blue-600 text-white rounded-2xl disabled:opacity-60"
         (click)="send()"
         [disabled]="isThinking"
       >
         發送
       </button>
     </div>
+    <div class="h-[50px]"></div>
   </div>
 </div>

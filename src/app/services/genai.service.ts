@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { GoogleGenAI } from '@google/genai';
-import { AppStateService, type ChatMessage as AppChatMessage } from '../state/app-state.service';
+import { AppStateService } from '../state/app-state.service';
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
