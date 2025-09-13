@@ -374,33 +374,6 @@ export class LocalVideoComponent {
       }
     }
 
-    // const msg = [
-    //   {
-    //     role: 'system',
-    //     content:
-    //       '以下為使用者所選取的句子：<br><br>1. They do not like anything that is different or strange, and they hate mysterious things most of all.<br>2. They are a perfectly normal family.<br>3. Mr. and Mrs. Dursley live at number 4, Privet Drive.<br><br>請基於這些內容協助回答後續問題。',
-    //     id: 'e96d9f8b3ff84a85-90ddee6b-45e9184-8bd32ed-7fee6296f6d5a9ec77a56fa',
-    //     createdAt: 1757736917082,
-    //   },
-    //   {
-    //     role: 'user',
-    //     content: '詳細翻譯',
-    //     id: 'e9bfc5b872639b9d-30ae8d8-4e0b786-92dffc6-c6c1bfbbb478d28527f28b29',
-    //     createdAt: 1757736920641,
-    //   },
-    //   {
-    //     role: 'assistant',
-    //     content:
-    //       '以下是這三句的詳細翻譯：\n\n1.  **They do not like anything that is different or strange, and they hate mysterious things most of all.**\n    *   **詳細翻譯：** 他們不喜歡任何異於常規或怪異的事物，而他們最厭惡的莫過於神秘事物。\n    *   **說明：**\n        *   "anything that is different or strange" 翻譯為「任何異於常規或怪異的事物」，「異於常規」比「不同」更強調不尋常，「怪異」則準確表達"strange"。\n        *   "they hate mysterious things most of all" 翻譯為「他們最厭惡的莫過於神秘事物」，「厭惡」比「討厭」語氣更重，更符合"hate"的程度。「莫過於」則精準表達了「最......不過」或「沒有什麼比這更......」的意思，強調了「最」的程度。\n\n2.  **They are a perfectly normal family.**\n    *   **詳細翻譯：** 他們是一個再正常不過的家庭。\n    *   **說明：**\n        *   "perfectly normal" 翻譯為「再正常不過」，這是一個非常地道且有力的表達方式，強調了「完全、絕對正常」的語氣，比單純的「非常正常」或「完全正常」更具原文的強調意味。\n\n3.  **Mr. and Mrs. Dursley live at number 4, Privet Drive.**\n    *   **詳細翻譯：** 德思禮夫婦住在水蠟樹街四號。\n    *   **說明：**\n        *   "Mr. and Mrs. Dursley" 翻譯為「德思禮夫婦」，這是指稱夫妻的常用且簡潔的方式。\n        *   "Privet Drive" 是《哈利波特》系列中的地名，標準譯名為「水蠟樹街」。\n        *   地址的順序在中文中通常是街名在前，門牌號碼在後，因此「水蠟樹街四號」是自然流暢的表達。',
-    //     id: '80499f75468d8ac4-ea84fab-4f5b848-92e9162-3465e880224c3498842adcf8',
-    //     createdAt: 1757736930087,
-    //   },
-    // ];
-
-    // msg.forEach(e => {
-    //   this.app.addMessage({ role: e.role as 'system' | 'user' | 'assistant', content: e.content });
-    // });
-
     this.showChat.set(true);
   }
 
