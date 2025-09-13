@@ -17,7 +17,9 @@
         (change)="onFilesSelected($event)"
       />
     </label>
-    <a routerLink="/menu" class="bg-gray-700 text-white rounded px-3 py-2">返回選單</a>
+    <a routerLink="/menu" class="bg-gray-700 text-white rounded px-3 py-2">
+      <app-menu-icon [cls]="'w-7 h-7'"></app-menu-icon>
+    </a>
   </div>
 
   <div class="divide-y divide-gray-700 bg-gray-800/50 rounded-lg border border-gray-700">

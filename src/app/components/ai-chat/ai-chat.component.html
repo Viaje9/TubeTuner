@@ -28,15 +28,8 @@
         *ngFor="let m of state.messages()"
         [class]="'flex ' + (m.role === 'user' ? 'justify-end' : 'justify-start')"
       >
-        <div
-          [class]="
-            'max-w-[80%] rounded-lg p-4 text-sm ' +
-            (m.role === 'user'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-800 text-gray-100 border border-gray-700')
-          "
-        >
-          <div [innerHTML]="m.content"></div>
+        <div [ngClass]="m.role === 'user' ? 'user' : 'assistant'" class="messages">
+          <div [innerHTML]="renderMessageContent(m)"></div>
         </div>
       </div>
 
@@ -46,7 +39,7 @@
           <div
             class="max-w-[80%] rounded-lg p-4 text-sm bg-gray-800 text-gray-100 border border-gray-700"
           >
-            …
+            {{ thinkingDots }}
           </div>
         </div>
       }

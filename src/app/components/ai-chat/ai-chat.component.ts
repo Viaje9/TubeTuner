@@ -1,22 +1,29 @@
-import { Component, inject, Input } from '@angular/core';
+import { NgClass, NgFor } from '@angular/common';
+import { Component, inject, Input, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgFor } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { marked } from 'marked';
+import { interval, Subscription } from 'rxjs';
+import { ChatMessage, GenAIService } from '../../services/genai.service';
 import { AppStateService } from '../../state/app-state.service';
-import { GenAIService } from '../../services/genai.service';
 
 @Component({
   selector: 'app-ai-chat',
   standalone: true,
-  imports: [FormsModule, NgFor],
+  imports: [FormsModule, NgFor, NgClass],
   templateUrl: './ai-chat.component.html',
+  styleUrl: './ai-chat.component.scss',
 })
-export class AiChatComponent {
+export class AiChatComponent implements OnDestroy {
   readonly state = inject(AppStateService);
   readonly genai = inject(GenAIService);
+  private sanitizer = inject(DomSanitizer);
   @Input({ required: true }) onBack!: () => void;
   input = '';
   // 載入中指示（送出問題等待回覆期間顯示 … 氣泡）
   isThinking = false;
+  thinkingDots = '.';
+  private thinkingSubscription?: Subscription;
 
   constructor() {
     // 進入畫面時若有待處理上下文，注入為 system 訊息
@@ -48,6 +55,7 @@ export class AiChatComponent {
       ? [{ role: 'system' as const, content: systemPrompt }, ...baseMessages]
       : baseMessages;
     this.isThinking = true;
+    this.startThinkingAnimation();
     this.genai
       .chatCompletion({
         model: cfg.model,
@@ -64,6 +72,29 @@ export class AiChatComponent {
       })
       .finally(() => {
         this.isThinking = false;
+        this.stopThinkingAnimation();
       });
+  }
+
+  renderMessageContent(message: ChatMessage): SafeHtml {
+    // 對於模型的輸出，先用 marked 解析，再用 sanitizer 淨化
+    const rawHtml = marked.parse(message.content) as string;
+    return this.sanitizer.bypassSecurityTrustHtml(rawHtml);
+  }
+
+  private startThinkingAnimation(): void {
+    this.thinkingDots = '.';
+    this.thinkingSubscription?.unsubscribe();
+    this.thinkingSubscription = interval(300).subscribe(() => {
+      this.thinkingDots = this.thinkingDots.length < 3 ? this.thinkingDots + '.' : '.';
+    });
+  }
+
+  private stopThinkingAnimation(): void {
+    this.thinkingSubscription?.unsubscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.stopThinkingAnimation();
   }
 }

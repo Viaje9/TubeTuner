@@ -1,0 +1,12 @@
+.messages {
+  @apply max-w-[80%] rounded-lg px-3 py-4;
+  line-height: 1.6;
+}
+
+.user {
+  @apply bg-blue-600 text-white;
+}
+
+.assistant {
+  @apply bg-gray-800 text-gray-100 border border-gray-700;
+}

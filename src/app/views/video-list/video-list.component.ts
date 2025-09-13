@@ -1,13 +1,14 @@
-import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Component, signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router, RouterLink } from '@angular/router';
 import { VideoLibraryService, type VideoMeta } from '../../services/video-library.service';
+import { MenuIconComponent } from '../../components/icons/menu-icon.component';
 
 @Component({
   selector: 'app-video-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, MenuIconComponent],
   templateUrl: './video-list.component.html',
 })
 export class VideoListComponent {
