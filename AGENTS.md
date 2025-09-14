@@ -1,202 +1,140 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to code agents (Claude Code, GPT‑Code, etc.) when working with this repository.
 
-此檔案為 Claude Code (claude.ai/code) 在處理此專案時提供的指引。
+此檔案為程式代理（例如 Claude Code、GPT‑Code）在處理本專案時的工作指引。
 
-**重要：請使用繁體中文與使用者溝通，除非使用者明確要求使用英文。**
+重要：請使用繁體中文與使用者溝通，除非使用者明確要求使用英文。
 
 ## 專案概述
 
-TubeTuner 是一個先進的 YouTube 影片速度控制器，結合了 AI 聊天功能的 Vue 3 + TypeScript PWA 應用程式。專案使用 Vite 作為建置工具，Pinia 進行狀態管理，並整合 OpenRouter AI API 提供影片內容討論功能。
+TubeTuner NG 是一個進階的本機影片播放器與字幕輔助工具，結合 Gemini AI 對話協助理解內容。以 Angular 19 + TypeScript 開發，採用 Tailwind CSS 與 Angular Material，並以 IndexedDB 儲存影片/字幕與中繼資料。
 
 ## 必要指令
 
-### 開發
+開發與建置
 
 ```bash
-npm run dev          # 啟動開發伺服器 (Vite)
-npm run build        # 生產環境建置（含型別檢查）
-npm run preview      # 本地預覽生產版本
+npm start             # 啟動開發伺服器（等同 ng serve）
+npm run build         # 生產建置（輸出 dist/angular）
+npm run build:github  # 針對 GitHub Pages 設定 base-href 後建置
 ```
 
-### 程式碼品質
+品質與測試
 
 ```bash
-npm run lint         # 執行 ESLint 並自動修復
-npm run format       # 使用 Prettier 格式化程式碼 (src/ 目錄)
-npm run type-check   # 使用 vue-tsc 檢查 TypeScript 型別
-```
-
-### 建置變體
-
-```bash
-npm run build-only   # 建置但不檢查型別（較快）
+npm run lint       # ESLint 檢查
+npm run format     # Prettier 格式化（src/**/*.{ts,html,css,scss}）
+npm test           # Karma + Jasmine 測試
 ```
 
 ## 架構總覽
 
-### 技術堆疊
+技術堆疊
 
-- **Vue 3.5** 搭配 Composition API (`<script setup>`)
-- **TypeScript 5.8** 嚴格型別檢查
-- **Vite 7** 用於開發和建置
-- **Pinia** 狀態管理
-- **Vue Router 4** 路由管理（已設定但尚未定義路由）
-- **TailwindCSS 4** 用於樣式設計
-- **PWA** 支援（使用 vite-plugin-pwa）
+- Angular 19（Standalone Components）
+- TypeScript 5.7（ESM）
+- Tailwind CSS 3.4 + Angular Material
+- Signals 為主要狀態管理；少量 RxJS
+- IndexedDB（影片與字幕儲存）
+- Web App Manifest（PWA 基礎，未啟用 service worker）
 
-### 專案結構
+專案結構（摘要）
 
 ```
 src/
-├── App.vue                    # 根元件（Router 出口）
-├── main.ts                    # 應用程式進入點（包含 PWA service worker 註冊）
-├── app.css                    # 全域樣式
-├── components/                # Vue 元件
-│   ├── MessageBox.vue         # 訊息提示框元件
-│   ├── YouTubePlayer.vue      # YouTube 播放器主元件
-│   ├── FloatingControlPanel.vue # 浮動控制面板
-│   └── AISettingsModal.vue    # AI 設定模態框
-├── composables/               # Vue 組合式函數
-│   └── useYouTubePlayer.ts    # YouTube 播放器邏輯封裝
-├── services/                  # 外部服務整合
-│   └── openrouter.ts          # OpenRouter AI API 服務
-├── stores/                    # Pinia 狀態管理
-│   ├── aiConfig.ts            # AI 設定 store
-│   ├── chat.ts                # 聊天記錄 store
-│   ├── favorites.ts           # 字幕收藏功能 store
-│   └── counter.ts             # 範例 store（使用 composition API 風格）
-├── types/                     # TypeScript 型別定義
-│   └── youtube.ts             # YouTube API 相關型別
-├── utils/                     # 工具函數
-│   └── markdown.ts            # Markdown 處理工具
-├── views/                     # 頁面元件
-│   ├── HomeView.vue           # 主頁面
-│   ├── LocalVideoView.vue     # 本地影片播放頁面
-│   ├── MenuView.vue           # 主選單頁面
-│   ├── AISettingsView.vue     # AI 設定頁面
-│   └── FavoritesView.vue      # 收藏字幕列表頁面
-└── router/                    # Vue Router 設定
-    └── index.ts               # 路由設定
-
-layouts/
-└── index.html                 # 完整的 YouTube 控制器實作（舊版參考，原生 JavaScript）
+├── index.html
+├── main.ts
+├── styles.scss
+└── app/
+    ├── app.config.ts           # providers/動畫/路由
+    ├── app.routes.ts           # 路由定義
+    ├── components/             # 共用元件（icons、ai-chat、dialogs、subtitle-scroll）
+    ├── services/               # genai、video-library、dialog
+    ├── state/                  # app-state、favorites、player-preferences
+    ├── utils/                  # srt-parser、json-subtitle-parser、uuid
+    └── views/                  # menu、video-list、video-detail、local-video、ai-settings
+public/manifest.webmanifest     # PWA manifest
 ```
 
-### 關鍵設定檔
+關鍵設定檔
 
-- `vite.config.ts` - Vite 設定，包含 Vue 插件、路徑別名、TailwindCSS 和 PWA 設定
-- `eslint.config.ts` - 扁平化 ESLint 設定，含 Vue/TypeScript 規則
-- `tsconfig.app.json` - 應用程式的 TypeScript 設定
-- `tsconfig.node.json` - 建置工具的 TypeScript 設定
-- `package.json` - 依賴管理和腳本定義（使用 ES 模組）
+- angular.json：建置/開發設定、資產與樣式注入
+- tsconfig*.json：TypeScript 設定
+- styles.scss：Tailwind 與 Material 主題覆寫（含自訂底部彈窗/對話框樣式）
+- tailwind.config.js：Tailwind 設定
+- package.json：腳本與依賴（type: module）
 
-### 路徑別名
+## 開發模式與規範
 
-- `@/*` 映射到 `./src/*`（在 Vite 和 TypeScript 都有設定）
+元件與服務
 
-## 開發模式
+- 採用 Standalone Component；新元件預設 `style: 'scss'`
+- 依現有風格優先使用「建構式注入」；在函式/非建構情境可用 `inject()`
+- 優先以 Angular Signals 管理 UI 狀態；必要時再引入 RxJS
+- 保持檔名與目錄結構一致性（views/components/services/state/utils）
 
-### 元件開發
+UI 設計
 
-- 使用單檔元件 (.vue) 搭配 TypeScript
-- 優先使用 `<script setup lang="ts">` 語法
-- 元件應使用 Composition API
+- 不使用 hover 效果；行動優先、可觸控友善
+- 使用 Tailwind 實作樣式；Material 作為對話框/底部面板等互動容器
+- 預設深色風格；沿用 `.tt-bottom-sheet`、`.tt-material-dialog` 類別覆寫
 
-### UI 設計規範
+狀態與資料
 
-- **不使用 hover 樣式**：專案設計為避免使用 hover 效果，確保在觸控裝置上的一致體驗
-- 所有互動元件應保持靜態視覺狀態，不依賴滑鼠懸停效果
-- 按鈕和互動元素應始終可見和可操作
+- 全域/跨頁設定集中於 `AppStateService`（Signals，含 AI 設定與聊天訊息）
+- 收藏資料於 `FavoritesService`（localStorage）
+- 播放偏好於 `PlayerPreferencesService`（Signals + localStorage）
+- 影片/字幕庫於 `VideoLibraryService`（IndexedDB）：
+  - 儲存影片與字幕 Blob、影片中繼資料與上次播放位置
+  - 變更 schema 或 version 前需審慎評估遷移與相容性
 
-### 狀態管理
+字幕處理
 
-- Pinia stores 使用 composition 風格（參考 `stores/counter.ts`）
-- 使用 `defineStore` 和 setup 函式定義 stores
-- 使用 `ref()` 定義狀態、`computed()` 定義 getters、一般函式定義 actions
-- 重要 stores：
-  - `aiConfig.ts` - AI API 設定（金鑰、模型、參數）
-  - `chat.ts` - 聊天記錄和 AI 對話狀態
-  - `favorites.ts` - 字幕收藏功能，支援 localStorage 持久化儲存
+- `utils/srt-parser.ts`：SRT 解析與時間計算
+- `utils/json-subtitle-parser.ts`：YouTube 事件風格 JSON 解析與 content→events 轉換
+- 檔案限制：字幕 10MB、影片 2GB（與現有驗證一致）
 
-### PWA 設定
+AI 對話（Gemini）
 
-- 應用程式配置為 PWA（Progressive Web App）
-- PWA 清單設定在 `vite.config.ts` 中，包含主題顏色、圖示等
-- Service Worker 自動註冊於 `main.ts`
-- 支援離線使用和安裝到裝置
+- `GenAIService` 使用 `@google/genai`，API Key 由 `AppStateService` 管理
+- 透過 `listModels()` 取得可用模型（含快取），`chatCompletion()` 進行對話
+- 請勿硬編 API Key 或模型清單；尊重現有本地快取與 UI 設定流程
 
-### YouTube 整合
+路由
 
-- 使用 YouTube IFrame API 進行影片控制
-- `useYouTubePlayer.ts` 組合式函數封裝播放器邏輯
-- `YouTubePlayer.vue` 主要播放器元件，支援影片載入、速度控制、播放/暫停
-- `FloatingControlPanel.vue` 提供浮動式快速控制介面
-- 型別定義在 `src/types/youtube.ts`
+- 入口 `/` 與 `/menu`：MenuComponent
+- `/video-list`、`/video/:id`：清單與細節頁
+- `/local-video`：本機影片播放（可解析字幕、收藏、AI）
+- `/ai-settings`：AI 設定頁
 
-### AI 聊天功能
+PWA 與資產
 
-- 整合 OpenRouter API 提供多種 AI 模型選擇
-- `aiConfig.ts` store 管理 API 金鑰、模型選擇、溫度等設定
-- `chat.ts` store 處理聊天記錄和對話狀態
-- `AISettingsModal.vue` 提供 AI 設定介面
-- 支援與 YouTube 影片內容相關的 AI 對話
-
-### 字幕收藏功能
-
-- `SubtitleScrollPanel.vue` 元件提供字幕收藏按鈕（星號圖示）
-- `favorites.ts` store 管理收藏的字幕，支援 localStorage 持久化
-- `FavoritesView.vue` 顯示收藏列表，支援刪除和清空功能
-- 收藏資料包含句子內容、時間範圍、影片 ID 和收藏時間戳記
-
-## 重要架構模式
-
-### 組合式函數模式
-
-- `useYouTubePlayer.ts` 示範了如何將複雜的 YouTube API 邏輯封裝成可重用的組合式函數
-- 處理 YouTube IFrame API 的載入、播放器初始化、狀態管理
-- 提供響應式的播放器狀態（isReady, isPlaying, playbackRate）
-
-### 服務層架構
-
-- `services/openrouter.ts` 封裝第三方 API 呼叫邏輯
-- 提供型別安全的 API 介面和錯誤處理
-- 支援多種 AI 模型的統一介面
-
-### 元件間通訊
-
-- 使用 Pinia stores 進行跨元件狀態共享
-- 透過 props/emit 進行父子元件通訊
-- 組合式函數提供邏輯共享機制
-
-## 開發注意事項
-
-### 外部 API 整合
-
-- YouTube IFrame API 需要全域載入，在 `useYouTubePlayer.ts` 中處理載入邏輯
-- OpenRouter API 需要 API 金鑰，透過 `aiConfig.ts` store 管理
-- 所有 API 呼叫都應包含適當的錯誤處理和載入狀態
-
-### 型別安全
-
-- YouTube API 相關型別定義在 `src/types/youtube.ts`
-- OpenRouter API 型別定義在 `services/openrouter.ts`
-- 嚴格的 TypeScript 設定確保型別安全
+- 僅提供 `manifest.webmanifest`；目前未啟用 service worker
+- 若需離線快取或安裝支援擴充，須經需求確認後新增
 
 ## Node.js 需求
 
-- Node.js 20.19.0+ 或 22.12.0+
-- 使用 ES 模組（package.json 中設定 `"type": "module"`）
+- Node.js 20+（建議 LTS）
+- ESM 專案（`"type": "module"`）
 
 ## 提交訊息規範
 
-- 使用繁體中文撰寫提交訊息（commit message）。
-- 採用 Conventional Commits 類型前綴：`feat`、`fix`、`refactor`、`docs`、`test`、`style`、`build`、`ci`、`chore`。
-- 主旨語句簡潔描述變更重點，必要時於內文補充影響範圍與動機。
+- 使用繁體中文撰寫提交訊息（commit message）
+- 採用 Conventional Commits：`feat`、`fix`、`refactor`、`docs`、`test`、`style`、`build`、`ci`、`chore`
+- 主旨簡潔，必要時在內文補充影響範圍與動機
 - 範例：
-  - `(feat) 將本機影片頁面的內嵌 SVG 拆成獨立圖示元件`
-  - `(fix) 修正播放按鈕在暫停狀態下的圖示切換`
+  - `(feat) 新增本機影片頁的快進/回退步進設定`
+  - `(fix) 修正 SRT 解析在行尾時間碼的錯誤`
+
+## 其他工作守則
+
+- 嚴格遵守：不做未被要求的變更；小心修改現有行為
+- 優先編輯既有檔案，除非確有需要才新增檔案/依賴
+- 不主動啟用 service worker 或導入大型框架調整
+- 保持程式碼與現有風格一致，避免過度重構
+
+---
 
 # important-instruction-reminders
 
@@ -204,3 +142,4 @@ Do what has been asked; nothing more, nothing less.
 NEVER create files unless they're absolutely necessary for achieving your goal.
 ALWAYS prefer editing an existing file to creating a new one.
 NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
+

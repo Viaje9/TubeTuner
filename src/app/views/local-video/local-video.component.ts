@@ -86,6 +86,10 @@ export class LocalVideoComponent {
       }
       this.rate.set(this.prefs.playbackRate());
     }
+
+    // setTimeout(() => {
+    //   this.openChatWithSelected();
+    // });
   }
   get hasVideoLoaded() {
     return !!this.src();
@@ -372,6 +376,33 @@ export class LocalVideoComponent {
         this.app.setPendingContext([system]);
       }
     }
+
+    // const msg = [
+    //   {
+    //     role: 'assistant',
+    //     content:
+    //       '以下為使用者所選取的句子：<br><br>1. They are a perfectly normal family.<br>2. They do not like anything that is different or strange, and they hate mysterious things most of all.<br>3. They prefer a life that is calm, ordinary and without any surprises.<br><br>請基於這些內容協助回答後續問題。',
+    //     id: '706c92fdbd2f1c3b-a320acb-4f0521b-84a3f4d-ac7612a4ca32e4fa583ba8b',
+    //     createdAt: 1757771324072,
+    //   },
+    //   {
+    //     role: 'user',
+    //     content: '詳細的翻譯',
+    //     id: 'c9a0a5a4a0404214-b37c46c8-4f01bb7-89190d3-9cba4ea42f91b6cab7dbb03d',
+    //     createdAt: 1757771331061,
+    //   },
+    //   {
+    //     role: 'assistant',
+    //     content:
+    //       '好的，這三句話的詳細翻譯如下：\n\n1.  **They are a perfectly normal family.**\n    *   **詳細翻譯：** 他們是一個再普通不過的家庭。\n    *   **逐字解釋：**\n        *   "They" (他們): 指稱複數人稱。\n        *   "are" (是): 動詞，表示「是」。\n        *   "a perfectly normal family" (一個再普通不過的家庭):\n            *   "a family" (一個家庭): 最基本的構成。\n            *   "perfectly normal" (再普通不過): 強調其極度、徹底的普通，沒有任何特別之處。「再...不過」是中文中表達「沒有比這更...」的慣用句型，非常貼切地傳達了"perfectly normal"這種「普通到極點」的語氣。\n\n2.  **They do not like anything that is different or strange, and they hate mysterious things most of all.**\n    *   **詳細翻譯：** 他們不喜歡任何與眾不同或奇怪的事物，而且他們尤其討厭神秘的事物。\n    *   **逐字解釋：**\n        *   "They do not like" (他們不喜歡): 直接表達不喜歡的態度。\n        *   "anything that is different or strange" (任何與眾不同或奇怪的事物):\n            *   "anything" (任何事物): 指所有可能的事物。\n            *   "different" (與眾不同): 形容詞，表示與一般事物不同，帶有獨特或不尋常的意味。\n            *   "or strange" (或奇怪): 連接詞「或」，形容詞「奇怪」，表示不尋常、不合常理。\n        *   "and" (而且): 連接詞，表示進一步的說明或加強語氣。\n        *   "they hate" (他們討厭): 直接表達強烈的不喜歡。\n        *   "mysterious things" (神秘的事物):\n            *   "mysterious" (神秘): 形容詞，指難以理解、充滿未知或隱藏秘密的事物。\n            *   "things" (事物): 指一般的事物。\n        *   "most of all" (尤其): 強調「最」討厭的對象，點明了討厭的程度和優先級。\n\n3.  **They prefer a life that is calm, ordinary and without any surprises.**\n    *   **詳細翻譯：** 他們偏好平靜、平凡且沒有任何意外的生活。\n    *   **逐字解釋：**\n        *   "They prefer" (他們偏好): 動詞「偏好」，比「喜歡」更強調選擇和傾向於某種事物。\n        *   "a life" (生活): 指生活方式或生命。\n        *   "that is calm, ordinary and without any surprises" (平靜、平凡且沒有任何意外的):\n            *   "calm" (平靜): 形容詞，指沒有波動、安穩的狀態。\n            *   "ordinary" (平凡): 形容詞，指普通、不特別、不引人注目的。\n            *   "and" (且): 連接詞，表示並列關係。\n            *   "without any surprises" (沒有任何意外):\n                *   "without" (沒有): 表示缺乏或不具備。\n                *   "any" (任何): 強調「所有的」。\n                *   "surprises" (意外): 在此語境中，"surprises" 指的是意料之外、可能打破平靜的事物，通常帶有負面或不希望發生的含義，因此翻譯為「意外」比「驚喜」更合適。',
+    //     id: '146774797921e02e-b7e92e47-48de041-95044f1-36e6bb3c26c61b90e6bb7ce3',
+    //     createdAt: 1757771348090,
+    //   },
+    // ];
+
+    // msg.forEach(m => {
+    //   this.app.addMessage({ role: m.role as 'assistant' | 'user' | 'system', content: m.content });
+    // });
 
     this.showChat.set(true);
   }
